@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank;
+package com.cs203t5.ryverbank.entity;
 
 public class Transaction {
 

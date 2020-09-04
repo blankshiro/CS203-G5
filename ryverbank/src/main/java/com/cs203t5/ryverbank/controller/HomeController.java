@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank;
+package com.cs203t5.ryverbank.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.stereotype.Controller;
