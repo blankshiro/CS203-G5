@@ -1,6 +1,6 @@
 package com.cs203t5.ryverbank.app;
 
-import com.cs203t5.ryverbank.service.*;
+//import com.cs203t5.ryverbank.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,6 +19,6 @@ public class RyverbankApplication {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void triggerWhenStarts() {
-		sendEmailService.sendEmail("edwin.tok.2019@smu.edu.sg", "test", "test");
+		sendEmailService.sendEmail("derrick.lim.2019@sis.smu.edu.sg", "if the email service is working, you will receive this email. PS: Megumin best girl", "pls work");
 	}
 }
