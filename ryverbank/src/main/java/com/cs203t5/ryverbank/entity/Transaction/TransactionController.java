@@ -2,12 +2,10 @@ package com.cs203t5.ryverbank.entity.Transaction;
 
 import java.util.List;
 
-import org.springframework.data.repository.core.support.TransactionalRepositoryFactoryBeanSupport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.cs203t5.ryverbank.entity.User.*;
-import com.cs203t5.ryverbank.entity.Stock.*;
 
 //This class is used to show the options that are available when a client logs in
 @RestController
@@ -40,12 +38,13 @@ public class TransactionController {
     @PutMapping("/users/{userId}/transactions/{transactionId}")
     public Transaction updateTransaction(@PathVariable (value = "userId") String userId,
                                             @PathVariable (value = "transactionId") Long transactionId,
-                                            @RequestBody Transaction newTransaction) {
+                                            @RequestBody Transaction newTransInfo) {
         if(!users.existsById(userId)){
             throw new UserNotFoundException(userId);
         }
         return transactions.findByIdAndUserId(transactionId, userId).map(transaction -> {
-            transaction.setTransaction(new Transaction(newTransaction.getTransactionID(), newTransaction.getAmount(), newTransaction.getTransactionType()));
+            transaction.setAmount(newTransInfo.getAmount());
+            transaction.setTransactionType(newTransInfo.getTransactionType());
             return transactions.save(transaction);
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
     }

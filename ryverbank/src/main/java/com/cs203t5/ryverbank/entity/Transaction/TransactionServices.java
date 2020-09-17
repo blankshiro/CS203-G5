@@ -1,7 +1,5 @@
 package com.cs203t5.ryverbank.entity.Transaction;
 
-import com.cs203t5.ryverbank.entity.User.User;
-
 import java.util.List;
 
 public interface TransactionServices {

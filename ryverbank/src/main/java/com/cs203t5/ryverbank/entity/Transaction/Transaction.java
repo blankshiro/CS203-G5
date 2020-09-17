@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import com.cs203t5.ryverbank.entity.User.*;
-import com.cs203t5.ryverbank.entity.Stock.*;
 
 @Entity
 @Setter
@@ -21,7 +20,6 @@ public class Transaction {
     private String transactionType;
 
     @JsonIgnore
-    private List<Stock> stock;
 
     //many transaction to one user
     @ManyToOne
