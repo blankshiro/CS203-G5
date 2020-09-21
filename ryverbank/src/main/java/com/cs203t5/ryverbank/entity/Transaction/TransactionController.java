@@ -2,22 +2,31 @@ package com.cs203t5.ryverbank.entity.Transaction;
 
 import java.util.List;
 
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.cs203t5.ryverbank.entity.User.*;
 
 //This class is used to show the options that are available when a client logs in
+
 @RestController
 public class TransactionController {
+
+    
     private TransactionRepository transactions;
     private UserRepository users;
 
+    @Autowired
     public TransactionController (TransactionRepository transactions, UserRepository users){
+
         this.transactions = transactions;
         this.users = users;
     }
-
 
     @GetMapping("/users/{userId}/transactions")
     public List<Transaction> getAllTransactionsByUserId(@PathVariable (value = "userId") String userId){
