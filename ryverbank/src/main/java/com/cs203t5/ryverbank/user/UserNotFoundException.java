@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.entity.User;
+package com.cs203t5.ryverbank.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

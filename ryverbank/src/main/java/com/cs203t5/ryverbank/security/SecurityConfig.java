@@ -2,6 +2,7 @@ package com.cs203t5.ryverbank.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,16 +30,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-				.antMatchers("/register/**", "/login/**")
-				.permitAll()
-				.anyRequest()
-				.authenticated()
-				.and()
-				.formLogin()
-				.loginPage("/login")
-				.permitAll();
-        }
+            http
+        .httpBasic()
+            .and() //  "and()"" method allows us to continue configuring the parent
+        .authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/books", "/books/**").permitAll() // Anyone can view books and reviews
+            .antMatchers(HttpMethod.POST, "/books").hasRole("ADMIN")
+            .antMatchers(HttpMethod.PUT, "/books/*").hasRole("ADMIN")
+            .antMatchers(HttpMethod.DELETE, "/books/*").hasRole("ADMIN")
+
+            .antMatchers(HttpMethod.POST, "/books/*/reviews").authenticated()
+            .antMatchers(HttpMethod.PUT, "/books/*", "/books/*/reviews/*").authenticated()
+            .antMatchers(HttpMethod.DELETE, "/books/*", "/books/*/reviews/*").authenticated()
+
+            .antMatchers(HttpMethod.POST, "/books/*/reviews").hasAnyRole("ADMIN", "USER")
+            .antMatchers(HttpMethod.PUT, "/books/*/reviews/*").hasRole("ADMIN")
+            .antMatchers(HttpMethod.DELETE, "/books/*/reviews/*").hasRole("ADMIN")
+            .antMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+            .antMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
+
+            .and()
+        .csrf().disable() // CSRF protection is needed only for browser based attacks
+        .formLogin().disable()
+        .headers().disable(); // Disable the security headers, as we do not return HTML in our service
+    }
 
     /**
      * @Bean annotation is used to declare a PasswordEncoder bean in the Spring

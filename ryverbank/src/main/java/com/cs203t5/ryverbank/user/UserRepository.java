@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.entity.User;
+package com.cs203t5.ryverbank.user;
 
 import java.util.Optional;
 
@@ -11,5 +11,5 @@ public interface UserRepository extends JpaRepository <User, String> {
     Optional<User> findByUsername(String username);
 
     // define a derived query to find user by email
-    Optional<User> findByEmail(String email);
+    // Optional<User> findByEmail(String email);
 }

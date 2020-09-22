@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.entity.Transaction;
+package com.cs203t5.ryverbank.transaction;
 
 import java.util.List;
 

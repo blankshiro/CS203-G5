@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.entity.User;
+package com.cs203t5.ryverbank.email;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;

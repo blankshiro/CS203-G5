@@ -1,20 +1,20 @@
-package com.cs203t5.ryverbank.entity.User;
+package com.cs203t5.ryverbank.user;
 
 import java.util.List;
 
-import com.cs203t5.ryverbank.entity.ConfirmationToken.ConfirmationToken;
-import com.cs203t5.ryverbank.entity.ConfirmationToken.ConfirmationTokenService;
+// import com.cs203t5.ryverbank.token.*;
+// import com.cs203t5.ryverbank.email.*;
 
-import org.springframework.mail.SimpleMailMessage;
+// import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
     private UserRepository users;
-    private ConfirmationTokenService confirmationTokenService;
+    // private ConfirmationTokenService confirmationTokenService;
     private BCryptPasswordEncoder encoder;
-    private EmailService javaMailSender;
+    // private EmailService javaMailSender;
 
     public UserServiceImpl(UserRepository users) {
         this.users = users;
@@ -24,15 +24,6 @@ public class UserServiceImpl implements UserService {
     public List<User> listUsers() {
         return users.findAll();
     }
-
-    /*
-    @Override
-    public User getUser(String id) {
-        return users.findById(id).map(user -> {
-            return user;
-        }).orElse(null);
-    }
-    */
     
     @Override
     public User getUser(String id) {
@@ -57,6 +48,7 @@ public class UserServiceImpl implements UserService {
         users.deleteById(id);
     }
 
+    /*
     public void register(User user) {
 
         String encryptedPassword = encoder.encode(user.getPassword());
@@ -72,7 +64,9 @@ public class UserServiceImpl implements UserService {
         sendEmail(user.getEmail(), confirmationToken.getTokenid());
 
     }
+    */
 
+    /*
     public void confirm(ConfirmationToken confirmationToken) {
         // Gets the user from the token
         User user = confirmationToken.getUser();
@@ -86,10 +80,12 @@ public class UserServiceImpl implements UserService {
         // deletes the confirmation token from repo
         confirmationTokenService.deleteToken(confirmationToken.getTokenid());
     }
+    */
 
     /**
      * Sends confirmation email to the user who registered for an account
      */
+    /*
     public void sendEmail(String toUser, String token) {
         System.out.println("sending email...");
 
@@ -105,5 +101,6 @@ public class UserServiceImpl implements UserService {
 
         System.out.println("confirmation email sent!");
     }
+    */
 
 }

@@ -1,11 +1,10 @@
-package com.cs203t5.ryverbank.entity.User;
+package com.cs203t5.ryverbank.user;
 
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.dao.*;
-import org.springframework.http.*;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,26 +14,10 @@ public class UserController {
     private UserService userService;
     private BCryptPasswordEncoder encoder;
 
-    public UserController(UserService userService, BCryptPasswordEncoder encoder) {
-        this.userService = userService;
+    public UserController(UserRepository users, UserService userSvc, BCryptPasswordEncoder encoder) {
+        this.users = users;
+        this.userService = userSvc;
         this.encoder = encoder;
-    }
-
-    @GetMapping("/register")
-    public String register() {
-        return "register";
-    }
-
-    @PostMapping("/register")
-    public String register(User user) {
-        userService.register(user);
-
-        return "redirect:/login";
-    }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
     }
 
     /**
@@ -44,7 +27,18 @@ public class UserController {
      */
     @GetMapping("/users")
     public List<User> getUsers() {
-        return userService.listUsers();
+        return users.findAll();
+    }
+
+    /**
+     * Using BCrypt encoder to encrypt the password for storage 
+     * @param user
+     * @return
+     */
+    @PostMapping("/users")
+    public User addUser(@Valid @RequestBody User user){
+        user.setPassword(encoder.encode(user.getPassword()));
+        return users.save(user);
     }
 
     /**
@@ -61,13 +55,6 @@ public class UserController {
         if (user == null)
             throw new UserNotFoundException(id);
         return userService.getUser(id);
-    }
-
-
-    @PostMapping("/users")
-    public User addUser(@Valid @RequestBody User user){
-        user.setPassword(encoder.encode(user.getPassword()));
-        return users.save(user);
     }
 
     /**

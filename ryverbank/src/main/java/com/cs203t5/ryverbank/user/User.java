@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.entity.User;
+package com.cs203t5.ryverbank.user;
 
 import java.util.*;
 import javax.persistence.*;
@@ -11,9 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.*;
 
-import com.cs203t5.ryverbank.entity.Transaction.*;
+import com.cs203t5.ryverbank.transaction.*;
 
-@Entity (name = "Users")
+@Entity
 @Setter
 @Getter
 @ToString
@@ -35,15 +35,12 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @NotNull(message = "Email should not be null")
     @Column(name = "email_address", unique = true)
     private String email;
 
-    @NotNull(message = "First name should not be null")
     @Column(name = "first_name")
     private String firstName;
 
-    @NotNull(message = "Last name should not be null")
     @Column(name = "last_name")
     private String lastName;
 

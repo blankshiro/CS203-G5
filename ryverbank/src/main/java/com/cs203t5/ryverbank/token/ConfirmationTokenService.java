@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.entity.ConfirmationToken;
+package com.cs203t5.ryverbank.token;
 
 import org.springframework.stereotype.Service;
 

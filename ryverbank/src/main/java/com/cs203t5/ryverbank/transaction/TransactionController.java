@@ -1,8 +1,6 @@
-package com.cs203t5.ryverbank.entity.Transaction;
+package com.cs203t5.ryverbank.transaction;
 
 import java.util.List;
-
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,18 +8,15 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.cs203t5.ryverbank.entity.User.*;
+import com.cs203t5.ryverbank.user.*;
 
 //This class is used to show the options that are available when a client logs in
 
 @RestController
 public class TransactionController {
-
-    
     private TransactionRepository transactions;
     private UserRepository users;
 
-    @Autowired
     public TransactionController (TransactionRepository transactions, UserRepository users){
 
         this.transactions = transactions;
@@ -44,6 +39,7 @@ public class TransactionController {
         }).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
+    /*
     @PutMapping("/users/{userId}/transactions/{transactionId}")
     public Transaction updateTransaction(@PathVariable (value = "userId") String userId,
                                             @PathVariable (value = "transactionId") Long transactionId,
@@ -71,4 +67,5 @@ public class TransactionController {
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
                         
     }
+    */
 }

@@ -1,21 +1,20 @@
-package com.cs203t5.ryverbank.entity.Transaction;
+package com.cs203t5.ryverbank.transaction;
 
-import java.util.List;
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import com.cs203t5.ryverbank.entity.User.*;
+import com.cs203t5.ryverbank.user.*;
 
 @Entity
-@Setter
 @Getter
+@Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Transaction {
-    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long transactionID;
+    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     private double amount;
     private String transactionType;
 
@@ -27,7 +26,7 @@ public class Transaction {
     private User user;
 
     public Transaction(long id, double amt, String tType) {
-        this.transactionID = id;
+        this.id = id;
         this.amount = amt;
         this.transactionType = tType;
     }

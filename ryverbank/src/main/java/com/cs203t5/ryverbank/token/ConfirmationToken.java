@@ -1,11 +1,11 @@
-package com.cs203t5.ryverbank.entity.ConfirmationToken;
+package com.cs203t5.ryverbank.token;
 
 import java.time.*;
 import java.util.UUID;
 
 import javax.persistence.*;
 
-import com.cs203t5.ryverbank.entity.User.*;
+import com.cs203t5.ryverbank.user.*;
 
 import lombok.*;
 
