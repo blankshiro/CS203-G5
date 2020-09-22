@@ -17,6 +17,6 @@ public class RyverbankApplication {
 		UserRepository users = ctx.getBean(UserRepository.class);
         BCryptPasswordEncoder encoder = ctx.getBean(BCryptPasswordEncoder.class);
         System.out.println("[Add user]: " + users.save(
-            new User("admin", encoder.encode("goodpassword"),"ROLE_ADMIN")).getPassword());
+            new User("admin", encoder.encode("goodpassword"),"ROLE_ADMIN")).getUsername());
 	}
 }

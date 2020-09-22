@@ -39,7 +39,6 @@ public class TransactionController {
         }).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
-    /*
     @PutMapping("/users/{userId}/transactions/{transactionId}")
     public Transaction updateTransaction(@PathVariable (value = "userId") String userId,
                                             @PathVariable (value = "transactionId") Long transactionId,
@@ -67,5 +66,4 @@ public class TransactionController {
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
                         
     }
-    */
 }
