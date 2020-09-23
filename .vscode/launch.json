@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-RyverbankApplication<ryverbank>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.cs203t5.ryverbank.app.RyverbankApplication",
+            "projectName": "ryverbank",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-RyverbankApplication<ryverbank>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.cs203t5.ryverbank.RyverbankApplication",
+            "projectName": "ryverbank",
+            "args": ""
+        }
+    ]
+}

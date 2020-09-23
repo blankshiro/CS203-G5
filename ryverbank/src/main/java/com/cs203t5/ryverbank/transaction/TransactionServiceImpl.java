@@ -1,12 +1,16 @@
-package com.cs203t5.ryverbank.entity.Transaction;
+package com.cs203t5.ryverbank.transaction;
 
 import java.util.List;
+
+
 import org.springframework.stereotype.Service;
 
 @Service
-public class TransactionServiceImpl implements TransactionServices{
+public class TransactionServiceImpl implements TransactionServices {
+
     private TransactionRepository transactions;
 
+    
     public TransactionServiceImpl(TransactionRepository transactions) {
         this.transactions = transactions;
     }
@@ -16,8 +20,8 @@ public class TransactionServiceImpl implements TransactionServices{
         return transactions.findAll();
     }
 
-    @Override 
-    public Transaction getTransaction(Long id){
+    @Override
+    public Transaction getTransaction(Long id) {
         return transactions.findById(id).map(transaction -> {
             return transaction;
         }).orElse(null);
@@ -29,16 +33,16 @@ public class TransactionServiceImpl implements TransactionServices{
     }
 
     @Override
-    public Transaction updateTransaction(Long id, Transaction newTransInfo){
+    public Transaction updateTransaction(Long id, Transaction newTransInfo) {
         return transactions.findById(id).map(transaction -> {
             transaction.setAmount(newTransInfo.getAmount());
             transaction.setTransactionType(newTransInfo.getTransactionType());
             return transactions.save(transaction);
-        }).orElse(null);    
+        }).orElse(null);
     }
 
     @Override
-    public void deleteTransaction(Long id){
+    public void deleteTransaction(Long id) {
         transactions.deleteById(id);
     }
 }
