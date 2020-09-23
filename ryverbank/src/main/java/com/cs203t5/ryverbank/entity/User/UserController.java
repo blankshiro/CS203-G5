@@ -1,6 +1,11 @@
 package com.cs203t5.ryverbank.entity.User;
 
 import java.util.List;
+
+import javax.validation.Valid;
+import com.cs203t5.ryverbank.entity.Security.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,12 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 @RestController
 public class UserController {
     private UserService userService;
 
-    public UserController(UserService us){
+    // @Autowired
+    private BCryptPasswordEncoder encoder;
+
+    
+    public UserController(UserService us, BCryptPasswordEncoder encoder){
         this.userService = us;
+        this.encoder = encoder;
     }
     
     //list all the user in the system
@@ -39,7 +51,8 @@ public class UserController {
     //add a new user 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/users")
-    public User addUsser(@RequestBody User user){
+    public User addUser(@Valid @RequestBody User user){
+        user.setPassword(encoder.encode(user.getPassword()));
         return userService.addUser(user);
     }
 
