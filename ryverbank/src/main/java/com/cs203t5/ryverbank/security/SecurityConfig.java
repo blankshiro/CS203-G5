@@ -29,27 +29,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http
+    protected void configure(HttpSecurity http) throws Exception {
+        http
         .httpBasic()
-            .and() //  "and()"" method allows us to continue configuring the parent
+        .and()
         .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/register", "/login").permitAll() // Anyone can view registration page and login page
-            .antMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
-            .antMatchers(HttpMethod.PUT, "/users/*").hasRole("ADMIN")
-            .antMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN")
+            .antMatchers(HttpMethod.POST, "/users/{userID}/transactions").authenticated()
+            .antMatchers(HttpMethod.GET, "/users/{userId}/transactions").authenticated()
+            .antMatchers(HttpMethod.PUT, "/users/{userId}/transactions/{transactionId}").authenticated()
+            .antMatchers(HttpMethod.DELETE, "/users/{userID}/transactions/{transactionId}").authenticated()
 
-            .antMatchers(HttpMethod.POST, "/books/*/reviews").authenticated()
-            .antMatchers(HttpMethod.PUT, "/books/*", "/books/*/reviews/*").authenticated()
-            .antMatchers(HttpMethod.DELETE, "/books/*", "/books/*/reviews/*").authenticated()
-
-            .antMatchers(HttpMethod.POST, "/books/*/reviews").hasAnyRole("ADMIN", "USER")
-            .antMatchers(HttpMethod.PUT, "/books/*/reviews/*").hasRole("ADMIN")
-            .antMatchers(HttpMethod.DELETE, "/books/*/reviews/*").hasRole("ADMIN")
-            .antMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
-            .antMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
-
-            .and()
+            .antMatchers(HttpMethod.POST, "/users/{userID}/transactions").hasRole("CLIENT")
+            .antMatchers(HttpMethod.GET, "/users/{userId}/transactions").hasAnyRole("STAFF","CLIENT")
+            .antMatchers(HttpMethod.PUT, "/users/{userId}/transactions/{transactionId}").hasRole("CLIENT")
+            .antMatchers(HttpMethod.DELETE, "/users/{userID}/transactions/{transactionId}").hasRole("CLIENT")
+        .and()
         .csrf().disable() // CSRF protection is needed only for browser based attacks
         .formLogin().disable()
         .headers().disable(); // Disable the security headers, as we do not return HTML in our service
