@@ -20,25 +20,33 @@ public class UserController {
         this.encoder = encoder;
     }
 
+
+    /**
+     * Registers a new user and uses BCrypt encoder to encrypt the password for storage
+     * 
+     * @param user
+     * @return the user
+     */
+    @PostMapping("/register")
+    public User register(@Valid @RequestBody User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        return users.save(user);
+    }
+
+    /*
+    @PostMapping(path = "/users/login")
+    public User login(@Valid @RequestBody User user) {
+        return userService.loginUser(user);
+    } */
+
     /**
      * List all users in the system
      * 
      * @return list of all users
      */
-    @GetMapping("/users")
+    @GetMapping("/customers")
     public List<User> getUsers() {
         return users.findAll();
-    }
-
-    /**
-     * Using BCrypt encoder to encrypt the password for storage 
-     * @param user
-     * @return
-     */
-    @PostMapping("/users")
-    public User addUser(@Valid @RequestBody User user){
-        user.setPassword(encoder.encode(user.getPassword()));
-        return users.save(user);
     }
 
     /**
@@ -48,8 +56,8 @@ public class UserController {
      * @param id
      * @return user with the given id
      */
-    @GetMapping("/users/{id}")
-    public User getUser(@PathVariable String id) {
+    @GetMapping("/customers/{id}")
+    public User getUser(@PathVariable Long id) {
         User user = userService.getUser(id);
 
         if (user == null)
@@ -64,8 +72,8 @@ public class UserController {
      * @param newUserInfo
      * @return the updated, or newly added book
      */
-    @PutMapping("/users/{id}")
-    public User updateUser(@PathVariable String id, @RequestBody User newUserInfo) {
+    @PutMapping("/customers/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User newUserInfo) {
         User user = userService.updateUser(id, newUserInfo);
         if (user == null)
             throw new UserNotFoundException(id);
@@ -79,8 +87,8 @@ public class UserController {
      * 
      * @param id
      */
-    @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable String id) {
+    @DeleteMapping("/customers/{id}")
+    public void deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
         } catch (EmptyResultDataAccessException e) {

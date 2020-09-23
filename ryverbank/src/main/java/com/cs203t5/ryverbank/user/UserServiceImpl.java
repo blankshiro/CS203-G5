@@ -26,8 +26,8 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
-    public User getUser(String id) {
-        return users.findById(id).orElse(null);
+    public User getUser(Long userId) {
+        return users.findById(userId).orElse(null);
     }
 
     @Override
@@ -36,36 +36,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String id, User newUserInfo) {
-        return users.findById(id).map(user -> {
+    public User updateUser(Long userId, User newUserInfo) {
+        return users.findById(userId).map(user -> {
             user.setPassword(newUserInfo.getPassword());
             return users.save(user);
         }).orElse(null);
     }
 
     @Override
-    public void deleteUser(String id) {
-        users.deleteById(id);
+    public void deleteUser(Long userId) {
+        users.deleteById(userId);
     }
 
-    /*
-    public void register(User user) {
+    
+    @Override
+    public User register(User user) {
+        if (users.existsByUsername(user.getUsername())) {
+            throw new UserExistsException("username used");
+        }
 
-        String encryptedPassword = encoder.encode(user.getPassword());
+        if (users.existsByEmail(user.getEmail())) {
+            throw new UserExistsException("email used");
+        }
 
-        user.setPassword(encryptedPassword);
-
-        users.save(user);
-
-        ConfirmationToken confirmationToken = new ConfirmationToken(user);
-
-        confirmationTokenService.saveToken(confirmationToken);
-
-        sendEmail(user.getEmail(), confirmationToken.getTokenid());
-
+        user.setPassword(encoder.encode(user.getPassword()));
+        return users.save(user);
     }
-    */
 
+    
     /*
     public void confirm(ConfirmationToken confirmationToken) {
         // Gets the user from the token

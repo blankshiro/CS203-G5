@@ -34,10 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .httpBasic()
             .and() //  "and()"" method allows us to continue configuring the parent
         .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/books", "/books/**").permitAll() // Anyone can view books and reviews
-            .antMatchers(HttpMethod.POST, "/books").hasRole("ADMIN")
-            .antMatchers(HttpMethod.PUT, "/books/*").hasRole("ADMIN")
-            .antMatchers(HttpMethod.DELETE, "/books/*").hasRole("ADMIN")
+            .antMatchers(HttpMethod.GET, "/register", "/login").permitAll() // Anyone can view registration page and login page
+            .antMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
+            .antMatchers(HttpMethod.PUT, "/users/*").hasRole("ADMIN")
+            .antMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN")
 
             .antMatchers(HttpMethod.POST, "/books/*/reviews").authenticated()
             .antMatchers(HttpMethod.PUT, "/books/*", "/books/*/reviews/*").authenticated()

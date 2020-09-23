@@ -5,6 +5,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TransactionRepository extends JpaRepository <Transaction, Long>{
-    List<Transaction> findByUserId(String userId);
-    Optional<Transaction> findByIdAndUserId(Long id, String userId);
+    List<Transaction> findByUserId(Long userId);
+    Optional<Transaction> findByTransactionIdAndUserId(Long id, Long userId);
 }

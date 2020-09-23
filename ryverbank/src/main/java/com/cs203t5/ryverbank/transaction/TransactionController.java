@@ -18,21 +18,20 @@ public class TransactionController {
     private UserRepository users;
 
     public TransactionController (TransactionRepository transactions, UserRepository users){
-
         this.transactions = transactions;
         this.users = users;
     }
 
     @GetMapping("/users/{userId}/transactions")
-    public List<Transaction> getAllTransactionsByUserId(@PathVariable (value = "userId") String userId){
+    public List<Transaction> getAllTransactionsByUserId(@PathVariable (value = "userId") Long userId){
         if(!users.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
         return transactions.findByUserId(userId);
     }
 
-    @PostMapping("/users/{userID}/transactions")
-    public Transaction addTransaction(@PathVariable (value = "userId") String userId, @RequestBody Transaction transaction){
+    @PostMapping("/users/{userId}/transactions")
+    public Transaction addTransaction(@PathVariable (value = "userId") Long userId, @RequestBody Transaction transaction){
         return users.findById(userId).map(user -> {
             transaction.setUser(user);
             return transactions.save(transaction);
@@ -40,27 +39,27 @@ public class TransactionController {
     }
 
     @PutMapping("/users/{userId}/transactions/{transactionId}")
-    public Transaction updateTransaction(@PathVariable (value = "userId") String userId,
+    public Transaction updateTransaction(@PathVariable (value = "userId") Long userId,
                                             @PathVariable (value = "transactionId") Long transactionId,
                                             @RequestBody Transaction newTransInfo) {
         if(!users.existsById(userId)){
             throw new UserNotFoundException(userId);
         }
-        return transactions.findByIdAndUserId(transactionId, userId).map(transaction -> {
+        return transactions.findByTransactionIdAndUserId(transactionId, userId).map(transaction -> {
             transaction.setAmount(newTransInfo.getAmount());
             transaction.setTransactionType(newTransInfo.getTransactionType());
             return transactions.save(transaction);
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
     }
 
-    @DeleteMapping("/users/{userID}/transactions/{transactionId}")
-    public ResponseEntity<?> deleteTransaction(@PathVariable (value = "userId") String userId,
+    @DeleteMapping("/users/{userId}/transactions/{transactionId}")
+    public ResponseEntity<?> deleteTransaction(@PathVariable (value = "userId") Long userId,
                                                 @PathVariable (value = "transactionId") Long transactionId) {
         if(!users.existsById(userId)){
             throw new UserNotFoundException(userId);
         }
 
-        return transactions.findByIdAndUserId(transactionId, userId).map(transaction -> {
+        return transactions.findByTransactionIdAndUserId(transactionId, userId).map(transaction -> {
             transactions.delete(transaction);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));

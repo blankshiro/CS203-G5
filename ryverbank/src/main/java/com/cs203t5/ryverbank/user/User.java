@@ -35,30 +35,40 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "email_address", unique = true)
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "nric", unique = true)
+    private String nric;
+    
+    @Column(name = "phone", unique = true)
+    private String phoneNo;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "email", unique = true)
     private String email;
-
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
 
     @NotNull(message = "Authorities should not be null")
     private String authorities;
 
-    // Checks whether User's account is enabled
-    private Boolean enabled = false;
+    private boolean active = true;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
-    public User(String username, String password, String authorities) {
+    public User(String username, String password, String fullname, String nric, String phoneNo, String address, String email, String authorities) {
         this.username = username;
         this.password = password;
+        this.fullName = fullname;
+        this.nric = nric;
+        this.phoneNo = phoneNo;
+        this.address = address;
+        this.email = email;
         this.authorities = authorities;
     }
-
+    
     /*
      * Return a collection of authorities (roles) granted to the user.
      */
@@ -84,6 +94,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return active;
     }
 }

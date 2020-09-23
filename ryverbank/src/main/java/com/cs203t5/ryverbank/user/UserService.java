@@ -7,15 +7,15 @@ import java.util.List;
 public interface UserService {
     List<User> listUsers();
 
-    User getUser(String id);
+    User getUser(Long userId);
 
     User addUser(User user);
 
-    User updateUser(String id, User user);
+    User updateUser(Long userId, User user);
 
-    void deleteUser(String id);
+    void deleteUser(Long userId);
 
-    // void register(User user);
+    User register(User user);
 
     // void confirm(ConfirmationToken confirmationToken);
 
