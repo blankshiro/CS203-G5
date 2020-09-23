@@ -33,12 +33,6 @@ public class UserController {
         return users.save(user);
     }
 
-    /*
-    @PostMapping(path = "/users/login")
-    public User login(@Valid @RequestBody User user) {
-        return userService.loginUser(user);
-    } */
-
     /**
      * List all users in the system
      * 
