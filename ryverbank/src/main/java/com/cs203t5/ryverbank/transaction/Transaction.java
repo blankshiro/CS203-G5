@@ -4,7 +4,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import com.cs203t5.ryverbank.user.*;
+import com.cs203t5.ryverbank.account.*;
 
 @Entity
 @Getter
@@ -14,21 +14,23 @@ import com.cs203t5.ryverbank.user.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Transaction {
-    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long transactionId;
+    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     private double amount;
-    private String transactionType;
+    private Long from;
+    private Long to;
 
     @JsonIgnore
 
     // many transaction to one user
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "id", nullable = false)
+    private Account account;
 
-    public Transaction(Long id, double amt, String tType) {
-        this.transactionId = id;
+    public Transaction(Long id, double amt, Long from, Long to) {
+        this.id = id;
         this.amount = amt;
-        this.transactionType = tType;
+        this.from = from;
+        this.to = to;
     }
 
 }

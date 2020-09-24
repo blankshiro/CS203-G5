@@ -36,19 +36,16 @@ public class User implements UserDetails {
     private String password;
 
     @Column(name = "full_name")
-    private String fullName;
+    private String full_name;
 
     @Column(name = "nric", unique = true)
     private String nric;
     
     @Column(name = "phone", unique = true)
-    private String phoneNo;
+    private String phone;
 
     @Column(name = "address")
     private String address;
-
-    @Column(name = "email", unique = true)
-    private String email;
 
     @NotNull(message = "Authorities should not be null")
     private String authorities;
@@ -58,15 +55,15 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
-    public User(String username, String password, String fullname, String nric, String phoneNo, String address, String email, String authorities) {
+    public User(String username, String password, String full_name, String nric, String phone, String address, String authorities, boolean active) {
         this.username = username;
         this.password = password;
-        this.fullName = fullname;
+        this.full_name = full_name;
         this.nric = nric;
-        this.phoneNo = phoneNo;
+        this.phone = phone;
         this.address = address;
-        this.email = email;
         this.authorities = authorities;
+        this.active = active;
     }
     
     /*
