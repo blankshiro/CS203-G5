@@ -42,8 +42,8 @@ public class TransactionController {
         if(!users.existsById(userId)){
             throw new UserNotFoundException(userId);
         }
-        return transactions.findByIdAndUserId(transactionId, userId).map(transaction -> {
-            transaction.setAmount(newTransInfo.getAmount());
+        return transactions.findBytransactionIDAndUserId(transactionId, userId).map(transaction -> {
+            transaction.setValue(newTransInfo.getValue());
             transaction.setTransactionType(newTransInfo.getTransactionType());
             return transactions.save(transaction);
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
@@ -56,7 +56,7 @@ public class TransactionController {
             throw new UserNotFoundException(userId);
         }
 
-        return transactions.findByIdAndUserId(transactionId, userId).map(transaction -> {
+        return transactions.findBytransactionIDAndUserId(transactionId, userId).map(transaction -> {
             transactions.delete(transaction);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));

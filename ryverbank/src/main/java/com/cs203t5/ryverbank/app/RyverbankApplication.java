@@ -11,9 +11,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(scanBasePackages = {"com.cs203t5.ryverbank", "com.cs203t5"})
-@EnableJpaRepositories({"com.cs203t5.entity.Transaction", "com.cs203t5.entity.User"})
-@ComponentScan({"com.cs203t5.entity.Transaction", "com.cs203t5.entity.User"})
-@EntityScan({"com.cs203t5.entity.Transaction", "com.cs203t5.entity.User"})
+@EnableJpaRepositories({"com.cs203t5.entity.Transaction", "com.cs203t5.entity.User", "com.cs203t5.entity.Account"})
+@ComponentScan({"com.cs203t5.entity.Transaction", "com.cs203t5.entity.User","com.cs203t5.entity.Account"})
+@EntityScan({"com.cs203t5.entity.Transaction", "com.cs203t5.entity.User","com.cs203t5.entity.Account"})
 public class RyverbankApplication {
 
 	// @Autowired

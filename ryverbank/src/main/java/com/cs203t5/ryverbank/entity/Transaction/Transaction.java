@@ -16,7 +16,7 @@ import com.cs203t5.ryverbank.entity.User.*;
 @EqualsAndHashCode
 public class Transaction {
     private @Id @GeneratedValue (strategy = GenerationType.IDENTITY) Long transactionID;
-    private double amount;
+    private double value;
     private String transactionType;
 
     @JsonIgnore
@@ -26,9 +26,9 @@ public class Transaction {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
-    public Transaction(long id, double amt, String tType){
-        this.transactionID = id;
-        this.amount = amt;
+    public Transaction(long transactionID, double value, String tType){
+        this.transactionID = transactionID;
+        this.value = value;
         this.transactionType = tType;
     }
 

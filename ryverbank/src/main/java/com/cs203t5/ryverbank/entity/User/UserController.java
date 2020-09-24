@@ -39,7 +39,7 @@ public class UserController {
     //add a new user 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/users")
-    public User addUsser(@RequestBody User user){
+    public User addUser(@RequestBody User user){
         return userService.addUser(user);
     }
 
