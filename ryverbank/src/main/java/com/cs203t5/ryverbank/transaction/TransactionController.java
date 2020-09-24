@@ -46,7 +46,7 @@ public class TransactionController {
         if(!accounts.existsById(accId)){
             throw new CustomerNotFoundException(accId);
         }
-        return transactions.findByTransactionIdAndUserId(transactionId, accId).map(transaction -> {
+        return transactions.findByidAndUserId(transactionId, accId).map(transaction -> {
             transaction.setAmount(newTransInfo.getAmount());
             transaction.setFrom(newTransInfo.getFrom());
             transaction.setTo(newTransInfo.getTo());
@@ -54,17 +54,17 @@ public class TransactionController {
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
     }
 
-    @DeleteMapping("/users/{userId}/transactions/{transactionId}")
-    public ResponseEntity<?> deleteTransaction(@PathVariable (value = "userId") Long userId,
-                                                @PathVariable (value = "transactionId") Long transactionId) {
-        if(!users.existsById(userId)){
-            throw new CustomerNotFoundException(userId);
-        }
+    // @DeleteMapping("/users/{userId}/transactions/{transactionId}")
+    // public ResponseEntity<?> deleteTransaction(@PathVariable (value = "userId") Long userId,
+    //                                             @PathVariable (value = "transactionId") Long transactionId) {
+    //     if(!users.existsById(userId)){
+    //         throw new UserNotFoundException(userId);
+    //     }
 
-        return transactions.findByTransactionIdAndUserId(transactionId, userId).map(transaction -> {
-            transactions.delete(transaction);
-            return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
+    //     return transactions.findByidAndUserId(transactionId, userId).map(transaction -> {
+    //         transactions.delete(transaction);
+    //         return ResponseEntity.ok().build();
+    //     }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
                         
-    }
+    // }
 }
