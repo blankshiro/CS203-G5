@@ -15,20 +15,20 @@ import com.cs203t5.ryverbank.user.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Account {
-    private @Id @GeneratedValue (strategy = GenerationType.IDENTITY) Long accNumber;
-    private String accType;
+    private @Id @GeneratedValue (strategy = GenerationType.IDENTITY) Long id;
+    private Long customer_id;
     private double balance;
-    private double limit;
+    private double available_balance;
 
     @JsonIgnore
     @OneToMany
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Account(long accNumber, String accType, double balance, double limit){
-        this.accNumber = accNumber;
-        this.accType = accType;
+    public Account(long id, double balance, double available_balance){
+        this.id = id;
+        this.customer_id = user.getId();
         this.balance = balance;
-        this.limit = limit;
+        this.available_balance = available_balance;
     }
 }

@@ -29,27 +29,25 @@ public class AccountController {
     @PostMapping("/users/{userID}/accounts")
     public Account addAccount(@PathVariable (value = "userId") Long userId, @RequestBody Account account){
         return users.findById(userId).map(user -> {
-            account.setUser(user);
-            account.setAccType(account.getAccType());
+            account.setCustomer_id(user.getId());
             account.setBalance(account.getBalance());
-            account.setLimit(account.getLimit());
+            account.setAvailable_balance(account.getAvailable_balance());
             return accService.addAccount(account);
         }).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
-    @PutMapping("/users/{userId}/accounts/{accNumber}")
+    @PutMapping("/users/{userId}/accounts/{accId}")
     public Account updateAccount(@PathVariable (value = "userId") Long userId, 
-                                    @PathVariable (value = "accNumber") Long accNumber,
+                                    @PathVariable (value = "accId") Long accId,
                                     @RequestBody Account newAccInfo) {
         if(!users.existsById(userId)){
             throw new UserNotFoundException(userId);
         } 
-        return accounts.findByaccNumberAndUserID(accNumber, userId).map(account -> {
-            account.setAccType(newAccInfo.getAccType());
-            account.setBalance(newAccInfo.getBalance());
-            account.setLimit(newAccInfo.getLimit());
-            return accService.updateAccount(accNumber, account);
-        }).orElseThrow(() -> new AccountNotFoundException(accNumber));
+        return accounts.findByaccIdAndUserID(accId, userId).map(account -> {
+            account.setBalance(account.getBalance());
+            account.setAvailable_balance(account.getAvailable_balance());
+            return accService.updateAccount(accId, account);
+        }).orElseThrow(() -> new AccountNotFoundException(accId));
     }
 
     @DeleteMapping("/users/{userID}/deleteAcc/{accNumber}")
@@ -58,7 +56,7 @@ public class AccountController {
         if(users.existsById(userId)){
             throw new UserNotFoundException(userId);
         }
-        return accounts.findByaccNumberAndUserID(accNumber, userId).map(account -> {
+        return accounts.findByaccIdAndUserID(accNumber, userId).map(account -> {
             accounts.delete(account);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new AccountNotFoundException(accNumber));

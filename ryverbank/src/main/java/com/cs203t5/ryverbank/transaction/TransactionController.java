@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
+import com.cs203t5.ryverbank.account.*;
 import com.cs203t5.ryverbank.user.*;
 
 //This class is used to show the options that are available when a client logs in
@@ -13,39 +14,42 @@ import com.cs203t5.ryverbank.user.*;
 @RestController
 public class TransactionController {
     private TransactionRepository transactions;
-    private UserRepository users;
+    private AccountRepository accounts;
 
-    public TransactionController (TransactionRepository transactions, UserRepository users){
+    public TransactionController (TransactionRepository transactions, AccountRepository accounts){
         this.transactions = transactions;
-        this.users = users;
+        this.accounts = accounts;
     }
 
-    @GetMapping("/users/{userId}/transactions")
+    @GetMapping("/accounts/{accId}/transactions")
     public List<Transaction> getAllTransactionsByUserId(@PathVariable (value = "userId") Long userId){
-        if(!users.existsById(userId)) {
+        if(!accounts.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
         return transactions.findByUserId(userId);
     }
 
-    @PostMapping("/users/{userId}/transactions")
-    public Transaction addTransaction(@PathVariable (value = "userId") Long userId, @RequestBody Transaction transaction){
-        return users.findById(userId).map(user -> {
-            transaction.setUser(user);
+    @PostMapping("/accounts/{accId}/transactions")
+    public Transaction addTransaction(@PathVariable (value = "userId") Long accId, @RequestBody Transaction transaction){
+        return accounts.findById(accId).map(account -> {
+            transaction.setAmount(transaction.getAmount());
+            transaction.setFrom(account.getCustomer_id());
+            transaction.setTo(transaction.getTo());
             return transactions.save(transaction);
-        }).orElseThrow(() -> new UserNotFoundException(userId));
+        }).orElseThrow(() -> new AccountNotFoundException(accId));
     }
 
-    @PutMapping("/users/{userId}/transactions/{transactionId}")
-    public Transaction updateTransaction(@PathVariable (value = "userId") Long userId,
+    @PutMapping("/accounts/{accId}/transactions/{transactionId}")
+    public Transaction updateTransaction(@PathVariable (value = "accId") Long accId,
                                             @PathVariable (value = "transactionId") Long transactionId,
                                             @RequestBody Transaction newTransInfo) {
-        if(!users.existsById(userId)){
-            throw new UserNotFoundException(userId);
+        if(!accounts.existsById(accId)){
+            throw new UserNotFoundException(accId);
         }
-        return transactions.findByTransactionIdAndUserId(transactionId, userId).map(transaction -> {
+        return transactions.findByTransactionIdAndUserId(transactionId, accId).map(transaction -> {
             transaction.setAmount(newTransInfo.getAmount());
-            transaction.setTransactionType(newTransInfo.getTransactionType());
+            transaction.setFrom(newTransInfo.getFrom());
+            transaction.setTo(newTransInfo.getTo());
             return transactions.save(transaction);
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
     }
