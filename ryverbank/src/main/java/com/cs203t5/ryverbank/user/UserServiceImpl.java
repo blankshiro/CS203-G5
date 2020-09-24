@@ -55,10 +55,6 @@ public class UserServiceImpl implements UserService {
             throw new UserExistsException("username used");
         }
 
-        if (users.existsByEmail(user.getEmail())) {
-            throw new UserExistsException("email used");
-        }
-
         user.setPassword(encoder.encode(user.getPassword()));
         return users.save(user);
     }
