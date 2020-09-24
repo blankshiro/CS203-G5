@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.account;
+package com.cs203t5.ryverbank.account_transaction;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long>{
-    Optional<Account> findById(Long accId);
-    Optional<Account> findByIdAndUserID(Long accId, Long userId);
+    Optional<Account> findByid(Long accId);
+    Optional<Account> findByidAndUserid(Long accId, Long userId);
 }

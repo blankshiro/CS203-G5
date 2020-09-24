@@ -1,11 +1,11 @@
-package com.cs203t5.ryverbank.account;
+package com.cs203t5.ryverbank.account_transaction;
 
 import java.util.List;
 import javax.persistence.*;
-
-import com.cs203t5.ryverbank.customer.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+
+import com.cs203t5.ryverbank.customer.*;
 
 @Entity
 @Setter
@@ -23,7 +23,7 @@ public class Account {
     @JsonIgnore
     @OneToMany
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Customer user;
 
     public Account(long id, double balance, double available_balance){
         this.id = id;

@@ -1,13 +1,11 @@
-package com.cs203t5.ryverbank.transaction;
+package com.cs203t5.ryverbank.account_transaction;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 
-import com.cs203t5.ryverbank.account.*;
-import com.cs203t5.ryverbank.customer.*;
+import com.cs203t5.ryverbank.account_transaction.*;
+import com.cs203t5.ryverbank.user.*;
 
 //This class is used to show the options that are available when a client logs in
 
@@ -24,7 +22,7 @@ public class TransactionController {
     @GetMapping("/accounts/{accId}/transactions")
     public List<Transaction> getAllTransactionsByUserId(@PathVariable (value = "userId") Long userId){
         if(!accounts.existsById(userId)) {
-            throw new CustomerNotFoundException(userId);
+            throw new UserNotFoundException(userId);
         }
         return transactions.findByUserId(userId);
     }
@@ -44,7 +42,7 @@ public class TransactionController {
                                             @PathVariable (value = "transactionId") Long transactionId,
                                             @RequestBody Transaction newTransInfo) {
         if(!accounts.existsById(accId)){
-            throw new CustomerNotFoundException(accId);
+            throw new UserNotFoundException(accId);
         }
         return transactions.findByidAndUserId(transactionId, accId).map(transaction -> {
             transaction.setAmount(newTransInfo.getAmount());
