@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import javax.persistence.*;
 
-import com.cs203t5.ryverbank.user.*;
+import com.cs203t5.ryverbank.customer.*;
 
 import lombok.*;
 

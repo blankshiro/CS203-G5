@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.user;
+package com.cs203t5.ryverbank.customer;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService{
-    private UserRepository users;
+    private CustomerRepository users;
     
-    public CustomUserDetailsService(UserRepository users) {
+    public CustomUserDetailsService(CustomerRepository users) {
         this.users = users;
     }
 

@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.user;
+package com.cs203t5.ryverbank.customer;
 
 import java.util.*;
 import javax.persistence.*;
@@ -20,7 +20,7 @@ import com.cs203t5.ryverbank.transaction.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class User implements UserDetails {
+public class Customer implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
@@ -55,7 +55,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
-    public User(String username, String password, String full_name, String nric, String phone, String address, String authorities, boolean active) {
+    public Customer(String username, String password, String full_name, String nric, String phone, String address, String authorities, boolean active) {
         this.username = username;
         this.password = password;
         this.full_name = full_name;

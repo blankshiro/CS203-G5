@@ -1,11 +1,11 @@
 package com.cs203t5.ryverbank.client;
 
+import com.cs203t5.ryverbank.customer.*;
+
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import com.cs203t5.ryverbank.user.*;
 
 @Component
 public class RestTemplateClient {
