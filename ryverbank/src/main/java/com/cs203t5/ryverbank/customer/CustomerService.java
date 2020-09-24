@@ -17,7 +17,5 @@ public interface CustomerService {
 
     Customer register(Customer user);
 
-    // void confirm(ConfirmationToken confirmationToken);
-
     // void sendEmail(String toUser, String token);
 }

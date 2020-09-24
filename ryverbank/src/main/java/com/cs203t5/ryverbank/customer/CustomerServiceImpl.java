@@ -1,6 +1,7 @@
 package com.cs203t5.ryverbank.customer;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 // import com.cs203t5.ryverbank.token.*;
 // import com.cs203t5.ryverbank.email.*;
@@ -58,23 +59,6 @@ public class CustomerServiceImpl implements CustomerService {
         user.setPassword(encoder.encode(user.getPassword()));
         return users.save(user);
     }
-
-    
-    /*
-    public void confirm(ConfirmationToken confirmationToken) {
-        // Gets the user from the token
-        User user = confirmationToken.getUser();
-
-        // enables user
-        user.setEnabled(true);
-
-        // save user to repo
-        users.save(user);
-
-        // deletes the confirmation token from repo
-        confirmationTokenService.deleteToken(confirmationToken.getTokenid());
-    }
-    */
 
     /**
      * Sends confirmation email to the user who registered for an account
