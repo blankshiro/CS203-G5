@@ -32,7 +32,7 @@ public class AccountServiceImpl implements AccountServices {
     @Override
     public Account updateAccount(Long accNumber, Account newAccInfo){
         return accounts.findById(accNumber).map(account -> {
-            account.setCustomer_id(newAccInfo.getId());
+            account.setCustomerId(newAccInfo.getId());
             account.setBalance(newAccInfo.getBalance());
             account.setAvailable_balance(newAccInfo.getAvailable_balance());
             return accounts.save(account);

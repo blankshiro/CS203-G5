@@ -16,21 +16,21 @@ import com.cs203t5.ryverbank.customer.*;
 @EqualsAndHashCode
 public class Account {
     private @Id @GeneratedValue (strategy = GenerationType.IDENTITY) Long id;
-    private Long customer_id;
+    private Long customerId;
     private double balance;
     private double available_balance;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "customerId", referencedColumnName = "id", updatable = false, insertable = false)
     private Customer user;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "from", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
     public Account(long id, double balance, double available_balance){
         this.id = id;
-        this.customer_id = user.getId();
+        this.customerId = user.getId();
         this.balance = balance;
         this.available_balance = available_balance;
     }
