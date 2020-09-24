@@ -54,8 +54,8 @@ public class Customer implements UserDetails {
 
     private boolean active = true;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Transaction> transactions;
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    private List<Account> accounts;
 
     public Customer(String username, String password, String full_name, String nric, String phone, String address, String authorities, boolean active) {
         this.username = username;

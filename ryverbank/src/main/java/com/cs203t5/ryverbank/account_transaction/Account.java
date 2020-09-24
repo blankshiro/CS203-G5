@@ -21,9 +21,12 @@ public class Account {
     private double available_balance;
 
     @JsonIgnore
-    @OneToMany
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "id", nullable = false)
     private Customer user;
+
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    private List<Transaction> transactions;
 
     public Account(long id, double balance, double available_balance){
         this.id = id;
