@@ -15,7 +15,7 @@ public interface CustomerService {
 
     void deleteUser(Long userId);
 
-    Customer register(Customer user);
+    Customer createCustomer(Customer user);
 
     // void sendEmail(String toUser, String token);
 }

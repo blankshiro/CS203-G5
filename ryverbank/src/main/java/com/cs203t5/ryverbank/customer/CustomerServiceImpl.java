@@ -51,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     
     @Override
-    public Customer register(Customer user) {
+    public Customer createCustomer(Customer user) {
         if (users.existsByUsername(user.getUsername())) {
             throw new CustomerExistsException("username used");
         }

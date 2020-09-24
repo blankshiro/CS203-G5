@@ -28,7 +28,7 @@ public class CustomerController {
      * @return the user
      */
     @PostMapping("/customers")
-    public Customer register(@Valid @RequestBody Customer user) {
+    public Customer createCustomer(@Valid @RequestBody Customer user) {
         user.setPassword(encoder.encode(user.getPassword()));
         user.validateNric(user.getNric());
         user.validatePhone(user.getPhone());
