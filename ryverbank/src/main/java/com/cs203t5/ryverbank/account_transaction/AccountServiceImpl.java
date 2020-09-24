@@ -1,10 +1,6 @@
-package com.cs203t5.ryverbank.account;
+package com.cs203t5.ryverbank.account_transaction;
 
 import java.util.List;
-
-import javax.transaction.Transaction;
-
-import com.cs203t5.ryverbank.transaction.TransactionServices;
 
 import org.springframework.stereotype.Service;
 
