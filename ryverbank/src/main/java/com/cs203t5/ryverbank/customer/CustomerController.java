@@ -67,7 +67,7 @@ public class CustomerController {
      * @return the updated, or newly added book
      */
     @PutMapping("/customers/{id}")
-    public Customer updateUser(@PathVariable Long id, @RequestBody User newUserInfo) {
+    public Customer updateUser(@PathVariable Long id, @RequestBody Customer newUserInfo) {
         Customer user = userService.updateUser(id, newUserInfo);
         if (user == null)
             throw new CustomerNotFoundException(id);
