@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.entity.Account;
+package com.cs203t5.ryverbank.account;
 
 import java.util.List;
 

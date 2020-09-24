@@ -1,11 +1,11 @@
-package com.cs203t5.ryverbank.entity.Account;
+package com.cs203t5.ryverbank.account;
 
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.cs203t5.ryverbank.entity.User.*;
+import com.cs203t5.ryverbank.user.*;
 
 @RestController
 public class AccountController {
@@ -19,7 +19,7 @@ public class AccountController {
     }
 
     @GetMapping("/users/{userId}/accounts")
-    public List<Account> getAllAccountsByUserId(@PathVariable (value = "userId") String userId){
+    public List<Account> getAllAccountsByUserId(@PathVariable (value = "userId") Long userId){
         if(!users.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
@@ -27,7 +27,7 @@ public class AccountController {
     }
 
     @PostMapping("/users/{userID}/accounts")
-    public Account addAccount(@PathVariable (value = "userId") String userId, @RequestBody Account account){
+    public Account addAccount(@PathVariable (value = "userId") Long userId, @RequestBody Account account){
         return users.findById(userId).map(user -> {
             account.setUser(user);
             account.setAccType(account.getAccType());
@@ -38,7 +38,7 @@ public class AccountController {
     }
 
     @PutMapping("/users/{userId}/accounts/{accNumber}")
-    public Account updateAccount(@PathVariable (value = "userId") String userId, 
+    public Account updateAccount(@PathVariable (value = "userId") Long userId, 
                                     @PathVariable (value = "accNumber") Long accNumber,
                                     @RequestBody Account newAccInfo) {
         if(!users.existsById(userId)){
@@ -53,7 +53,7 @@ public class AccountController {
     }
 
     @DeleteMapping("/users/{userID}/deleteAcc/{accNumber}")
-    public ResponseEntity<?> deleteAccount(@PathVariable (value = "userId") String userId,
+    public ResponseEntity<?> deleteAccount(@PathVariable (value = "userId") Long userId,
                                             @PathVariable (value = "accNumber") Long accNumber){
         if(users.existsById(userId)){
             throw new UserNotFoundException(userId);

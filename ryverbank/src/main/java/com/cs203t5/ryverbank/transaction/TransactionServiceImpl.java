@@ -35,7 +35,7 @@ public class TransactionServiceImpl implements TransactionServices {
     @Override
     public Transaction updateTransaction(Long id, Transaction newTransInfo) {
         return transactions.findById(id).map(transaction -> {
-            transaction.setValue(newTransInfo.getValue());
+            transaction.setAmount(newTransInfo.getAmount());
             transaction.setTransactionType(newTransInfo.getTransactionType());
             return transactions.save(transaction);
         }).orElse(null);
