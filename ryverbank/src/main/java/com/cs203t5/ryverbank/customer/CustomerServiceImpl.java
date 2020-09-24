@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.user;
+package com.cs203t5.ryverbank.customer;
 
 import java.util.List;
 
@@ -10,33 +10,33 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService {
-    private UserRepository users;
+public class CustomerServiceImpl implements CustomerService {
+    private CustomerRepository users;
     // private ConfirmationTokenService confirmationTokenService;
     private BCryptPasswordEncoder encoder;
     // private EmailService javaMailSender;
 
-    public UserServiceImpl(UserRepository users) {
+    public CustomerServiceImpl(CustomerRepository users) {
         this.users = users;
     }
 
     @Override
-    public List<User> listUsers() {
+    public List<Customer> listUsers() {
         return users.findAll();
     }
     
     @Override
-    public User getUser(Long userId) {
+    public Customer getUser(Long userId) {
         return users.findById(userId).orElse(null);
     }
 
     @Override
-    public User addUser(User user) {
+    public Customer addUser(Customer user) {
         return users.save(user);
     }
 
     @Override
-    public User updateUser(Long userId, User newUserInfo) {
+    public Customer updateUser(Long userId, Customer newUserInfo) {
         return users.findById(userId).map(user -> {
             user.setPassword(newUserInfo.getPassword());
             return users.save(user);
@@ -50,11 +50,11 @@ public class UserServiceImpl implements UserService {
 
     
     @Override
-    public User register(User user) {
+    public Customer register(Customer user) {
         if (users.existsByUsername(user.getUsername())) {
-            throw new UserExistsException("username used");
+            throw new CustomerExistsException("username used");
         }
-
+        
         user.setPassword(encoder.encode(user.getPassword()));
         return users.save(user);
     }

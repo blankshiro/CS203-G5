@@ -2,18 +2,18 @@ package com.cs203t5.ryverbank.account;
 
 import java.util.List;
 
+import com.cs203t5.ryverbank.customer.*;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.cs203t5.ryverbank.user.*;
 
 @RestController
 public class AccountController {
     private AccountRepository accounts;
     private AccountServices accService;
-    private UserRepository users;
+    private CustomerRepository users;
 
-    public AccountController(AccountRepository accounts, UserRepository users){
+    public AccountController(AccountRepository accounts, CustomerRepository users){
         this.accounts = accounts;
         this.users = users;
     }
@@ -21,7 +21,7 @@ public class AccountController {
     @GetMapping("/users/{userId}/accounts")
     public List<Account> getAllAccountsByUserId(@PathVariable (value = "userId") Long userId){
         if(!users.existsById(userId)) {
-            throw new UserNotFoundException(userId);
+            throw new CustomerNotFoundException(userId);
         }
         return accounts.findByUserId(userId);
     }
@@ -33,7 +33,7 @@ public class AccountController {
             account.setBalance(account.getBalance());
             account.setAvailable_balance(account.getAvailable_balance());
             return accService.addAccount(account);
-        }).orElseThrow(() -> new UserNotFoundException(userId));
+        }).orElseThrow(() -> new CustomerNotFoundException(userId));
     }
 
     @PutMapping("/users/{userId}/accounts/{accId}")
@@ -41,7 +41,7 @@ public class AccountController {
                                     @PathVariable (value = "accId") Long accId,
                                     @RequestBody Account newAccInfo) {
         if(!users.existsById(userId)){
-            throw new UserNotFoundException(userId);
+            throw new CustomerNotFoundException(userId);
         } 
         return accounts.findByaccIdAndUserID(accId, userId).map(account -> {
             account.setBalance(account.getBalance());
@@ -54,7 +54,7 @@ public class AccountController {
     public ResponseEntity<?> deleteAccount(@PathVariable (value = "userId") Long userId,
                                             @PathVariable (value = "accNumber") Long accNumber){
         if(users.existsById(userId)){
-            throw new UserNotFoundException(userId);
+            throw new CustomerNotFoundException(userId);
         }
         return accounts.findByaccIdAndUserID(accNumber, userId).map(account -> {
             accounts.delete(account);

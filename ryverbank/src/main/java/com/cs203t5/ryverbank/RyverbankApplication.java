@@ -1,11 +1,11 @@
 package com.cs203t5.ryverbank;
 
+import com.cs203t5.ryverbank.customer.*;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.cs203t5.ryverbank.user.*;
 
 @SpringBootApplication
 public class RyverbankApplication {

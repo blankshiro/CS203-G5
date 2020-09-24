@@ -1,4 +1,4 @@
-package com.cs203t5.ryverbank.user;
+package com.cs203t5.ryverbank.customer;
 
 import java.util.List;
 
@@ -9,26 +9,26 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class UserController {
-    private UserRepository users;
-    private UserService userService;
+public class CustomerController {
+    private CustomerRepository users;
+    private CustomerService userService;
     private BCryptPasswordEncoder encoder;
 
-    public UserController(UserRepository users, UserService userSvc, BCryptPasswordEncoder encoder) {
+    public CustomerController(CustomerRepository users, CustomerService userSvc, BCryptPasswordEncoder encoder) {
         this.users = users;
         this.userService = userSvc;
         this.encoder = encoder;
     }
 
-
     /**
-     * Registers a new user and uses BCrypt encoder to encrypt the password for storage
+     * Registers a new user and uses BCrypt encoder to encrypt the password for
+     * storage
      * 
      * @param user
      * @return the user
      */
     @PostMapping("/register")
-    public User register(@Valid @RequestBody User user) {
+    public Customer register(@Valid @RequestBody Customer user) {
         user.setPassword(encoder.encode(user.getPassword()));
         return users.save(user);
     }
@@ -39,7 +39,7 @@ public class UserController {
      * @return list of all users
      */
     @GetMapping("/customers")
-    public List<User> getUsers() {
+    public List<Customer> getUsers() {
         return users.findAll();
     }
 
@@ -51,11 +51,11 @@ public class UserController {
      * @return user with the given id
      */
     @GetMapping("/customers/{id}")
-    public User getUser(@PathVariable Long id) {
-        User user = userService.getUser(id);
+    public Customer getUser(@PathVariable Long id) {
+        Customer user = userService.getUser(id);
 
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new CustomerNotFoundException(id);
         return userService.getUser(id);
     }
 
@@ -67,10 +67,10 @@ public class UserController {
      * @return the updated, or newly added book
      */
     @PutMapping("/customers/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User newUserInfo) {
-        User user = userService.updateUser(id, newUserInfo);
+    public Customer updateUser(@PathVariable Long id, @RequestBody Customer newUserInfo) {
+        Customer user = userService.updateUser(id, newUserInfo);
         if (user == null)
-            throw new UserNotFoundException(id);
+            throw new CustomerNotFoundException(id);
 
         return user;
     }
@@ -86,7 +86,7 @@ public class UserController {
         try {
             userService.deleteUser(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new UserNotFoundException(id);
+            throw new CustomerNotFoundException(id);
         }
     }
 }

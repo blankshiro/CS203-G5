@@ -2,10 +2,10 @@ package com.cs203t5.ryverbank.account;
 
 import java.util.List;
 import javax.persistence.*;
+
+import com.cs203t5.ryverbank.customer.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-
-import com.cs203t5.ryverbank.user.*;
 
 @Entity
 @Setter

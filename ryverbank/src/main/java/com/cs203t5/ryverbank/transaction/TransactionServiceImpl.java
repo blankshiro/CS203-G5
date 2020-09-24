@@ -36,13 +36,14 @@ public class TransactionServiceImpl implements TransactionServices {
     public Transaction updateTransaction(Long id, Transaction newTransInfo) {
         return transactions.findById(id).map(transaction -> {
             transaction.setAmount(newTransInfo.getAmount());
-            transaction.setTransactionType(newTransInfo.getTransactionType());
+            transaction.setFrom(newTransInfo.getFrom());
+            transaction.setTo(newTransInfo.getTo());
             return transactions.save(transaction);
         }).orElse(null);
     }
 
-    @Override
-    public void deleteTransaction(Long id) {
-        transactions.deleteById(id);
-    }
+    // @Override
+    // public void deleteTransaction(Long id) {
+    //     transactions.deleteById(id);
+    // }
 }

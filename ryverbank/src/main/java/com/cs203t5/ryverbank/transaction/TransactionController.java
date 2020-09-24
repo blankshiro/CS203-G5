@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.cs203t5.ryverbank.account.*;
-import com.cs203t5.ryverbank.user.*;
+import com.cs203t5.ryverbank.customer.*;
 
 //This class is used to show the options that are available when a client logs in
 
@@ -24,7 +24,7 @@ public class TransactionController {
     @GetMapping("/accounts/{accId}/transactions")
     public List<Transaction> getAllTransactionsByUserId(@PathVariable (value = "userId") Long userId){
         if(!accounts.existsById(userId)) {
-            throw new UserNotFoundException(userId);
+            throw new CustomerNotFoundException(userId);
         }
         return transactions.findByUserId(userId);
     }
@@ -44,9 +44,9 @@ public class TransactionController {
                                             @PathVariable (value = "transactionId") Long transactionId,
                                             @RequestBody Transaction newTransInfo) {
         if(!accounts.existsById(accId)){
-            throw new UserNotFoundException(accId);
+            throw new CustomerNotFoundException(accId);
         }
-        return transactions.findByTransactionIdAndUserId(transactionId, accId).map(transaction -> {
+        return transactions.findByidAndUserId(transactionId, accId).map(transaction -> {
             transaction.setAmount(newTransInfo.getAmount());
             transaction.setFrom(newTransInfo.getFrom());
             transaction.setTo(newTransInfo.getTo());
@@ -54,17 +54,17 @@ public class TransactionController {
         }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
     }
 
-    @DeleteMapping("/users/{userId}/transactions/{transactionId}")
-    public ResponseEntity<?> deleteTransaction(@PathVariable (value = "userId") Long userId,
-                                                @PathVariable (value = "transactionId") Long transactionId) {
-        if(!users.existsById(userId)){
-            throw new UserNotFoundException(userId);
-        }
+    // @DeleteMapping("/users/{userId}/transactions/{transactionId}")
+    // public ResponseEntity<?> deleteTransaction(@PathVariable (value = "userId") Long userId,
+    //                                             @PathVariable (value = "transactionId") Long transactionId) {
+    //     if(!users.existsById(userId)){
+    //         throw new UserNotFoundException(userId);
+    //     }
 
-        return transactions.findByTransactionIdAndUserId(transactionId, userId).map(transaction -> {
-            transactions.delete(transaction);
-            return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
+    //     return transactions.findByidAndUserId(transactionId, userId).map(transaction -> {
+    //         transactions.delete(transaction);
+    //         return ResponseEntity.ok().build();
+    //     }).orElseThrow(() -> new TransactionNotFoundException(transactionId));
                         
-    }
+    // }
 }
