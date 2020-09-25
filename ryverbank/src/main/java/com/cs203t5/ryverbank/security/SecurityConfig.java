@@ -34,19 +34,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .httpBasic()
         .and()
         .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/users/{userID}/transactions").authenticated()
-            .antMatchers(HttpMethod.GET, "/users/{userId}/transactions").authenticated()
-            .antMatchers(HttpMethod.PUT, "/users/{userId}/transactions/{transactionId}").authenticated()
-            .antMatchers(HttpMethod.DELETE, "/users/{userID}/transactions/{transactionId}").authenticated()
-
-            .antMatchers(HttpMethod.POST, "/users/{userID}/transactions").hasRole("CLIENT")
-            .antMatchers(HttpMethod.GET, "/users/{userId}/transactions").hasAnyRole("STAFF","CLIENT")
-            .antMatchers(HttpMethod.PUT, "/users/{userId}/transactions/{transactionId}").hasRole("CLIENT")
-            .antMatchers(HttpMethod.DELETE, "/users/{userID}/transactions/{transactionId}").hasRole("CLIENT")
+            .antMatchers(HttpMethod.POST, "/customers/{id}").authenticated()
+            .antMatchers(HttpMethod.GET, "/customers/{id}").authenticated()
+            .antMatchers(HttpMethod.PUT, "/customers/{id}").authenticated()
+            .antMatchers(HttpMethod.DELETE, "/customers/{id}").authenticated()
+        
+            .antMatchers(HttpMethod.GET, "/accounts").hasAnyRole("ROLE_USER", "ROLE_MANAGER")
+            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasAnyRole("ROLE_USER","ROLE_MANAGER")
+            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}").hasRole("ROLE_USER")
+            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasRole("ROLE_USER")
         .and()
         .csrf().disable() // CSRF protection is needed only for browser based attacks
-        .formLogin().disable()
+        .formLogin().successHandler(new CustomAuthenticationSuccessHandler()) //creates session after successful login
+        .failureUrl("/login?error=true").
+            and()
         .headers().disable(); // Disable the security headers, as we do not return HTML in our service
+        //allow max 1 session , direct to expired url
+        http.sessionManagement().maximumSessions(1).expiredUrl("/login?expired=true"); 
     }
 
     /**
