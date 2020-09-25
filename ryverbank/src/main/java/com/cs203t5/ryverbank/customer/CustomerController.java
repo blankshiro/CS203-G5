@@ -2,6 +2,7 @@ package com.cs203t5.ryverbank.customer;
 
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
 import javax.validation.Valid;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -29,13 +30,15 @@ public class CustomerController {
      */
     @PostMapping("/customers")
     public Customer createCustomer(@Valid @RequestBody Customer user) {
-        user.setPassword(encoder.encode(user.getPassword()));
-        
-        if (user.validateNric(user.getNric()) && user.validatePhone(user.getPhone())) {
-            return userService.createCustomer(user);
+        System.out.println("TEST1: " + user.validateNric(user.getNric()));
+        System.out.println("TEST2: " + user.validatePhone(user.getPhone()));
+        if (!user.validateNric(user.getNric()) || !user.validatePhone(user.getPhone())) {
+            throw new InvalidEntryException("Invalid NRIC/Phone number");
+
         }
-        
-        return null;
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userService.createCustomer(user);
+
     }
 
     /**
