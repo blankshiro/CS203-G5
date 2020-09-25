@@ -30,9 +30,12 @@ public class CustomerController {
     @PostMapping("/customers")
     public Customer createCustomer(@Valid @RequestBody Customer user) {
         user.setPassword(encoder.encode(user.getPassword()));
-        user.validateNric(user.getNric());
-        user.validatePhone(user.getPhone());
-        return users.save(user);
+        
+        if (user.validateNric(user.getNric()) && user.validatePhone(user.getPhone())) {
+            return userService.createCustomer(user);
+        }
+        
+        return null;
     }
 
     /**
@@ -53,7 +56,7 @@ public class CustomerController {
      * @return user with the given id
      */
     @GetMapping("/customers/{id}")
-    public Customer getUser(@PathVariable Long id) {
+    public Customer getCustomer(@PathVariable Long id) {
         Customer user = userService.getUser(id);
 
         if (user == null)
@@ -69,7 +72,7 @@ public class CustomerController {
      * @return the updated, or newly added book
      */
     @PutMapping("/customers/{id}")
-    public Customer updateUser(@PathVariable Long id, @RequestBody Customer newUserInfo) {
+    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer newUserInfo) {
         Customer user = userService.updateUser(id, newUserInfo);
         if (user == null)
             throw new CustomerNotFoundException(id);
@@ -84,7 +87,7 @@ public class CustomerController {
      * @param id
      */
     @DeleteMapping("/customers/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public void deleteCustomer(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
         } catch (EmptyResultDataAccessException e) {

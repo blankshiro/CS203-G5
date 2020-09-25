@@ -83,6 +83,38 @@ public class TestConstants {
             "authorities":"ROLE_USER",
             "active": true (or false: to indicate if the customer account is in use)
         }
+
+        For our own testing:
+        {
+            "full_name":"Mark Tan",
+            "nric":"S7982834C", 
+            "phone":"91251234", 
+            "address":"27 Jalan Alamak S680234", 
+            "username":"gooduser",
+            "password":"password" ,
+            "authorities":"ROLE_USER",
+            "active": true 
+        }
+        {
+            "full_name":"Doggy Chan",
+            "nric":"S79824C",
+            "phone":"11251234", 
+            "address":"27 Dog S680234", 
+            "username":"gooduser1",
+            "password":"password1" ,
+            "authorities":"ROLE_USER",
+            "active": true 
+        }
+        {
+            "full_name":"Kitty Lim",
+            "nric":"null",
+            "phone":"null",
+            "address":"27 Cat S680234",
+            "username":"gooduser",
+            "password":"password",
+            "authorities":"ROLE_USER",
+            "active": true 
+        }
      */
     public static String customerURL = baseURL + "/customers";
     
