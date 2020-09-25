@@ -9,9 +9,4 @@ public interface TransactionServices {
     Transaction getTransaction(Long id);
 
     Transaction addTransaction(Transaction transaction);
-
-    Transaction updateTransaction(Long id, Transaction transaction);
-
-    // void deleteTransaction(Long id);
-
 }
