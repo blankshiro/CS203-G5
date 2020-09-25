@@ -16,14 +16,18 @@ import lombok.*;
 public class Transaction {
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     private double amount;
+
+    @Column(name = "accFrom")
     private Long from;
+
+    @Column(name = "accTo")
     private Long to;
 
     @JsonIgnore
 
     // many transaction to one user
-    @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "accFrom", referencedColumnName = "id", updatable = false, insertable = false )
     private Account account;
 
     public Transaction(Long id, double amt, Long from, Long to) {

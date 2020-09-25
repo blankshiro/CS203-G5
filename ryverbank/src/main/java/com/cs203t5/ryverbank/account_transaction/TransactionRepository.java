@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransactionRepository extends JpaRepository <Transaction, Long>{
-    List<Transaction> findByUserId(Long userId);
-
     //find all the transaction based on account id
     List<Transaction> findByFromOrTo(Long fromAccId, Long toAccId);
 }

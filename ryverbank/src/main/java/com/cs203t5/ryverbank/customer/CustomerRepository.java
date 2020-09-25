@@ -12,9 +12,4 @@ public interface CustomerRepository extends JpaRepository <Customer, Long> {
 
     // define a derviced query to check if username exists
     Boolean existsByUsername(String username);
-
-    // define a derviced query to check if email exists
-    Boolean existsByEmail(String email);
-
-    
 }

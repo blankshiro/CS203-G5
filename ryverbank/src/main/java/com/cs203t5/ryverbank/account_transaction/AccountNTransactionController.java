@@ -29,7 +29,7 @@ public class AccountNTransactionController {
         if(!cusRepo.existsById(id)){
             throw new CustomerNotFoundException(id);
         }
-        return accRepo.findByCustomer_id(id);
+        return accRepo.findByCustomerId(id);
     }
 
     @GetMapping("/accounts/{accounts_id}")
