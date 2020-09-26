@@ -17,12 +17,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			Authentication authentication) throws IOException, ServletException {
 		
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-        if(roles.contains("ROLE_USER")){
+        if(roles.contains("USER")){
             //Returns the current HttpSession associated with this request or, if there is no current session and create is true, returns a new session.
             //If create is false and the request has no valid HttpSession, this method returns null.
             request.getSession(false).setMaxInactiveInterval(240);
         }
-        else if(roles.contains("ROLE_MANAGER")){
+        else if(roles.contains("MANAGER")){
             request.getSession(false).setMaxInactiveInterval(1800);
         }
         //login success url goes here, currently login success url="/"

@@ -39,10 +39,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.PUT, "/customers/{id}").authenticated()
             .antMatchers(HttpMethod.DELETE, "/customers/{id}").authenticated()
         
-            .antMatchers(HttpMethod.GET, "/accounts").hasAnyRole("ROLE_USER", "ROLE_MANAGER")
-            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasAnyRole("ROLE_USER","ROLE_MANAGER")
-            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}").hasRole("ROLE_USER")
-            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasRole("ROLE_USER")
+            .antMatchers(HttpMethod.GET, "/accounts").hasAnyRole("USER", "MANAGER")
+            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasAnyRole("USER","MANAGER")
+            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}").hasRole("USER")
+            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasRole("USER")
         .and()
         .csrf().disable() // CSRF protection is needed only for browser based attacks
         .formLogin().successHandler(new CustomAuthenticationSuccessHandler()) //creates session after successful login
