@@ -2,7 +2,6 @@ package com.cs203t5.ryverbank.customer;
 
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
 import javax.validation.Valid;
 
 import org.springframework.dao.EmptyResultDataAccessException;
