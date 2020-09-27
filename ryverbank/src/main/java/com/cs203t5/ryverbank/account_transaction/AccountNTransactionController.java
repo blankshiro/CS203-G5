@@ -54,8 +54,9 @@ public class AccountNTransactionController {
         Account newAcc = new Account();
 
         return cusRepo.findById(id).map(customer -> {
-            newAcc.setCustomerId(id);
-            newAcc.setBalance(newAccInfo.getCustomerId());
+            newAcc.setCustomer(cus);
+            newAcc.setTransactions(null);
+            newAcc.setBalance(newAccInfo.getBalance());
             newAcc.setAvailableBalance(newAccInfo.getAvailableBalance());
             return accService.addAccount(newAcc);
         }).orElseThrow(() -> new CustomerNotFoundException(id));
@@ -72,12 +73,12 @@ public class AccountNTransactionController {
     @PostMapping("/accounts/{accounts_id}")
     public Transaction addTransaction(@PathVariable (value = "accounts_id") Long accId,
                                         @RequestBody Transaction newTransInfo){
-        Transaction newTrans = new Transaction();
+        Transaction newTrans = new Transaction(
 
         return accRepo.findById(accId).map(account -> {
             newTrans.setAmount(newTransInfo.getAmount());
-            newTrans.setFrom(account.getId());
-            newTrans.setTo(newTransInfo.getTo());
+            newTrans.setAccount1(account);
+            newTrans.setAccount2(newTransInfo.getAccount2());
             return transService.addTransaction(newTrans);
         }).orElseThrow(() -> new AccountNotFoundException(accId));
     }
