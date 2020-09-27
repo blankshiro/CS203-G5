@@ -13,6 +13,17 @@ public class RyverbankApplication {
 
 		ApplicationContext ctx = SpringApplication.run(RyverbankApplication.class, args);
 
+		// JPA user repository init
+		//create a manager account 
+		//to be filled in with address, NRIC, full name etc
+		CustomerRepository users = ctx.getBean(CustomerRepository.class);
+		BCryptPasswordEncoder encoder = ctx.getBean(BCryptPasswordEncoder.class);
+		System.out.println("[Add admin]: " + users.save(
+			new Customer("manager", encoder.encode("goodpassword"),null, null, null, null, "ROLE_MANAGER", true)).getUsername());
+		
+	
+			
+		
 	// 	 JPA user repository init
 	// 	UserRepository users = ctx.getBean(UserRepository.class);
     //     BCryptPasswordEncoder encoder = ctx.getBean(BCryptPasswordEncoder.class);

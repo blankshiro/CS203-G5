@@ -52,12 +52,13 @@ public class Customer implements UserDetails {
     @NotNull(message = "Authorities should not be null")
     private String authorities;
 
-    private boolean active = true;
+    @NotNull(message = "Active should not be null")
+    private Boolean active = null ;
 
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<Account> accounts;
 
-    public Customer(String username, String password, String full_name, String nric, String phone, String address, String authorities, boolean active) {
+    public Customer(String username, String password, String full_name, String nric, String phone, String address, String authorities, Boolean active) {
         this.username = username;
         this.password = password;
         this.full_name = full_name;
@@ -67,7 +68,8 @@ public class Customer implements UserDetails {
         this.authorities = authorities;
         this.active = active;
     }
-    
+
+
     /*
      * Return a collection of authorities (roles) granted to the user.
      */
@@ -93,8 +95,11 @@ public class Customer implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return active;
+        boolean actives = active.booleanValue();
+        return actives;
     }
+
+  
 
     /**
      * Validates Singapore NRIC / FIN in 2 stages: 1) Ensure first letter starts

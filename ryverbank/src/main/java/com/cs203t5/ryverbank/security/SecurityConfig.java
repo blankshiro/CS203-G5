@@ -28,21 +28,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
     }
 
+    /*  
+    * Note: '*' matches zero or more characters, e.g., /customers/* matches /customers/20
+            '**' matches zero or more 'directories' in a path, e.g., /accounts/** matches /accounts/1/transactions
+    */
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
         .httpBasic()
         .and()
         .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/customers/{id}").authenticated()
-            .antMatchers(HttpMethod.GET, "/customers/{id}").authenticated()
-            .antMatchers(HttpMethod.PUT, "/customers/{id}").authenticated()
-            .antMatchers(HttpMethod.DELETE, "/customers/{id}").authenticated()
+            //create a customer profile
+            .antMatchers(HttpMethod.POST, "/customers").hasRole("MANAGER")
+            //Get all customers
+            .antMatchers(HttpMethod.GET, "/customers").hasRole("MANAGER")
+            //Get specific customer profile
+            .antMatchers(HttpMethod.GET, "/customers/*").hasAnyRole("USER","MANAGER")
+
+            //update specific customer profile
+            .antMatchers(HttpMethod.PUT, "/customers/*").hasAnyRole("USER","MANAGER")
+            // .antMatchers(HttpMethod.DELETE, "/customers/*").authenticated()
         
-            .antMatchers(HttpMethod.GET, "/accounts").hasAnyRole("ROLE_USER", "ROLE_MANAGER")
-            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasAnyRole("ROLE_USER","ROLE_MANAGER")
-            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}").hasRole("ROLE_USER")
-            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasRole("ROLE_USER")
+            .antMatchers(HttpMethod.GET, "/accounts").hasAnyRole("USER", "MANAGER")
+            .antMatchers(HttpMethod.GET, "/accounts/*/transactions").hasAnyRole("USER","MANAGER")
+            .antMatchers(HttpMethod.GET, "/accounts/*").hasRole("USER")
+            .antMatchers(HttpMethod.GET, "/accounts/*/transactions").hasRole("USER")
         .and()
         .csrf().disable() // CSRF protection is needed only for browser based attacks
         .formLogin().successHandler(new CustomAuthenticationSuccessHandler()) //creates session after successful login
@@ -63,4 +74,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // auto-generate a random salt internally
         return new BCryptPasswordEncoder();
     }
+
+
 }
