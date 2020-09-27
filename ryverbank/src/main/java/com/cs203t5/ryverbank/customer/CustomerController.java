@@ -29,10 +29,15 @@ public class CustomerController {
      */
     @PostMapping("/customers")
     public Customer createCustomer(@Valid @RequestBody Customer user) {
+        System.out.println("TEST1: " + user.validateNric(user.getNric()));
+        System.out.println("TEST2: " + user.validatePhone(user.getPhone()));
+        if (!user.validateNric(user.getNric()) || !user.validatePhone(user.getPhone())) {
+            throw new InvalidEntryException("Invalid NRIC/Phone number");
+
+        }
         user.setPassword(encoder.encode(user.getPassword()));
-        user.validateNric(user.getNric());
-        user.validatePhone(user.getPhone());
-        return users.save(user);
+        return userService.createCustomer(user);
+
     }
 
     /**
@@ -53,7 +58,7 @@ public class CustomerController {
      * @return user with the given id
      */
     @GetMapping("/customers/{id}")
-    public Customer getUser(@PathVariable Long id) {
+    public Customer getCustomer(@PathVariable Long id) {
         Customer user = userService.getUser(id);
 
         if (user == null)
@@ -69,7 +74,7 @@ public class CustomerController {
      * @return the updated, or newly added book
      */
     @PutMapping("/customers/{id}")
-    public Customer updateUser(@PathVariable Long id, @RequestBody Customer newUserInfo) {
+    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer newUserInfo) {
         Customer user = userService.updateUser(id, newUserInfo);
         if (user == null)
             throw new CustomerNotFoundException(id);
@@ -84,7 +89,7 @@ public class CustomerController {
      * @param id
      */
     @DeleteMapping("/customers/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public void deleteCustomer(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
         } catch (EmptyResultDataAccessException e) {
