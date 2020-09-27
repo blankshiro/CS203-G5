@@ -1,5 +1,7 @@
 package com.cs203t5.ryverbank.security;
 
+import java.text.Normalizer.Form;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,21 +36,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .httpBasic()
         .and()
         .authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/customers").authenticated()
+            .antMatchers(HttpMethod.GET, "/customers").hasRole("MANAGER")
+            // .antMatchers(HttpMethod.POST, "/customers").authenticated()
+
             .antMatchers(HttpMethod.POST, "/customers/{id}").authenticated()
             .antMatchers(HttpMethod.GET, "/customers/{id}").authenticated()
             .antMatchers(HttpMethod.PUT, "/customers/{id}").authenticated()
             .antMatchers(HttpMethod.DELETE, "/customers/{id}").authenticated()
-        
+
+
+
             .antMatchers(HttpMethod.GET, "/accounts").hasAnyRole("USER", "MANAGER")
             .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasAnyRole("USER","MANAGER")
             .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}").hasRole("USER")
             .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasRole("USER")
-        .and()
+            .and()
         .csrf().disable() // CSRF protection is needed only for browser based attacks
         .formLogin().successHandler(new CustomAuthenticationSuccessHandler()) //creates session after successful login
         .failureUrl("/login?error=true").
             and()
-        .headers().disable(); // Disable the security headers, as we do not return HTML in our service
+        .headers().disable() // Disable the security headers, as we do not return HTML in our service
+        .formLogin().disable();
         //allow max 1 session , direct to expired url
         http.sessionManagement().maximumSessions(1).expiredUrl("/login?expired=true"); 
     }

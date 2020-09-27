@@ -1,0 +1,46 @@
+//This is to get customers
+GET http://localhost:8080/customers
+
+####
+
+POST http://localhost:8080/customers
+Content-Type: application/json
+
+{
+    "full_name":"Mark Tan",
+    "nric":"S4206969I", 
+    "phone":"69696969", 
+    "address":"27 Jalan Alamak S680234", 
+    "username":"gooduser213",
+    "password":"password" ,
+    "authorities":"ROLE_USER",
+    "active": true 
+}
+
+####
+
+POST http://localhost:8080/customers
+Content-Type: application/json
+
+{
+    "full_name":"Mark Tan",
+    "nric":"S1234567D", 
+    "phone":"97972522", 
+    "address":"27 Jalan Alamak S680234", 
+    "username":"gooduser",
+    "password":"password" ,
+    "authorities":"ROLE_MANAGER",
+    "active": true 
+}
+####
+#This fella is a manager
+GET http://localhost:8080/customers
+Content-Type: application/json
+Authorization: Basic gooduser:password
+
+####
+#This fella is a user
+GET http://localhost:8080/customers
+Content-Type: application/json
+Authorization: Basic gooduser213:password
+
