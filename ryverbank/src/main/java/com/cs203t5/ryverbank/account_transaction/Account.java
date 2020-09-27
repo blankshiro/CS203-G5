@@ -3,6 +3,8 @@ package com.cs203t5.ryverbank.account_transaction;
 import java.util.List;
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.*;
 
 import com.cs203t5.ryverbank.customer.*;
@@ -16,9 +18,11 @@ import com.cs203t5.ryverbank.customer.*;
 @EqualsAndHashCode
 public class Account {
     private @Id @GeneratedValue (strategy = GenerationType.IDENTITY) Long id;
+    @JsonProperty("customer_id")
     private Long customerId;
     private double balance;
-    private double available_balance;
+    @JsonProperty("available_balance")
+    private double availableBalance;
 
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -28,10 +32,10 @@ public class Account {
     @OneToMany(mappedBy = "from", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
-    public Account(long id, double balance, double available_balance){
+    public Account(long id, double balance, double availableBalance){
         this.id = id;
         this.customerId = user.getId();
         this.balance = balance;
-        this.available_balance = available_balance;
+        this.availableBalance = availableBalance;
     }
 }

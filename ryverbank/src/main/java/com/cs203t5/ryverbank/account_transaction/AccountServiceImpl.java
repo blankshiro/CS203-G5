@@ -28,20 +28,4 @@ public class AccountServiceImpl implements AccountServices {
     public Account addAccount(Account account){
         return accounts.save(account);
     }
-
-    @Override
-    public Account updateAccount(Long accNumber, Account newAccInfo){
-        return accounts.findById(accNumber).map(account -> {
-            account.setCustomerId(newAccInfo.getId());
-            account.setBalance(newAccInfo.getBalance());
-            account.setAvailable_balance(newAccInfo.getAvailable_balance());
-            return accounts.save(account);
-        }).orElse(null);
-    }
-
-    @Override
-    public void deleteAccount(Long accNumber){
-        accounts.deleteById(accNumber);
-    }
-
 }
