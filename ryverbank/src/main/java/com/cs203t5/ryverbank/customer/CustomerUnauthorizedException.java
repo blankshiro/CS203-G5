@@ -10,4 +10,9 @@ public class CustomerUnauthorizedException extends RuntimeException {
     public CustomerUnauthorizedException(Long id){
         super("Unauthorized access " + id);
     }
+
+	public CustomerUnauthorizedException(String string) {
+        super(string);
+	}
 }
+

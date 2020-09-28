@@ -1,0 +1,53 @@
+#########################################
+#This block here is to test the contents#
+#########################################
+
+####
+#Try to get without authorization to contents
+GET http://localhost:8080/contents
+
+####
+#Try to get with authorization as manager
+GET http://localhost:8080/contents
+Authorization: Basic manager:goodpassword
+####
+#Try to get with authorization as analyst
+GET http://localhost:8080/contents
+Authorization: Basic analyst:goodpassword
+
+###
+#Try to get with authorization as user
+GET http://localhost:8080/contents
+Authorization: Basic user1:goodpassword
+
+###
+#Logout
+GET http://localhost:8080/logout
+
+###
+#Try to create articles as analyst
+POST http://localhost:8080/contents
+Content-Type: application/json
+Authorization: Basic analyst:goodpassword
+
+{
+    "title": "Megumin is best girl",
+    "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise.",
+    "content": "Megumin best girl x 100",
+    "link": "megumin.bestgirl.world"
+}
+
+
+###
+#Try to create articles as a user
+POST http://localhost:8080/contents
+Content-Type: application/json
+Authorization: user1:goodpassword
+
+{
+    "title": "Megumin is best girl",
+    "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise.",
+    "content": "Megumin best girl x 100",
+    "link": "megumin.bestgirl.world"
+}
+

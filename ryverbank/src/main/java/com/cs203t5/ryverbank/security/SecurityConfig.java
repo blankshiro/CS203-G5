@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.context.request.RequestContextHolder;
 
 @EnableWebSecurity
 @Configuration
@@ -54,14 +55,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.GET, "/accounts/*/transactions").hasAnyRole("USER","MANAGER")
             .antMatchers(HttpMethod.GET, "/accounts/*").hasRole("USER")
             .antMatchers(HttpMethod.GET, "/accounts/*/transactions").hasRole("USER")
+            
+            //Following lines are for content
+            .antMatchers(HttpMethod.GET, "/contents").authenticated()
+            .antMatchers(HttpMethod.POST, "/contents").hasAnyRole("ANALYST","MANAGER")
+        .and()
+        .logout()
+        .logoutUrl("/logout")
+        //This is to allow the session to be set up so that it is not invalidated when a logout occurs
+        // Note to self: Find a way to find the session ID if necessary
+        // .invalidateHttpSession(true)
+        // .deleteCookies(RequestContextHolder.currentRequestAttributes().getSessionId())
+
         .and()
         .csrf().disable() // CSRF protection is needed only for browser based attacks
         .formLogin().successHandler(new CustomAuthenticationSuccessHandler()) //creates session after successful login
         .failureUrl("/login?error=true").
             and()
         .headers().disable(); // Disable the security headers, as we do not return HTML in our service
+    
         //allow max 1 session , direct to expired url
         http.sessionManagement().maximumSessions(1).expiredUrl("/login?expired=true"); 
+
     }
 
     /**
