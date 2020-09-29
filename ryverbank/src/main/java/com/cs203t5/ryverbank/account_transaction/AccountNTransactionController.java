@@ -39,7 +39,6 @@ public class AccountNTransactionController {
        
         if (principal != null && principal instanceof UserDetails) {
             username = ((UserDetails)principal).getUsername(); //retrieve session userdetails and store into username
-            System.out.println(username + "\n\n\n\n\n");
         } 
         else {
             // username = principal.toString();
@@ -74,19 +73,20 @@ public class AccountNTransactionController {
         }
         return accService.getAccount(accId);
     }
+    
 
-    /*
-    change the Long id to equal to the session stored value
-    */
+    //not checking if customer exist
     @PostMapping("/accounts")
     public Account createAccount(@RequestBody Account newAccInfo){
-        getSessionDetails();
-        Long id = sessionID;
-        return cusRepo.findById(id).map(customer -> {
-            newAccInfo.setCustomer(cusLogged);
-            newAccInfo.setTransactions(null);
+        if(cusRepo.existsById(newAccInfo.getCustomer())){
             return accService.addAccount(newAccInfo);
-        }).orElseThrow(() -> new CustomerNotFoundException(id));
+        } else {
+            throw new  CustomerNotFoundException(newAccInfo.getCustomer());
+        }
+        // return cusRepo.findById(id).map(customer -> {
+            // newAccInfo.setCustomer(newAccInfo.getId());
+            // newAccInfo.setTransactions(null);
+        // }).orElseThrow(() -> new CustomerNotFoundException(newAccInfo.getId()));
     }
 
     @GetMapping("/accounts/{accounts_id}/transactions")

@@ -17,26 +17,25 @@ import com.cs203t5.ryverbank.customer.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Account {
-    @Id 
-    @GeneratedValue (strategy = GenerationType.IDENTITY) 
-    private Long id;
+    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customerId", referencedColumnName = "id")
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "customerId", referencedColumnName = "id")
     @JsonProperty("customer_id")
-    private Customer customer;
+    private Long customer;
 
     private double balance;
 
     @JsonProperty("available_balance")
     private double availableBalance;
 
-    @OneToMany(mappedBy = "account1", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private List<Transaction> transactions;
+    // @OneToMany(mappedBy = "account1", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    // private List<Transaction> transactions;
 
-    public Account(double balance, double availableBalance){
-        this.transactions = new ArrayList<Transaction>();
+    public Account(double balance, Long customer, double availableBalance){
+        // this.transactions = new ArrayList<Transaction>();
         this.balance = balance;
+        this.customer = customer;
         this.availableBalance = availableBalance;
     }
 }
