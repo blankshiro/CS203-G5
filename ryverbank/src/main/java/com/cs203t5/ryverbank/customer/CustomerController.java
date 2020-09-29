@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 @RestController
 public class CustomerController {
@@ -19,6 +20,14 @@ public class CustomerController {
         this.userService = userSvc;
         this.encoder = encoder;
     }
+
+    // @GetMapping("/user")
+    // public String loggedInUserInfo(Authentication authentication){
+    //     String userName = authentication.getName();
+    //     String role = authentication.getAuthorities().stream().findAny().get().getAuthority();
+    //     return role;
+    // }
+
 
     /**
      * Registers a new user and uses BCrypt encoder to encrypt the password for
@@ -58,12 +67,14 @@ public class CustomerController {
      * @return user with the given id
      */
     @GetMapping("/customers/{id}")
-    public Customer getCustomer(@PathVariable Long id) {
-        Customer user = userService.getUser(id);
+    public Customer getUser(@PathVariable Long id, Authentication authentication) {
+        String authenticatedUserRole = authentication.getAuthorities().stream().findAny().get().getAuthority();
+        String authenticatedUsername = authentication.getName();
+        Customer user = userService.getUser(id, authenticatedUsername, authenticatedUserRole);
 
         if (user == null)
             throw new CustomerNotFoundException(id);
-        return userService.getUser(id);
+        return userService.getUser(id,  authenticatedUsername, authenticatedUserRole);
     }
 
     /**
@@ -73,14 +84,32 @@ public class CustomerController {
      * @param newUserInfo
      * @return the updated, or newly added book
      */
+
     @PutMapping("/customers/{id}")
-    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer newUserInfo) {
-        Customer user = userService.updateUser(id, newUserInfo);
+    public Customer updateUser(@PathVariable Long id, @RequestBody Customer newUserInfo, Authentication authentication) {
+        String authenticatedUserRole = authentication.getAuthorities().stream().findAny().get().getAuthority();
+        String authenticatedUsername = authentication.getName();
+        Customer user = userService.updateUser(id, newUserInfo, authenticatedUsername, authenticatedUserRole);
         if (user == null)
             throw new CustomerNotFoundException(id);
 
         return user;
     }
+
+ 
+
+    // @PutMapping(path = "/customers/{id}")
+   
+    // public Customer deactiveUser(@PathVariable Long id) {
+            
+    //         Customer user = userService.deactiveUser(id);
+    //         if(user == null)
+    //             throw new CustomerNotFoundException(id);
+            
+    //         return user;     
+        
+    // }
+
 
     /**
      * Removes a user with the DELETE request to "/users/{id}" If there is no user
@@ -88,12 +117,12 @@ public class CustomerController {
      * 
      * @param id
      */
-    @DeleteMapping("/customers/{id}")
-    public void deleteCustomer(@PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new CustomerNotFoundException(id);
-        }
-    }
+    // @PutMapping("/customers/{id}")
+    // public void deactiveUser(@PathVariable Long id) {
+    //     try {
+    //         userService.deactiveUser(id);
+    //     } catch (EmptyResultDataAccessException e) {
+    //         throw new CustomerNotFoundException(id);
+    //     }
+    // }
 }

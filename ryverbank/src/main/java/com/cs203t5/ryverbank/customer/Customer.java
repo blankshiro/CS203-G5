@@ -52,7 +52,8 @@ public class Customer implements UserDetails {
     @NotNull(message = "Authorities should not be null")
     private String authorities;
 
-    private boolean active = true;
+    @NotNull(message = "Active should not be null")
+    private Boolean active = null ;
 
     @OneToMany(mappedBy = "id", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Account> accounts;
@@ -94,8 +95,11 @@ public class Customer implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return active;
+        boolean actives = active.booleanValue();
+        return actives;
     }
+
+  
 
     /**
      * Validates Singapore NRIC / FIN in 2 stages: 1) Ensure first letter starts
