@@ -32,30 +32,6 @@ public class AccountNTransactionController {
        
     }
 
-    
-    public void getSessionDetails(){
-        String username = "";
-        //Inside the SecurityContextHolder we store details of the principal currently interacting with the application. 
-        //Spring Security uses an Authentication object to represent this information.
-        //call out securitycontextholder to get session
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       
-        if (principal != null && principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername(); //retrieve session userdetails and store into username
-            System.out.println(username + "\n\n\n\n\n");
-        } 
-        else {
-            // username = principal.toString();
-        }
-        //retrieve optionalCustomer object from repo
-        Optional<Customer> optionalCustomer = cusRepo.findByUsername(username);
-        //get customer object from optional object
-        if(optionalCustomer != null && optionalCustomer.isPresent()){
-            Customer customer = optionalCustomer.get();
-            this.sessionID = customer.getId();
-        }
-        
-    }
 
     public void getSessionDetails(){
         String username = "";
