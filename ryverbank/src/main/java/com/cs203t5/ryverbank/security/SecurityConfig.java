@@ -1,5 +1,7 @@
 package com.cs203t5.ryverbank.security;
 
+import java.text.Normalizer.Form;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
