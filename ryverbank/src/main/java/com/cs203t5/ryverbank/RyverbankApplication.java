@@ -2,6 +2,8 @@ package com.cs203t5.ryverbank;
 
 import javax.servlet.http.HttpSession;
 
+import com.cs203t5.ryverbank.content.Content;
+import com.cs203t5.ryverbank.content.ContentRepository;
 import com.cs203t5.ryverbank.customer.*;
 
 import org.springframework.boot.SpringApplication;
@@ -29,12 +31,21 @@ public class RyverbankApplication {
 
 		System.out.println("[Add user]: " + users.save(
 			new Customer("user1", encoder.encode("goodpassword"),null, null, null, null, "ROLE_USER", true)).getUsername());
-			
+	
+		ContentRepository meinContent = ctx.getBean(ContentRepository.class);
+		System.out.println("[Adding content]: " +  meinContent.save(
+			new Content("The greatest show", "Invest in the greatest shows", "This is some news", "www.greatshows.com")).getTitle());
 
-	// 	 JPA user repository init
-	// 	UserRepository users = ctx.getBean(UserRepository.class);
-    //     BCryptPasswordEncoder encoder = ctx.getBean(BCryptPasswordEncoder.class);
-    //     System.out.println("[Add user]: " + users.save(
-    //         new User("admin", "goodpassword", "test","test","test","test","test", "ROLE_ADMIN")).getUsername());
+		System.out.println("[Adding content]: " +  meinContent.save(
+			new Content("The lamest show", "Invest in the lamest shows", "This is bad news", "www.badshows.com")).getTitle());		
+
+		System.out.println("[Adding content]: " +  meinContent.save(
+			new Content("Konosuba Season 3", "Best shows", "Best girl is back", "www.konosuba.com")).getTitle());
+
+		System.out.println("[Adding content]: " +  meinContent.save(
+			new Content("Cats", "Cats are cool", "Need I say more?", "www.catsarekewl.com")).getTitle());
+		
+		
 	}
+
 }

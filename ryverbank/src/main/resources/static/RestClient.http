@@ -2,52 +2,87 @@
 #This block here is to test the contents#
 #########################################
 
-####
-#Try to get without authorization to contents
-GET http://localhost:8080/contents
-
-####
-#Try to get with authorization as manager
-GET http://localhost:8080/contents
-Authorization: Basic manager:goodpassword
-####
-#Try to get with authorization as analyst
-GET http://localhost:8080/contents
-Authorization: Basic analyst:goodpassword
 
 ###
-#Try to get with authorization as user
-GET http://localhost:8080/contents
-Authorization: Basic user1:goodpassword
+#Try to create articles as analyst
+# POST http://localhost:8080/contents
+# Content-Type: application/json
+# Authorization: Basic analyst:goodpassword
+
+# {
+#     "title": "Megumin is best girl",
+#     "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise.",
+#     "content": "Megumin best girl x 100",
+#     "link": "megumin.bestgirl.world"
+# }
+
+
+# ###
+# POST http://localhost:8080/contents
+# Content-Type: application/json
+# Authorization: Basic analyst:goodpassword
+
+# {
+#     "title": "Megumin is best girl",
+#     "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise."
+# }
+
+
+###
+# #Try to create articles as a user
+# POST http://localhost:8080/contents
+# Content-Type: application/json
+# Authorization: user1:goodpassword
+
+# {
+#     "title": "Megumin is best girl",
+#     "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise.",
+#     "content": "Megumin best girl x 100",
+#     "link": "megumin.bestgirl.world"
+# }
+###
+#Approve content as manager - Article 3
+PUT http://localhost:8080/contents/3
+Content-Type: application/json
+Authorization: Basic manager:goodpassword
+
+{
+    "approved":true
+}
+
+###
+#Try to approve content as an analyst - Article 4
+#This should throw an error
+PUT http://localhost:8080/contents/4
+Content-Type: application/json
+Authorization: Basic analyst:goodpassword
+
+{
+    "approved":true
+}
+
+###
+#Try to change fields in the content as an analyst
+PUT http://localhost:8080/contents/4
+Content-Type: application/json
+Authorization: Basic analyst:goodpassword
+
+{
+    "title" : "the life of IS211",
+    "summary":"what is it mean to be the worst?"
+}
+
+###
+#Try to change fields in the content as a manager
+PUT http://localhost:8080/contents/4
+Content-Type: application/json
+Authorization: Basic manager:goodpassword
+
+{
+    "content" : "This is true, my analyst should get a raise",
+    "approved" : true
+}
 
 ###
 #Logout
 GET http://localhost:8080/logout
-
-###
-#Try to create articles as analyst
-POST http://localhost:8080/contents
-Content-Type: application/json
-Authorization: Basic analyst:goodpassword
-
-{
-    "title": "Megumin is best girl",
-    "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise.",
-    "content": "Megumin best girl x 100",
-    "link": "megumin.bestgirl.world"
-}
-
-
-###
-#Try to create articles as a user
-POST http://localhost:8080/contents
-Content-Type: application/json
-Authorization: user1:goodpassword
-
-{
-    "title": "Megumin is best girl",
-    "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise.",
-    "content": "Megumin best girl x 100",
-    "link": "megumin.bestgirl.world"
-}
-

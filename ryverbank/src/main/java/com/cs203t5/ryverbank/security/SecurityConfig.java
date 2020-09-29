@@ -59,6 +59,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             //Following lines are for content
             .antMatchers(HttpMethod.GET, "/contents").authenticated()
             .antMatchers(HttpMethod.POST, "/contents").hasAnyRole("ANALYST","MANAGER")
+            .antMatchers(HttpMethod.PUT, "/contents").hasAnyRole("ANALYST","MANAGER")
+
         .and()
         .logout()
         .logoutUrl("/logout")
