@@ -31,7 +31,7 @@ public class Account {
     @JsonProperty("available_balance")
     private double availableBalance;
 
-    @OneToMany(mappedBy = "from", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "account1", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Transaction> transactions;
 
     public Account(double balance, double availableBalance){
