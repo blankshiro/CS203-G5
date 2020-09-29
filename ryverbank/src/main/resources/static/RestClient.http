@@ -10,10 +10,10 @@
 # Authorization: Basic analyst:goodpassword
 
 # {
-#     "title": "Megumin is best girl",
-#     "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise.",
-#     "content": "Megumin best girl x 100",
-#     "link": "megumin.bestgirl.world"
+#     "title": "meinPost2",
+#     "summary":"Post2 with more fields",
+#     "content": "Lol",
+#     "link": "www.pointlesslink.com.sg"
 # }
 
 
@@ -23,8 +23,8 @@
 # Authorization: Basic analyst:goodpassword
 
 # {
-#     "title": "Megumin is best girl",
-#     "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise."
+#     "title": "meinPost",
+#     "summary":"Test post with missing values"
 # }
 
 
@@ -35,10 +35,10 @@
 # Authorization: user1:goodpassword
 
 # {
-#     "title": "Megumin is best girl",
-#     "summary":"It has been scientifically proven that megumin is best girl, you are a dumbass if you think otherwise.",
-#     "content": "Megumin best girl x 100",
-#     "link": "megumin.bestgirl.world"
+#     "title": "Title 1",
+#     "summary":"Some summary.",
+#     "content": "Some content",
+#     "link": "www.somelink.com"
 # }
 ###
 #Approve content as manager - Article 3
@@ -68,8 +68,8 @@ Content-Type: application/json
 Authorization: Basic analyst:goodpassword
 
 {
-    "title" : "the life of IS211",
-    "summary":"what is it mean to be the worst?"
+    "title" : "Cats are cute",
+    "summary":"Cats are not only cute, they are cool as well"
 }
 
 ###

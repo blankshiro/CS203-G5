@@ -15,7 +15,6 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
 public class Content {
 
@@ -28,9 +27,11 @@ public class Content {
     @Column(name = "title")
     private String title;
 
+    @NotNull(message = "Summary cannot be null")
     @Column(name = "summary")
     private String summary;
 
+    @NotNull(message = "Content cannot be null")
     @Column(name = "content")
     @JsonProperty("content")
     private String newsContent;

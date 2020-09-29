@@ -44,8 +44,6 @@ public class RyverbankApplication {
 
 		System.out.println("[Adding content]: " +  meinContent.save(
 			new Content("Cats", "Cats are cool", "Need I say more?", "www.catsarekewl.com")).getTitle());
-		
-		
 	}
 
 }
