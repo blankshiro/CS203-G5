@@ -1,6 +1,6 @@
 package com.cs203t5.ryverbank.account_transaction;
 
-import java.util.List;
+import java.util.*;
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,24 +17,25 @@ import com.cs203t5.ryverbank.customer.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Account {
-    private @Id @GeneratedValue (strategy = GenerationType.IDENTITY) Long id;
+    @Id 
+    @GeneratedValue (strategy = GenerationType.IDENTITY) 
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customerId", referencedColumnName = "id")
     @JsonProperty("customer_id")
-    private Long customerId;
+    private Customer customer;
+
     private double balance;
+
     @JsonProperty("available_balance")
     private double availableBalance;
 
-    @JsonIgnore
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "customerId", referencedColumnName = "id", updatable = false, insertable = false)
-    private Customer user;
-
-    @OneToMany(mappedBy = "from", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "from", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Transaction> transactions;
 
-    public Account(long id, double balance, double availableBalance){
-        this.id = id;
-        this.customerId = user.getId();
+    public Account(double balance, double availableBalance){
+        this.transactions = new ArrayList<Transaction>();
         this.balance = balance;
         this.availableBalance = availableBalance;
     }

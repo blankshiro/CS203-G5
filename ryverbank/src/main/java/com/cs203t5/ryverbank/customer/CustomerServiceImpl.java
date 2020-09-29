@@ -135,7 +135,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomerExistsException("username used");
         }
         
-        user.setPassword(encoder.encode(user.getPassword()));
+        //user.setPassword(encoder.encode(user.getPassword()));
         return users.save(user);
     }
 
