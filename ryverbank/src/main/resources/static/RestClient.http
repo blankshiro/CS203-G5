@@ -1,46 +1,88 @@
-//This is to get customers
-GET http://localhost:8080/customers
+#########################################
+#This block here is to test the contents#
+#########################################
 
-####
 
-POST http://localhost:8080/customers
+###
+#Try to create articles as analyst
+# POST http://localhost:8080/contents
+# Content-Type: application/json
+# Authorization: Basic analyst:goodpassword
+
+# {
+#     "title": "meinPost2",
+#     "summary":"Post2 with more fields",
+#     "content": "Lol",
+#     "link": "www.pointlesslink.com.sg"
+# }
+
+
+# ###
+# POST http://localhost:8080/contents
+# Content-Type: application/json
+# Authorization: Basic analyst:goodpassword
+
+# {
+#     "title": "meinPost",
+#     "summary":"Test post with missing values"
+# }
+
+
+###
+# #Try to create articles as a user
+# POST http://localhost:8080/contents
+# Content-Type: application/json
+# Authorization: user1:goodpassword
+
+# {
+#     "title": "Title 1",
+#     "summary":"Some summary.",
+#     "content": "Some content",
+#     "link": "www.somelink.com"
+# }
+###
+#Approve content as manager - Article 3
+PUT http://localhost:8080/contents/3
 Content-Type: application/json
+Authorization: Basic manager:goodpassword
 
 {
-    "full_name":"Mark Tan",
-    "nric":"S4206969I", 
-    "phone":"69696969", 
-    "address":"27 Jalan Alamak S680234", 
-    "username":"gooduser213",
-    "password":"password" ,
-    "authorities":"ROLE_USER",
-    "active": true 
+    "approved":true
 }
 
-####
-
-POST http://localhost:8080/customers
+###
+#Try to approve content as an analyst - Article 4
+#This should throw an error
+PUT http://localhost:8080/contents/4
 Content-Type: application/json
+Authorization: Basic analyst:goodpassword
 
 {
-    "full_name":"Mark Tan",
-    "nric":"S1234567D", 
-    "phone":"97972522", 
-    "address":"27 Jalan Alamak S680234", 
-    "username":"gooduser",
-    "password":"password" ,
-    "authorities":"ROLE_MANAGER",
-    "active": true 
+    "approved":true
 }
-####
-#This fella is a manager
-GET http://localhost:8080/customers
-Content-Type: application/json
-Authorization: Basic gooduser:password
 
-####
-#This fella is a user
-GET http://localhost:8080/customers
+###
+#Try to change fields in the content as an analyst
+PUT http://localhost:8080/contents/4
 Content-Type: application/json
-Authorization: Basic gooduser213:password
+Authorization: Basic analyst:goodpassword
 
+{
+    "title" : "Cats are cute",
+    "summary":"Cats are not only cute, they are cool as well"
+}
+
+###
+#Try to change fields in the content as a manager
+PUT http://localhost:8080/contents/4
+Content-Type: application/json
+Authorization: Basic manager:goodpassword
+
+{
+    "content" : "This is true, my analyst should get a raise",
+    "approved" : true
+}
+
+###
+#Logout
+GET http://localhost:8080/logout

@@ -1,13 +1,12 @@
 package com.cs203t5.ryverbank.account_transaction;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import org.springframework.web.bind.annotation.*;
 
 import org.dom4j.rule.NullAction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
 
 import com.cs203t5.ryverbank.customer.*;
 
@@ -20,6 +19,7 @@ public class AccountNTransactionController {
     private TransactionServices transService;
 
     private Long sessionID = 1L; //this is to retrieve id from customer retreive from securitycontextholder
+    private Customer cusLogged;
 
     public AccountNTransactionController(AccountRepository accRepo, CustomerRepository cusRepo, 
                                         TransactionRepository transRepo, AccountServices accService, 
@@ -57,9 +57,30 @@ public class AccountNTransactionController {
         
     }
 
-    /*
-    change the Long id to equal to the session stored value
-    */
+    public void getSessionDetails(){
+        String username = "";
+        //Inside the SecurityContextHolder we store details of the principal currently interacting with the application. 
+        //Spring Security uses an Authentication object to represent this information.
+        //call out securitycontextholder to get session
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       
+        if (principal != null && principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername(); //retrieve session userdetails and store into username
+            System.out.println(username + "\n\n\n\n\n");
+        } 
+        else {
+            // username = principal.toString();
+        }
+        //retrieve optionalCustomer object from repo
+        Optional<Customer> optionalCustomer = cusRepo.findByUsername(username);
+        //get customer object from optional object
+        if(optionalCustomer != null && optionalCustomer.isPresent()){
+            this.cusLogged = optionalCustomer.get();
+            this.sessionID = cusLogged.getId();
+        }
+        
+    }
+
     @GetMapping("/accounts")
     public List<Account> getAllAccounts(){
         //get id
@@ -85,16 +106,13 @@ public class AccountNTransactionController {
     change the Long id to equal to the session stored value
     */
     @PostMapping("/accounts")
-    public Account createAccount(Customer cus, @RequestBody Account newAccInfo){
+    public Account createAccount(@RequestBody Account newAccInfo){
         getSessionDetails();
         Long id = sessionID;
-        Account newAcc = new Account();
-
         return cusRepo.findById(id).map(customer -> {
-            newAcc.setCustomerId(id);
-            newAcc.setBalance(newAccInfo.getCustomerId());
-            newAcc.setAvailableBalance(newAccInfo.getAvailableBalance());
-            return accService.addAccount(newAcc);
+            newAccInfo.setCustomer(cusLogged);
+            newAccInfo.setTransactions(null);
+            return accService.addAccount(newAccInfo);
         }).orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
@@ -109,13 +127,9 @@ public class AccountNTransactionController {
     @PostMapping("/accounts/{accounts_id}")
     public Transaction addTransaction(@PathVariable (value = "accounts_id") Long accId,
                                         @RequestBody Transaction newTransInfo){
-        Transaction newTrans = new Transaction();
 
         return accRepo.findById(accId).map(account -> {
-            newTrans.setAmount(newTransInfo.getAmount());
-            newTrans.setFrom(account.getId());
-            newTrans.setTo(newTransInfo.getTo());
-            return transService.addTransaction(newTrans);
+            return transService.addTransaction(newTransInfo);
         }).orElseThrow(() -> new AccountNotFoundException(accId));
     }
 } 

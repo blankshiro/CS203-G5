@@ -7,13 +7,13 @@ import java.util.List;
 public interface CustomerService {
     List<Customer> listUsers();
 
-    Customer getUser(Long userId);
+    Customer getUser(Long userId, String authenticatedUsername, String authenticatedUserRole);
 
     Customer addUser(Customer user);
 
-    Customer updateUser(Long userId, Customer user);
+    Customer updateUser(Long userId, Customer user, String authenticatedUsername, String authenticatedUserRole);
 
-    void deleteUser(Long userId);
+    // Customer deactiveUser(Long userId);
 
     Customer createCustomer(Customer user);
 

@@ -27,8 +27,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     @Override
-    public Customer getUser(Long userId) {
-        return users.findById(userId).orElse(null);
+    public Customer getUser(Long userId,String authenticatedUsername, String authenticatedUserRole) {
+      
+        return users.findById(userId).map(user -> {
+            if(authenticatedUserRole.equals("ROLE_USER") && user.getUsername().equals(authenticatedUsername) || authenticatedUserRole.equals("ROLE_MANAGER")){
+                return users.save(user);
+            }
+            else{
+                throw new CustomerUnauthorizedException(userId);
+            }
+        }).orElse(null);
     }
 
     @Override
@@ -36,18 +44,89 @@ public class CustomerServiceImpl implements CustomerService {
         return users.save(user);
     }
 
+
     @Override
-    public Customer updateUser(Long userId, Customer newUserInfo) {
+    public Customer updateUser(Long userId, Customer newUserInfo, String authenticatedUsername, String authenticatedUserRole) {
         return users.findById(userId).map(user -> {
-            user.setPassword(newUserInfo.getPassword());
+            //If phone it not being updated, it will remains the old phone number
+            if((authenticatedUserRole.equals("ROLE_USER") && !(user.getUsername().equals(authenticatedUsername)))){
+                throw new CustomerUnauthorizedException(userId);
+            }
+            if(authenticatedUserRole.equals("ROLE_MANAGER")){
+                try{
+                    newUserInfo.getPhone().equals(null);
+                    user.setPhone(newUserInfo.getPhone());
+                }catch(NullPointerException e){
+                    user.setPhone(user.getPhone());
+                }
+    
+                 //If address it not being updated, it will remains the old address
+                    
+                try{
+                    newUserInfo.getAddress().equals(null);
+                    user.setAddress(newUserInfo.getAddress());
+                }catch(NullPointerException e){
+                    user.setAddress(user.getAddress());
+                }
+               
+                //Manager disable accounts
+                try{
+                    if(newUserInfo.getActive().equals(null));
+                    user.setActive(newUserInfo.getActive());
+                }catch(NullPointerException e){
+                    user.setActive(user.getActive());
+                }
+            }else if(authenticatedUserRole.equals("ROLE_USER") && user.getUsername().equals(authenticatedUsername)){
+                try{
+                    newUserInfo.getPhone().equals(null);
+                    user.setPhone(newUserInfo.getPhone());
+                }catch(NullPointerException e){
+                    user.setPhone(user.getPhone());
+                }
+                 //If address it not being updated, it will remains the old address
+                    
+                try{
+                    newUserInfo.getAddress().equals(null);
+                    user.setAddress(newUserInfo.getAddress());
+                }catch(NullPointerException e){
+                    user.setAddress(user.getAddress());
+                }
+              
+                //Customers are not allowed to disable account
+                try{
+                    if(newUserInfo.getActive().equals(null));
+                    throw new CustomerUnauthorizedException(userId);
+                }catch(NullPointerException e){
+                    
+                }
+
+               
+
+            }
+       
+
+
+            //If password it not being updated, it will remains the old password
+            // try{
+            //     newUserInfo.getPassword().equals(null);
+            //     System.out.println("hi");
+            //     user.setPassword(newUserInfo.getPassword());
+            // }catch(NullPointerException e){
+            //     user.setPassword(user.getPassword());
+            // }
+
+         
             return users.save(user);
         }).orElse(null);
     }
 
-    @Override
-    public void deleteUser(Long userId) {
-        users.deleteById(userId);
-    }
+    // @Override
+    // public Customer deactiveUser(Long userId) {
+    //     return users.findById(userId).map(user -> {
+    //         user.setActive(false);
+    //         return users.save(user);
+    //     }).orElse(null);
+    // }
 
     
     @Override
@@ -56,7 +135,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomerExistsException("username used");
         }
         
-        user.setPassword(encoder.encode(user.getPassword()));
+        //user.setPassword(encoder.encode(user.getPassword()));
         return users.save(user);
     }
 

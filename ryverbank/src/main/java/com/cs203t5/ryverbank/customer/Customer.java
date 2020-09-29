@@ -29,7 +29,7 @@ public class Customer implements UserDetails {
 
     @NotNull(message = "Username should not be null")
     @Size(min = 5, max = 20, message = "Username should be between 5 and 20 characters")
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @NotNull(message = "Password should not be null")
@@ -42,7 +42,7 @@ public class Customer implements UserDetails {
 
     @Column(name = "nric", unique = true)
     private String nric;
-    
+
     @Column(name = "phone", unique = true)
     private String phone;
 
@@ -52,22 +52,24 @@ public class Customer implements UserDetails {
     @NotNull(message = "Authorities should not be null")
     private String authorities;
 
-    private boolean active = true;
+    @NotNull(message = "Active should not be null")
+    private Boolean active = null ;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "id", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Account> accounts;
 
-    public Customer(String username, String password, String full_name, String nric, String phone, String address, String authorities, boolean active) {
-        this.username = username;
-        this.password = password;
+    public Customer(String full_name, String nric, String phone, String address, String username, String password,
+            String authorities, boolean active) {
         this.full_name = full_name;
         this.nric = nric;
         this.phone = phone;
         this.address = address;
+        this.username = username;
+        this.password = password;
         this.authorities = authorities;
         this.active = active;
     }
-    
+
     /*
      * Return a collection of authorities (roles) granted to the user.
      */
@@ -93,8 +95,11 @@ public class Customer implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return active;
+        boolean actives = active.booleanValue();
+        return actives;
     }
+
+  
 
     /**
      * Validates Singapore NRIC / FIN in 2 stages: 1) Ensure first letter starts
@@ -148,7 +153,7 @@ public class Customer implements UserDetails {
 
     public boolean validatePhone(String phone) {
         // validate phone numbers of format "1234567890"
-        if (phone.matches("\\^[6|8|9]\\d{7}$"))
+        if (phone.matches("^[6|8|9]\\d{7}$"))
             return true;
         // return false if nothing matches the input
         else {

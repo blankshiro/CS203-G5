@@ -37,3 +37,6 @@ alter table transaction add constraint FKraurybmwm89q9fexn523bwgdw foreign key (
 2020-09-24 18:24:31 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TRANSACTION" not found; SQL statement:
 alter table transaction add constraint FKcjctrfp80wyh9gpl910y5enhf foreign key (acc_from) references account [42102-200]
+2020-09-26 23:32:49 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "ACCOUNT[*] SELECT * FROM CUSTOMER"; expected "ALTER, ANALYZE"; SQL statement:
+ACCOUNT SELECT * FROM CUSTOMER [42001-200]
