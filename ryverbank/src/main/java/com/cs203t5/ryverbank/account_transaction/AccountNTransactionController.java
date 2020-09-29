@@ -3,8 +3,6 @@ package com.cs203t5.ryverbank.account_transaction;
 import java.util.*;
 import org.springframework.web.bind.annotation.*;
 
-import org.dom4j.rule.NullAction;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -29,7 +27,6 @@ public class AccountNTransactionController {
         this.transRepo = transRepo;
         this.accService = accService;
         this.transService = transService;
-       
     }
 
     
@@ -65,7 +62,7 @@ public class AccountNTransactionController {
         if(!cusRepo.existsById(id)){
             throw new CustomerNotFoundException(id);
         }
-        return accRepo.findByCustomerId(id);
+        return accRepo.findByCustomer(id);
     }
 
     @GetMapping("/accounts/{accounts_id}")
@@ -97,7 +94,7 @@ public class AccountNTransactionController {
         if(!accRepo.existsById(accId)){
              throw new AccountNotFoundException(accId);
         }
-        return transRepo.findByFromOrTo(accId, accId);
+        return transRepo.findByAccount1OrAccount2(accId, accId);
     }
 
     @PostMapping("/accounts/{accounts_id}")

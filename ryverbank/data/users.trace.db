@@ -40,3 +40,6 @@ alter table transaction add constraint FKcjctrfp80wyh9gpl910y5enhf foreign key (
 2020-09-26 23:32:49 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "ACCOUNT[*] SELECT * FROM CUSTOMER"; expected "ALTER, ANALYZE"; SQL statement:
 ACCOUNT SELECT * FROM CUSTOMER [42001-200]
+2020-09-29 16:02:06 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CUSTOMER" not found; SQL statement:
+insert into customer (id, active, address, authorities, full_name, nric, password, phone, username) values (null, ?, ?, ?, ?, ?, ?, ?, ?) [42102-200]

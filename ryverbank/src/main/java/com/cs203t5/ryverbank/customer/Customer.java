@@ -58,7 +58,7 @@ public class Customer implements UserDetails {
     @OneToMany(mappedBy = "id", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Account> accounts;
 
-    public Customer(String full_name, String nric, String phone, String address, String username, String password,
+    public Customer(String username, String password, String full_name, String nric, String phone, String address,
             String authorities, boolean active) {
         this.full_name = full_name;
         this.nric = nric;
