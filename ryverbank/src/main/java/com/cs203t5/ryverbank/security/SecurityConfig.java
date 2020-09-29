@@ -53,10 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.PUT, "/customers/*").hasAnyRole("USER","MANAGER")
             // .antMatchers(HttpMethod.DELETE, "/customers/*").authenticated()
         
-            .antMatchers(HttpMethod.GET, "/accounts").hasAnyRole("USER", "MANAGER")
-            .antMatchers(HttpMethod.GET, "/accounts/*/transactions").hasAnyRole("USER","MANAGER")
+            .antMatchers(HttpMethod.GET, "/accounts").hasRole("USER")
             .antMatchers(HttpMethod.GET, "/accounts/*").hasRole("USER")
+            .antMatchers(HttpMethod.POST, "/accounts").hasRole("MANAGER")
             .antMatchers(HttpMethod.GET, "/accounts/*/transactions").hasRole("USER")
+            .antMatchers(HttpMethod.POST, "/accounts/*").hasRole("USER")
             
             //Following lines are for content
             //Everyone that wants to access the content page needs to be authenticated
