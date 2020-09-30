@@ -57,6 +57,9 @@ public class ContentController {
 
             // Return all content that are approved
         } else if (authenticatedUserRole.equals("ROLE_USER")) {
+            if (meinContent.findByApproved(true).isEmpty()){
+                throw new ContentNotFoundException("No content available for viewing");
+            }
             return meinContent.findByApproved(true);
         } else {
             throw new CustomerUnauthorizedException("You do not have permission to access the content");
