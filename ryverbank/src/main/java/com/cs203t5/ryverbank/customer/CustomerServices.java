@@ -4,7 +4,7 @@ import java.util.List;
 
 // import com.cs203t5.ryverbank.token.*;
 
-public interface CustomerService {
+public interface CustomerServices {
     List<Customer> listUsers();
 
     Customer getUser(Long userId);

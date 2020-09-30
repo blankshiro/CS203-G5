@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomerServiceImpl implements CustomerService {
+public class CustomerServiceImpl implements CustomerServices {
     private CustomerRepository users;
     // private ConfirmationTokenService confirmationTokenService;
     private BCryptPasswordEncoder encoder;

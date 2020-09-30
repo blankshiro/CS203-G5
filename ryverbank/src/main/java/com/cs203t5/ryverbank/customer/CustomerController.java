@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class CustomerController {
     private CustomerRepository users;
-    private CustomerService userService;
+    private CustomerServices userService;
     private BCryptPasswordEncoder encoder;
 
-    public CustomerController(CustomerRepository users, CustomerService userSvc, BCryptPasswordEncoder encoder) {
+    public CustomerController(CustomerRepository users, CustomerServices userSvc, BCryptPasswordEncoder encoder) {
         this.users = users;
         this.userService = userSvc;
         this.encoder = encoder;
