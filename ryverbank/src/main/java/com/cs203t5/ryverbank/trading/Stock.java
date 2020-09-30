@@ -1,7 +1,6 @@
 package com.cs203t5.ryverbank.trading;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 import lombok.*;
 
@@ -12,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Stock {
-    // All numbers are double except quantity/volume (int) and timestamp (long).
+    @Id
     private String symbol;
 
     private double lastPrice;
