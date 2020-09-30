@@ -17,5 +17,7 @@ public interface ContentRepository extends JpaRepository<Content, Long> {
     // This method is used to search for a particular content, based on its Id
     Optional<Content> findById(Long Id);
 
+    // This method is used to check if the title of the content already exists
+    Boolean existsByTitle(String aTitle);
 }
 
