@@ -2,8 +2,16 @@ package com.cs203t5.ryverbank.trading;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
+public interface StockServices {
+    List<Stock> listStock();
 
-public interface StockServices{
-    List<Stock> listStocks();
+    Stock getStock(String symbol);
+
+    Stock addStock(Stock stock);
+
+    Stock updateStock(String symbol, Stock stock);
+
+    void deleteStock(String symbol);
+
+    Stock createStock(Stock stock);
 }

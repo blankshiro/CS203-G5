@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Stock {
+   
     @Id
     private String symbol;
 
