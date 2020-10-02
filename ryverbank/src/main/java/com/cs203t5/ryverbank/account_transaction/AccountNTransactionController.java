@@ -48,7 +48,7 @@ public class AccountNTransactionController {
         //get customer object from optional object
         if(optionalCustomer != null && optionalCustomer.isPresent()){
             Customer customer = optionalCustomer.get();
-            this.sessionID = customer.getId();
+            this.sessionID = customer.getCustomerId();
         }
         
     }
@@ -58,10 +58,13 @@ public class AccountNTransactionController {
         //get id
         getSessionDetails();
         Long id = sessionID;
+        System.out.println("USER ID IS FOUND: " + sessionID + "\n\n\n\n\n");
         if(!cusRepo.existsById(id)){
             throw new CustomerNotFoundException(id);
         }
-        return accRepo.findByCustomer(id);
+        // This statement searches based on the customer, instead of the userId
+        return accRepo.findByCustomer(cusRepo.findById(id));
+        // return accRepo.findByCustomerCustomerId(id);
     }
 
     @GetMapping("/accounts/{accounts_id}")
@@ -75,14 +78,19 @@ public class AccountNTransactionController {
     }
     
 
-    //not checking if customer exist
     @PostMapping("/accounts")
     public Account createAccount(@RequestBody Account newAccInfo){
-        if(cusRepo.existsById(newAccInfo.getCustomer())){
+        // if(cusRepo.existsById(newAccInfo.getCustId())){
+        //     newAccInfo.setCustomer(cusRepo.getOne(newAccInfo.getCustId()));
+        //     return accService.addAccount(newAccInfo);
+        // } else {
+        //     throw new  CustomerNotFoundException(newAccInfo.getCustId());
+        // }
+        return cusRepo.findById(newAccInfo.getCustomer_id()).map(aCustomer -> {
+            newAccInfo.setCustomer(aCustomer);
             return accService.addAccount(newAccInfo);
-        } else {
-            throw new  CustomerNotFoundException(newAccInfo.getCustomer());
-        }
+
+        }).orElseThrow(() -> new CustomerNotFoundException(newAccInfo.getCustomer_id()));
         // return cusRepo.findById(id).map(customer -> {
             // newAccInfo.setCustomer(newAccInfo.getId());
             // newAccInfo.setTransactions(null);
