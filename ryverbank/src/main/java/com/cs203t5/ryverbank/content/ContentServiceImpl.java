@@ -14,10 +14,14 @@ public class ContentServiceImpl implements ContentService{
         this.meinContent = meinContent;
     }
 
+    //Throws an exception if a title of the title already exists
     //Allows Analysts and Managers to create content
     //This method will be used exclusively by Analysts & Managers
     @Override
     public Content createContent(Content content){
+        if (meinContent.existsByTitle(content.getTitle())){
+            throw new ContentExistsException(content.getTitle());
+        }
         return meinContent.save(content);
     }
 
