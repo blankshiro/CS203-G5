@@ -1,7 +1,8 @@
 package com.cs203t5.ryverbank.trading;
 
 import javax.persistence.*;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
