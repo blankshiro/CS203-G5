@@ -10,12 +10,19 @@ import java.util.regex.Pattern;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+
 @Service
 public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository users;
     // private ConfirmationTokenService confirmationTokenService;
-    private BCryptPasswordEncoder encoder;
+    
+
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     // private EmailService javaMailSender;
+
+
+  
 
     public CustomerServiceImpl(CustomerRepository users) {
         this.users = users;
@@ -115,10 +122,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer updatePassword(Long userId, String newPassword){
         if(newPassword != null && !newPassword.isEmpty()){
             return users.findById(userId).map(user -> {
-                // System.out.println(newPassword + " hi");
-                // String encodedPassword = encoder.encode(newPassword);
-                // System.out.println(encodedPassword);
-                user.setPassword(newPassword);
+                user.setPassword(encoder.encode(newPassword));
                 return users.save(user);
             }).orElse(null);
         }
@@ -127,82 +131,38 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
-    // @Override
-    // public Customer updateUser(Long userId, Customer newUserInfo, String authenticatedUsername, String authenticatedUserRole) {
-    //     return users.findById(userId).map(user -> {
-    //         //If phone it not being updated, it will remains the old phone number
+     //Updates the password of a particular user
+    //This method will be used exclusively by Customer
+    @Override
+    public Customer updatePassword(Long userId, String newPassword, String authenticatedUsername){
+        if(newPassword != null && !newPassword.isEmpty()){
+            return users.findById(userId).map(user -> {
+                if(user.getUsername().equals(authenticatedUsername)){
+                    user.setPassword(encoder.encode(newPassword));
+                    return users.save(user);
+                }else{
+                    throw new CustomerUnauthorizedException("You do not have permission to access this information");
+                } 
+            }).orElse(null);
+        }
 
+        return null;
+    }
 
-    //         if((authenticatedUserRole.equals("ROLE_USER") && !(user.getUsername().equals(authenticatedUsername)))){
-    //             throw new CustomerUnauthorizedException(userId);
-    //         }
-    //         if(authenticatedUserRole.equals("ROLE_MANAGER")){
-    //             try{
-    //                 newUserInfo.getPhone().equals(null);
-    //                 user.setPhone(newUserInfo.getPhone());
-    //             }catch(NullPointerException e){
-    //                 user.setPhone(user.getPhone());
-    //             }
-    
-    //              //If address it not being updated, it will remains the old address
-                    
-    //             try{
-    //                 newUserInfo.getAddress().equals(null);
-    //                 user.setAddress(newUserInfo.getAddress());
-    //             }catch(NullPointerException e){
-    //                 user.setAddress(user.getAddress());
-    //             }
-               
-    //             //Manager disable accounts
-    //             try{
-    //                 if(newUserInfo.getActive().equals(null));
-    //                 user.setActive(newUserInfo.getActive());
-    //             }catch(NullPointerException e){
-    //                 user.setActive(user.getActive());
-    //             }
-    //         }else if(authenticatedUserRole.equals("ROLE_USER") && user.getUsername().equals(authenticatedUsername)){
-    //             try{
-    //                 newUserInfo.getPhone().equals(null);
-    //                 user.setPhone(newUserInfo.getPhone());
-    //             }catch(NullPointerException e){
-    //                 user.setPhone(user.getPhone());
-    //             }
-    //              //If address it not being updated, it will remains the old address
-                    
-    //             try{
-    //                 newUserInfo.getAddress().equals(null);
-    //                 user.setAddress(newUserInfo.getAddress());
-    //             }catch(NullPointerException e){
-    //                 user.setAddress(user.getAddress());
-    //             }
-              
-    //             //Customers are not allowed to disable account
-    //             try{
-    //                 if(newUserInfo.getActive().equals(null));
-    //                 throw new CustomerUnauthorizedException(userId);
-    //             }catch(NullPointerException e){
-                    
-    //             }
+    //Updates the active field of a particular user
+    //This method will be used exclusively by Managers
+    @Override
+    public Customer updateActiveStatus(Long userId, Boolean activeStatus){
+        if(activeStatus != null){
+            return users.findById(userId).map(user -> {
+                user.setActive(activeStatus);
+                return users.save(user);
+            }).orElse(null);
+        }
 
-               
+        return null;
+    }
 
-    //         }
-       
-
-
-    //         //If password it not being updated, it will remains the old password
-    //         // try{
-    //         //     newUserInfo.getPassword().equals(null);
-    //         //     System.out.println("hi");
-    //         //     user.setPassword(newUserInfo.getPassword());
-    //         // }catch(NullPointerException e){
-    //         //     user.setPassword(user.getPassword());
-    //         // }
-
-         
-    //         return users.save(user);
-    //     }).orElse(null);
-    // }
 
 
 
@@ -213,7 +173,6 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomerExistsException("username used");
         }
         
-        //user.setPassword(encoder.encode(user.getPassword()));
         return users.save(user);
     }
 

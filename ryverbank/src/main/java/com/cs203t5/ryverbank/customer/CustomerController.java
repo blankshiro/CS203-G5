@@ -114,7 +114,7 @@ public class CustomerController {
         
 
         /*
-            If the Json input passed in is not null for the fields, it means that someone wishes to edit the link
+            If the Json input passed in is not null for the fields, it means that someone wishes to edit the fields
             This same process is repeated for every field that is available for updates.
         */
         //If the input passed into the Json is not null for the "address" field, it means that someone wishes to update the address
@@ -146,13 +146,25 @@ public class CustomerController {
            if(newUserInfo.getPassword() != null) {
                if(newUserInfo.getPassword().length() < 8){
                    throw new InvalidEntryException("Password should be at least 8 characters");
+               }else{
+                    if(authenticatedUserRole.equals("ROLE_USER")){
+                        userService.updatePassword(id, newUserInfo.getPassword(), authenticatedUsername);
+                        
+                    }
+                    else if(authenticatedUserRole.equals("ROLE_MANAGER")){
+                        userService.updatePassword(id, newUserInfo.getPassword());
+                    }   
+                   
                }
-            // if(authenticatedUserRole.equals("ROLE_USER")){
-            //     userService.updatePassword(id, newUserInfo.getPassword(), authenticatedUsername);
-                
-            // }
-             if(authenticatedUserRole.equals("ROLE_MANAGER")){
-                userService.updatePassword(id, newUserInfo.getPassword());
+            
+        }
+
+        if(newUserInfo.getActive() != null){
+            if(authenticatedUserRole.equals("ROLE_MANAGER")){
+                userService.updateActiveStatus(id, newUserInfo.getActive());
+            }
+            else{
+                throw new CustomerUnauthorizedException("You do not have permission to access this information");
             }
         }
         
