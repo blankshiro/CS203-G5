@@ -1,5 +1,7 @@
 package com.cs203t5.ryverbank.security;
 
+import java.text.Normalizer.Form;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.context.request.RequestContextHolder;
 
 @EnableWebSecurity
 @Configuration
@@ -28,29 +31,63 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(encoder());
     }
 
+    /*  
+    * Note: '*' matches zero or more characters, e.g., /customers/* matches /customers/20
+            '**' matches zero or more 'directories' in a path, e.g., /accounts/** matches /accounts/1/transactions
+    */
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
         .httpBasic()
         .and()
         .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/customers/{id}").authenticated()
-            .antMatchers(HttpMethod.GET, "/customers/{id}").authenticated()
-            .antMatchers(HttpMethod.PUT, "/customers/{id}").authenticated()
-            .antMatchers(HttpMethod.DELETE, "/customers/{id}").authenticated()
+            //create a customer profile
+            .antMatchers(HttpMethod.POST, "/customers").hasRole("MANAGER")
+            //Get all customers
+            .antMatchers(HttpMethod.GET, "/customers").hasRole("MANAGER")
+            //Get specific customer profile
+            .antMatchers(HttpMethod.GET, "/customers/*").hasAnyRole("USER","MANAGER")
+
+            //update specific customer profile
+            .antMatchers(HttpMethod.PUT, "/customers/*").hasAnyRole("USER","MANAGER")
+            // .antMatchers(HttpMethod.DELETE, "/customers/*").authenticated()
         
-            .antMatchers(HttpMethod.GET, "/accounts").hasAnyRole("USER", "MANAGER")
-            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasAnyRole("USER","MANAGER")
-            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}").hasRole("USER")
-            .antMatchers(HttpMethod.GET, "/accounts/{accounts_id}/transactions").hasRole("USER")
+            .antMatchers(HttpMethod.GET, "/accounts").hasRole("USER")
+            .antMatchers(HttpMethod.GET, "/accounts/*").hasRole("USER")
+            .antMatchers(HttpMethod.POST, "/accounts").hasRole("MANAGER")
+            .antMatchers(HttpMethod.GET, "/accounts/*/transactions").hasRole("USER")
+            .antMatchers(HttpMethod.POST, "/accounts/*").hasRole("USER")
+            
+            //Following lines are for content
+            //Everyone that wants to access the content page needs to be authenticated
+            .antMatchers(HttpMethod.GET, "/contents").authenticated()
+
+            //Only managers and analysts can post into this URL
+            .antMatchers(HttpMethod.POST, "/contents").hasAnyRole("ANALYST","MANAGER")
+
+            //Only managers and analysts can perform C.R.U.D into this URL
+            .antMatchers(HttpMethod.PUT, "/contents").hasAnyRole("ANALYST","MANAGER")
+            .antMatchers(HttpMethod.DELETE, "/contents/*").hasAnyRole("ANALYST","MANAGER")
+            
+        .and()
+        .logout()
+        .logoutUrl("/logout")
+        //This is to allow the session to be set up so that it is not invalidated when a logout occurs
+        // Note to self: Find a way to find the session ID if necessary
+        // .invalidateHttpSession(true)
+        // .deleteCookies(RequestContextHolder.currentRequestAttributes().getSessionId())
+
         .and()
         .csrf().disable() // CSRF protection is needed only for browser based attacks
         .formLogin().successHandler(new CustomAuthenticationSuccessHandler()) //creates session after successful login
         .failureUrl("/login?error=true").
             and()
         .headers().disable(); // Disable the security headers, as we do not return HTML in our service
+    
         //allow max 1 session , direct to expired url
         http.sessionManagement().maximumSessions(1).expiredUrl("/login?expired=true"); 
+
     }
 
     /**
@@ -63,4 +100,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // auto-generate a random salt internally
         return new BCryptPasswordEncoder();
     }
+
+
 }

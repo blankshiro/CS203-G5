@@ -1,0 +1,37 @@
+###
+#Logout
+GET http://localhost:8080/logout
+
+###
+#Try to get without authorization to contents
+GET http://localhost:8080/contents
+
+####
+#Try to get with authorization as manager
+GET http://localhost:8080/contents
+Authorization: Basic manager:goodpassword
+####
+#Try to get with authorization as analyst
+GET http://localhost:8080/contents
+Authorization: Basic analyst:goodpassword
+
+###
+#Try to get with authorization as user
+GET http://localhost:8080/contents
+Authorization: Basic user1:goodpassword
+
+###
+#Deleting non-existing content
+DELETE http://localhost:8080/contents/5
+Authorization: Basic manager:goodpassword
+
+
+###
+#Deleting existent content as manager
+DELETE http://localhost:8080/contents/1
+Authorization: Basic manager:goodpassword
+
+###
+#Deleting existent content as user (unauthorized)
+DELETE http://localhost:8080/contents/1
+Authorization: Basic user1:goodpassword
