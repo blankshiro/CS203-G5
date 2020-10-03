@@ -11,7 +11,17 @@ public interface CustomerService {
 
     Customer addUser(Customer user);
 
-    Customer updateUser(Long userId, Customer user, String authenticatedUsername, String authenticatedUserRole);
+    //Update user's information
+
+    // Customer updateUser(Long userId, Customer user, String authenticatedUsername, String authenticatedUserRole);
+    Customer updateAddress(Long userId, String address);
+    Customer updateAddress(Long userId, String address, String authenticatedUsername);
+
+    Customer updatePhone(Long userId, String phone);
+    Customer updatePhone(Long userId, String phone, String authenticatedUsername);
+
+    Customer updatePassword(Long userId, String password);
+    // Customer updatePassword(Long userId, String password, String authenticatedUsername);
 
     // Customer deactiveUser(Long userId);
 
