@@ -198,6 +198,24 @@ public class TestConstants {
         The last_price should reflect the actual price for the last trade done in your API.
         If no trade has been done, the last_price can be obtained from an external data source.
         Note that bid is always smaller than ask price.
+
+        To be deleted
+        Bid price: highest price you can sell. If we are selling stock, look at bid price (highest priced buy order that is available in the market)
+        Ask price: lowest price you can buy. If we are buying stock, look at ask price (lowest price that ppl are willing to sell) 
+        last price: eg wants to sell house @ 350, receiver offer @325, after nego settle @335 , last price = 335
+
+        A Transaction occurs after the buyer and seller agree on a price for the security which is no higher than a bid and 
+        and no lower than a ask
+
+        diff between bid and ask is known as spread; the smaller the spread, the greater the liquidity of the given security
+
+        traders want to get a better price , sell a little higher or buy a little lower
+
+        volume:
+        bid volume > ask volume, selling is strong. price is more likely to move down than up
+        bid volume < ask volume, buying is strong, price is more likely to move up then down
+
+        end of deletion
         
         Stock info:
         {
@@ -208,6 +226,14 @@ public class TestConstants {
             "ask_volume":20000,
             "ask":3.29
         }
+
+        To be deleted
+        bid-ask spread benefits the market marker
+        the spread represents the market marker's profit
+
+         end of deletion
+        
+
         Market Maker function: your API should be generating various sell and buy orders
             for all traded stocks at appropriate bids and asks (based on actual last_price).
             The volumes for these orders should be specified or fixed by your API, i.e.,
