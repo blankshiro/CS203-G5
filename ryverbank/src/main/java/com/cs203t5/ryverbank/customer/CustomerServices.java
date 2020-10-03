@@ -7,15 +7,38 @@ import java.util.List;
 public interface CustomerServices {
     List<Customer> listUsers();
 
-    Customer getUser(Long userId);
+    //Creating new User (C of C.R.U.D)
+    //Roles: Manager
+    Customer createCustomer(Customer user);
+
+    
+    //Get User (R of C.R.U.D)
+    //Roles: Customer & Manager
+    Customer getUser(Long userId, String authenticatedUsername, String authenticatedUserRole);
 
     Customer addUser(Customer user);
 
-    Customer updateUser(Long userId, Customer user);
+    //Update user's information (U of C.R.U.D)
+    //Roles: Customer & Manager
+    
+    //Manager update Customer Address
+    Customer updateAddress(Long userId, String address);
+    //Customer update own Address
+    Customer updateAddress(Long userId, String address, String authenticatedUsername);
 
-    void deleteUser(Long userId);
+    //Manager update Customer phone
+    Customer updatePhone(Long userId, String phone);
+     //Customer update own phone
+    Customer updatePhone(Long userId, String phone, String authenticatedUsername);
 
-    Customer createCustomer(Customer user);
+     //Manager update Customer password
+    Customer updatePassword(Long userId, String password);
+     //Customer update own password
+    Customer updatePassword(Long userId, String password, String authenticatedUsername);
 
-    // void sendEmail(String toUser, String token);
+    //Manager update Customer active field
+    Customer updateActiveStatus(Long userId, Boolean activeStatus);
+
+ 
+
 }

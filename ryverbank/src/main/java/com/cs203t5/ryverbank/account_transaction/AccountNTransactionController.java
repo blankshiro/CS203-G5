@@ -1,7 +1,10 @@
 package com.cs203t5.ryverbank.account_transaction;
 
-import java.util.List;
+import java.util.*;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cs203t5.ryverbank.customer.*;
 
@@ -13,6 +16,9 @@ public class AccountNTransactionController {
     private AccountServices accService;
     private TransactionServices transService;
 
+    private Long sessionID = 1L; //this is to retrieve id from customer retreive from securitycontextholder
+    private Customer cusLogged;
+
     public AccountNTransactionController(AccountRepository accRepo, CustomerRepository cusRepo, 
                                         TransactionRepository transRepo, AccountServices accService, 
                                         TransactionServices transService){
@@ -23,16 +29,39 @@ public class AccountNTransactionController {
         this.transService = transService;
     }
 
-    /*
-    change the Long id to equal to the session stored value
-    */
+    
+    public void getSessionDetails(){
+        String username = "";
+        //Inside the SecurityContextHolder we store details of the principal currently interacting with the application. 
+        //Spring Security uses an Authentication object to represent this information.
+        //call out securitycontextholder to get session
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       
+        if (principal != null && principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername(); //retrieve session userdetails and store into username
+        } 
+        else {
+            // username = principal.toString();
+        }
+        //retrieve optionalCustomer object from repo
+        Optional<Customer> optionalCustomer = cusRepo.findByUsername(username);
+        //get customer object from optional object
+        if(optionalCustomer != null && optionalCustomer.isPresent()){
+            Customer customer = optionalCustomer.get();
+            this.sessionID = customer.getId();
+        }
+        
+    }
+
     @GetMapping("/accounts")
-    public List<Account> getAllAccounts(Customer cus){
-        Long id = cus.getId();
+    public List<Account> getAllAccounts(){
+        //get id
+        getSessionDetails();
+        Long id = sessionID;
         if(!cusRepo.existsById(id)){
             throw new CustomerNotFoundException(id);
         }
-        return accRepo.findByCustomerId(id);
+        return accRepo.findByCustomer(id);
     }
 
     @GetMapping("/accounts/{accounts_id}")
@@ -44,21 +73,20 @@ public class AccountNTransactionController {
         }
         return accService.getAccount(accId);
     }
+    
 
-    /*
-    change the Long id to equal to the session stored value
-    */
+    //not checking if customer exist
     @PostMapping("/accounts")
-    public Account createAccount(Customer cus, @RequestBody Account newAccInfo){
-        Long id = cus.getId();
-        Account newAcc = new Account();
-
-        return cusRepo.findById(id).map(customer -> {
-            newAcc.setCustomerId(id);
-            newAcc.setBalance(newAccInfo.getCustomerId());
-            newAcc.setAvailableBalance(newAccInfo.getAvailableBalance());
-            return accService.addAccount(newAcc);
-        }).orElseThrow(() -> new CustomerNotFoundException(id));
+    public Account createAccount(@RequestBody Account newAccInfo){
+        if(cusRepo.existsById(newAccInfo.getCustomer())){
+            return accService.addAccount(newAccInfo);
+        } else {
+            throw new  CustomerNotFoundException(newAccInfo.getCustomer());
+        }
+        // return cusRepo.findById(id).map(customer -> {
+            // newAccInfo.setCustomer(newAccInfo.getId());
+            // newAccInfo.setTransactions(null);
+        // }).orElseThrow(() -> new CustomerNotFoundException(newAccInfo.getId()));
     }
 
     @GetMapping("/accounts/{accounts_id}/transactions")
@@ -66,19 +94,15 @@ public class AccountNTransactionController {
         if(!accRepo.existsById(accId)){
              throw new AccountNotFoundException(accId);
         }
-        return transRepo.findByFromOrTo(accId, accId);
+        return transRepo.findByAccount1OrAccount2(accId, accId);
     }
 
     @PostMapping("/accounts/{accounts_id}")
     public Transaction addTransaction(@PathVariable (value = "accounts_id") Long accId,
                                         @RequestBody Transaction newTransInfo){
-        Transaction newTrans = new Transaction();
 
         return accRepo.findById(accId).map(account -> {
-            newTrans.setAmount(newTransInfo.getAmount());
-            newTrans.setFrom(account.getId());
-            newTrans.setTo(newTransInfo.getTo());
-            return transService.addTransaction(newTrans);
+            return transService.addTransaction(newTransInfo);
         }).orElseThrow(() -> new AccountNotFoundException(accId));
     }
 } 
