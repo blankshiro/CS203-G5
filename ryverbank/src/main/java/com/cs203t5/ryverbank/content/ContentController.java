@@ -7,8 +7,10 @@ import javax.validation.Valid;
 
 import com.cs203t5.ryverbank.customer.CustomerUnauthorizedException;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,6 +57,9 @@ public class ContentController {
 
             // Return all content that are approved
         } else if (authenticatedUserRole.equals("ROLE_USER")) {
+            if (meinContent.findByApproved(true).isEmpty()){
+                throw new ContentNotFoundException("No content available for viewing");
+            }
             return meinContent.findByApproved(true);
         } else {
             throw new CustomerUnauthorizedException("You do not have permission to access the content");
@@ -62,7 +67,7 @@ public class ContentController {
     }
 
     // This method should only be accessible to managers/analysts, with the
-    // exception being approving the
+    // exception being approving the content
     /*
      * This method will be in charge of calling all the updating methods on content
      * 
@@ -83,7 +88,6 @@ public class ContentController {
 
         String authenticatedUserRole = auth.getAuthorities().stream().findAny().get().getAuthority();
         /*
-            First, check if the user is a manager or an analyst to determine the functions that will be called.
             A normal user should not be able to access this page based on the securityConfig
         */
         //If the content does not exist, throw error 404 handled by ContentNotFoundException
@@ -126,5 +130,17 @@ public class ContentController {
         }             
         return meinContent.findById(id);
     }
+
+    
+    @DeleteMapping(value = "/contents/{id}")
+    public void deleteContent(@PathVariable Long id){
+        try{
+            meinContent.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ContentNotFoundException(id);
+        }
+
+    }
+
 
 }

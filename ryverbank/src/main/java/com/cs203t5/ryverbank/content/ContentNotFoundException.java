@@ -9,4 +9,7 @@ public class ContentNotFoundException extends RuntimeException{
     public ContentNotFoundException(Long id){
         super("Unable to find content " + id);
     }
+    public ContentNotFoundException(String message){
+        super(message);
+    }
 }
