@@ -13,16 +13,25 @@ import lombok.*;
 public class CustomStock {
    
     @Id
+    @NotNull(message = "Symbol cannot be null")
     private String symbol;
 
+    @NotNull(message = "last price cannot be null")
+    @JsonProperty("last_price")
     private double lastPrice;
 
+    @NotNull(message = "bid volume cannot be null")
+    @JsonProperty("bid_volume")
     private int bidVolume;
 
+    @NotNull(message = "bid price cannot be null")
     private double bid;
 
+    @NotNull(message = "ask volume cannot be null")
+    @JsonProperty("ask_volume")
     private int askVolume;
 
+    @NotNull(message = "ask price cannot be null")
     private double ask;
 
     public CustomStock(String symbol, double lastPrice, int bidVolume, double bid, int askVolume, double ask) {
