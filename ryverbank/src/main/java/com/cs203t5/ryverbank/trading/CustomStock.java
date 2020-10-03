@@ -10,7 +10,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @EqualsAndHashCode
-public class Stock {
+public class CustomStock {
    
     @Id
     private String symbol;
@@ -25,7 +25,7 @@ public class Stock {
 
     private double ask;
 
-    public Stock(String symbol, double lastPrice, int bidVolume, double bid, int askVolume, double ask) {
+    public CustomStock(String symbol, double lastPrice, int bidVolume, double bid, int askVolume, double ask) {
         this.symbol = symbol;
         this.lastPrice = lastPrice;
         this.bidVolume = bidVolume;
