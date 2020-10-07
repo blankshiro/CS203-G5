@@ -15,14 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerServiceImpl implements CustomerServices {
     private CustomerRepository users;
-    // private ConfirmationTokenService confirmationTokenService;
-    
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     // private EmailService javaMailSender;
-
-
-  
 
     public CustomerServiceImpl(CustomerRepository users) {
         this.users = users;
@@ -51,7 +46,7 @@ public class CustomerServiceImpl implements CustomerServices {
         return users.save(user);
     }
 
-     //Updates the address of a particular user
+    //Updates the address of a particular user
     //This method will be used exclusively by Managers
     @Override
     public Customer updateAddress(Long userId, String newAddress){
