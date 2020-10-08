@@ -52,4 +52,5 @@ public class RyverbankApplication {
 	// 		new Content("Cats", "Cats are cool", "Need I say more?", "www.catsarekewl.com")).getTitle());
 	}
 
+
 }
