@@ -55,6 +55,12 @@ public class AccountServiceImpl implements AccountServices {
     public Account accTradeOnHold(Long accId, double amt){
         return accounts.findById(accId).map(account -> {
             double curr = account.getAvailableBalance();
+            //so if the amount should be deduct then amt will need to multiply by -1
+            //For example,
+            //acc1 gives money to acc2
+            //then when u use this method 
+            //acc1 should do accTradeOnHold(acc1, amt*-1)
+            //acc2 should do accTradeOnHold(acc2, amt)
             if(amt < 0.0){
                 if(curr - Math.abs(amt) < 0){
                     throw new InsufficientBalanceException("Not enough funds in trade");
@@ -70,6 +76,7 @@ public class AccountServiceImpl implements AccountServices {
 
     //use this for approved transaction
     //always use accTradeOnHold first before this
+    //the logic for this method same as the above one
     @Override
     public Account accTradeApproved(Long accId, double amt){
         return accounts.findById(accId).map(account -> {

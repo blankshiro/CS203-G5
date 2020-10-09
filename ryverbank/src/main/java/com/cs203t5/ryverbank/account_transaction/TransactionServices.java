@@ -8,5 +8,5 @@ public interface TransactionServices {
 
     Transaction getTransaction(Long id);
 
-    Transaction addTransaction(Transaction transaction, Long acc1, Long acc2);
+    Transaction addTransaction(Transaction transaction);
 }

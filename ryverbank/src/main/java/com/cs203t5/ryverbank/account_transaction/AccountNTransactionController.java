@@ -119,25 +119,24 @@ public class AccountNTransactionController {
         if(acc == null){
             throw new AccountNotFoundException(id);
         }
-        
+
         return transRepo.findByAccount1OrAccount2(id, id);
     }
 
-    @PostMapping("/accounts/{accounts_id}")
-    public Transaction addTransaction(@PathVariable (value = "accounts_id") Long accId,
+    @PostMapping("/accounts/{id}")
+    public Transaction addTransaction(@PathVariable Long id,
                                         @RequestBody Transaction newTransInfo){
         getSessionDetails();
-        Long id = sessionID;
+        Long session = sessionID;
         Long sender = newTransInfo.getAccount1();
         Long receiver = newTransInfo.getAccount2();
-
-        return accRepo.findById(accId).map(account -> {
+        return accRepo.findById(id).map(account -> {
             //check if the accounts_id belong to the customer
-            if(account.getCustomer_id() != id){
+            if(account.getCustomer_id() != session){
                 throw new CustomerUnauthorizedException("Account does not belong to this customer");
             }
             //check if the transaction serder account belong to the customer
-            if(sender != accId){
+            if(sender != id){
                 throw new CustomerUnauthorizedException("Account does not belong to this customer");
             }
             //check if sender and receiver are the same
@@ -149,7 +148,7 @@ public class AccountNTransactionController {
             if(!accRepo.existsById(receiver)){
                 throw new AccountNotFoundException(receiver);
             }
-            return transService.addTransaction(newTransInfo, sender, receiver);
-        }).orElseThrow(() -> new AccountNotFoundException(accId));
+            return transService.addTransaction(newTransInfo);
+        }).orElseThrow(() -> new AccountNotFoundException(id));
     }
 } 
