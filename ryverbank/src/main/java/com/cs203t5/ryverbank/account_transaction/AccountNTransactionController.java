@@ -74,13 +74,14 @@ public class AccountNTransactionController {
 
         Account acc = accService.getAccount(id);
 
+        if(acc == null){
+            throw new AccountNotFoundException(id);
+        }
+        
         if(session != acc.getCustomer_id()){
             throw new CustomerUnauthorizedException("Account does not belong to this customer");
         }
 
-        if(acc == null){
-            throw new AccountNotFoundException(id);
-        }
         return acc;
     }
     
