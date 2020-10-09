@@ -17,7 +17,6 @@ public class AccountNTransactionController {
     private TransactionServices transService;
 
     private Long sessionID = 1L; //this is to retrieve id from customer retreive from securitycontextholder
-    private Customer cusLogged;
 
     public AccountNTransactionController(AccountRepository accRepo, CustomerRepository cusRepo, 
                                         TransactionRepository transRepo, AccountServices accService, 
@@ -66,15 +65,23 @@ public class AccountNTransactionController {
         return accRepo.findByCustomer(cusRepo.findById(id));
         // return accRepo.findByCustomerCustomerId(id);
     }
+    
+    // put as id instead of account_id for now, need to check with prof again
+    @GetMapping("/accounts/{id}")
+    public Account getAccount(@PathVariable Long id){
+        getSessionDetails();
+        Long session = sessionID;
 
-    @GetMapping("/accounts/{accounts_id}")
-    public Account getAccount(@PathVariable (value = "account_id") Long accId){
-        Account acc = accService.getAccount(accId);
+        Account acc = accService.getAccount(id);
+
+        if(session != acc.getCustomer_id()){
+            throw new CustomerUnauthorizedException("Account does not belong to this customer");
+        }
 
         if(acc == null){
-            throw new AccountNotFoundException(accId);
+            throw new AccountNotFoundException(id);
         }
-        return accService.getAccount(accId);
+        return acc;
     }
     
 
@@ -97,20 +104,52 @@ public class AccountNTransactionController {
         // }).orElseThrow(() -> new CustomerNotFoundException(newAccInfo.getId()));
     }
 
-    @GetMapping("/accounts/{accounts_id}/transactions")
-    public List<Transaction> getAllTransaction(@PathVariable (value = "accounts_id") Long accId){
-        if(!accRepo.existsById(accId)){
-             throw new AccountNotFoundException(accId);
+    @GetMapping("/accounts/{id}/transactions")
+    public List<Transaction> getAllTransaction(@PathVariable Long id){
+        getSessionDetails();
+        Long session = sessionID;
+
+        Account acc = accService.getAccount(id);
+        //check if acc belong to the customer
+        if(acc.getCustomer_id() != session){
+            throw new CustomerUnauthorizedException("Account does not belong to this customer");
         }
-        return transRepo.findByAccount1OrAccount2(accId, accId);
+
+        //check if the account is valid
+        if(acc == null){
+            throw new AccountNotFoundException(id);
+        }
+        
+        return transRepo.findByAccount1OrAccount2(id, id);
     }
 
     @PostMapping("/accounts/{accounts_id}")
     public Transaction addTransaction(@PathVariable (value = "accounts_id") Long accId,
                                         @RequestBody Transaction newTransInfo){
+        getSessionDetails();
+        Long id = sessionID;
+        Long sender = newTransInfo.getAccount1();
+        Long receiver = newTransInfo.getAccount2();
 
         return accRepo.findById(accId).map(account -> {
-            return transService.addTransaction(newTransInfo);
+            //check if the accounts_id belong to the customer
+            if(account.getCustomer_id() != id){
+                throw new CustomerUnauthorizedException("Account does not belong to this customer");
+            }
+            //check if the transaction serder account belong to the customer
+            if(sender != accId){
+                throw new CustomerUnauthorizedException("Account does not belong to this customer");
+            }
+            //check if sender and receiver are the same
+            if(sender == receiver){
+                throw new InvalidEntryException("Cannot transfer to same account");
+            }
+
+            //check if the receiver is valid
+            if(!accRepo.existsById(receiver)){
+                throw new AccountNotFoundException(receiver);
+            }
+            return transService.addTransaction(newTransInfo, sender, receiver);
         }).orElseThrow(() -> new AccountNotFoundException(accId));
     }
 } 

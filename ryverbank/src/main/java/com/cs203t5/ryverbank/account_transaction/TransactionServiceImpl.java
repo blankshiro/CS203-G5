@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 public class TransactionServiceImpl implements TransactionServices {
 
     private TransactionRepository transactions;
+    private AccountServices accService;
 
-    
     public TransactionServiceImpl(TransactionRepository transactions) {
         this.transactions = transactions;
     }
@@ -28,7 +28,10 @@ public class TransactionServiceImpl implements TransactionServices {
     }
 
     @Override
-    public Transaction addTransaction(Transaction transaction) {
+    public Transaction addTransaction(Transaction transaction, Long acc1, Long acc2) {
+        accService.fundTransfer(acc1, transaction.getAmount());
+        accService.fundTransfer(acc2, transaction.getAmount());
+
         return transactions.save(transaction);
     }
 }
