@@ -62,7 +62,7 @@ public class Customer implements UserDetails {
     private String authorities;
 
     @NotNull(message = "Active should not be null")
-    private Boolean active = null;
+    private Boolean active = null ;
 
     //One person can have many accounts, that is why @OneToMany - One customer is given many accoutns
     //mappedBy: The list of accoutns is owned by a "customer"
@@ -74,18 +74,6 @@ public class Customer implements UserDetails {
     private List<Account> accounts;
 
 
-    /**
-     * Constructor for Customer.
-     * 
-     * @param username    The username of the customer.
-     * @param password    The password of the customer.
-     * @param full_name   The full name of the customer.
-     * @param nric        The NRIC of the customer.
-     * @param phone       The phone number of the customer.
-     * @param address     The home address of the customer.
-     * @param authorities The role of the customer.
-     * @param active      To set customer's account to active/inactive.
-     */
     public Customer(String username, String password, String full_name, String nric, String phone, String address,
             String authorities, boolean active) {
         this.full_name = full_name;
@@ -121,14 +109,13 @@ public class Customer implements UserDetails {
         return true;
     }
 
-    /**
-     * Returns the boolean check for status of customer's account.
-     */
     @Override
     public boolean isEnabled() {
         boolean actives = active.booleanValue();
         return actives;
     }
+
+  
 
     /**
      * Validates Singapore NRIC / FIN in 2 stages: 1) Ensure first letter starts
@@ -180,13 +167,6 @@ public class Customer implements UserDetails {
         }
     }
 
-    /**
-     * Validates phone number by checking if the number starts with 6/8/9 and has a
-     * total of 8 digits.
-     * 
-     * @param phone Phone number to be validated.
-     * @return true if the phone number passes, otherwise return false.
-     */
     public boolean validatePhone(String phone) {
         // validate phone numbers of format "1234567890"
         if (phone.matches("^[6|8|9]\\d{7}$"))

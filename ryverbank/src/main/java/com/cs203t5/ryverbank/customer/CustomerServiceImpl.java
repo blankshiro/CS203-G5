@@ -13,9 +13,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerServiceImpl implements CustomerServices {
     private CustomerRepository users;
+    // private ConfirmationTokenService confirmationTokenService;
+    
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     // private EmailService javaMailSender;
+
+
+  
 
     public CustomerServiceImpl(CustomerRepository users) {
         this.users = users;

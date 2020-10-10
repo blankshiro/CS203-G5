@@ -80,6 +80,7 @@ public class ContentServiceTest {
         when(meinContent.existsByTitle(any(String.class))).thenReturn(true);
 
         assertThrows(ContentExistsException.class, ()-> contentServices.createContent(newContent));
+
     }
 
     
