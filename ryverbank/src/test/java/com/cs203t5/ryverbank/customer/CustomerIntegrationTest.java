@@ -68,7 +68,7 @@ public class CustomerIntegrationTest {
         public void getCustomer_ValidCustomerId_Success() throws Exception {
                 Customer user = new Customer("user1", "goodpassword1", "Hibiki", "S8529649C", "91251234", "White House",
                                 "ROLE_USER", true);
-                Long id = user.getId();
+                Long id = user.getCustomerId();
 
                 users.save(user);
 
@@ -85,7 +85,7 @@ public class CustomerIntegrationTest {
         public void updateStatus_Valid_Success() throws Exception {
                 Customer user = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                                 "White House", "ROLE_USER", true);
-                Long id = users.save(user).getId();
+                Long id = users.save(user).getCustomerId();
 
                 Customer newUserInfo = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                                 "White House", "ROLE_USER", false);

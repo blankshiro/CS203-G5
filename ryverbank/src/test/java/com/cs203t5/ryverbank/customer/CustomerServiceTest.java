@@ -59,7 +59,7 @@ public class CustomerServiceTest {
         Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
         // Mock
-        Long userId = foundUser.getId();
+        Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
         Customer gCustomer = userService.getUser(userId, foundUser.getUsername(), "USER_ROLE");
@@ -77,7 +77,7 @@ public class CustomerServiceTest {
     void customerUpdateAddress_FoundUser_ReturnUpdatedAddress() {
         Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
-        Long userId = foundUser.getId();
+        Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
         Customer updatedCustomerAddress = userService.updateAddress(userId, "Blue House", "USER_ROLE");
@@ -90,7 +90,7 @@ public class CustomerServiceTest {
     void customerUpdatePhone_FoundUser_ReturnUpdatedPhone() {
         Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
-        Long userId = foundUser.getId();
+        Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
         Customer updatedCustomerPhone = userService.updatePhone(userId, "81234567", "ROLE_USER");
@@ -103,7 +103,7 @@ public class CustomerServiceTest {
     void customerUpdatePassword_FoundUser_ReturnUpdatedPassword() {
         Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
-        Long userId = foundUser.getId();
+        Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
         Customer updatedCustomerPassword = userService.updatePhone(userId, "betterpassword1", "USER_ROLE");
@@ -116,7 +116,7 @@ public class CustomerServiceTest {
     void updateActiveStatus_FoundUser_ReturnUpdatedActiveStatus() {
         Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
-        Long userId = foundUser.getId();
+        Long userId = foundUser.getCustomerId();
 
         when(users.findById(userId)).thenReturn(Optional.empty());
 

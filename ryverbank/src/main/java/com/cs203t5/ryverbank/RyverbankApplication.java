@@ -14,21 +14,6 @@ public class RyverbankApplication {
 
 		ApplicationContext ctx = SpringApplication.run(RyverbankApplication.class, args);
 
-		StockCrawler stc = ctx.getBean(StockCrawler.class);
-		stc.crawl();
-		StockRepository repo = ctx.getBean(StockRepository.class);
-
-		Optional<CustomStock> stock = repo.findBySymbol("A17U");
-		CustomStock stk = stock.get();
-
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println(stk.getSymbol());
-		System.out.println();
-		System.out.println();
-		
 		/*
 		// JPA user repository init
 		//create a manager account 
