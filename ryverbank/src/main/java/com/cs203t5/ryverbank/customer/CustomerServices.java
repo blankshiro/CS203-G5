@@ -7,16 +7,16 @@ import java.util.List;
 public interface CustomerServices {
     List<Customer> listUsers();
 
-    //Creating new User (C of C.R.U.D)
-    //Roles: Manager
-    Customer createCustomer(Customer user);
+    // Creating new User (C of C.R.U.D)
+    // Roles: Manager
+    Customer createUser(Customer user);
 
     
     //Get User (R of C.R.U.D)
     //Roles: Customer & Manager
     Customer getUser(Long userId, String authenticatedUsername, String authenticatedUserRole);
 
-    Customer addUser(Customer user);
+    //Customer addUser(Customer user);
 
     //Update user's information (U of C.R.U.D)
     //Roles: Customer & Manager

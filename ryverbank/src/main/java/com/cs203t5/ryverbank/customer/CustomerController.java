@@ -5,10 +5,9 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
 
 @RestController
 public class CustomerController {
@@ -39,14 +38,12 @@ public class CustomerController {
      */
     @PostMapping("/customers")
     public Customer createCustomer(@Valid @RequestBody Customer user) {
-        System.out.println("TEST1: " + user.validateNric(user.getNric()));
-        System.out.println("TEST2: " + user.validatePhone(user.getPhone()));
         if (!user.validateNric(user.getNric()) || !user.validatePhone(user.getPhone())) {
             throw new InvalidEntryException("Invalid NRIC/Phone number");
 
         }
         user.setPassword(encoder.encode(user.getPassword()));
-        return userService.createCustomer(user);
+        return userService.createUser(user);
 
     }
 
