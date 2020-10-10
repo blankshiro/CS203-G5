@@ -38,25 +38,14 @@ public class CustomerController {
      */
     @PostMapping("/customers")
     public Customer createCustomer(@Valid @RequestBody Customer user) {
-        // System.out.println("TEST1: " + user.validateNric(user.getNric()));
-        // System.out.println("TEST2: " + user.validatePhone(user.getPhone()));
         if (!user.validateNric(user.getNric()) || !user.validatePhone(user.getPhone())) {
             throw new InvalidEntryException("Invalid NRIC/Phone number");
 
         }
         user.setPassword(encoder.encode(user.getPassword()));
-        return userService.createUser(user);
-    }
+        return userService.createCustomer(user);
 
-    //FOR TESTING ONLY, NOT TO BE RUN
-    // @DeleteMapping(value = "/customers/{id}")
-    // public void deleteCustomer(@PathVariable Long id){
-    //     try{
-    //         users.deleteById(id);
-    //     } catch (EmptyResultDataAccessException e){
-    //         throw new CustomerNotFoundException(id);
-    //     }
-    // }
+    }
 
     /**
      * List all users in the system

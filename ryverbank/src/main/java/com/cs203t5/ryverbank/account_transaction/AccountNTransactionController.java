@@ -17,6 +17,7 @@ public class AccountNTransactionController {
     private TransactionServices transService;
 
     private Long sessionID = 1L; //this is to retrieve id from customer retreive from securitycontextholder
+    private Customer cusLogged;
 
     public AccountNTransactionController(AccountRepository accRepo, CustomerRepository cusRepo, 
                                         TransactionRepository transRepo, AccountServices accService, 
@@ -47,7 +48,7 @@ public class AccountNTransactionController {
         //get customer object from optional object
         if(optionalCustomer != null && optionalCustomer.isPresent()){
             Customer customer = optionalCustomer.get();
-            this.sessionID = customer.getCustomerId();
+            this.sessionID = customer.getId();
         }
         
     }
@@ -57,99 +58,51 @@ public class AccountNTransactionController {
         //get id
         getSessionDetails();
         Long id = sessionID;
-        System.out.println("USER ID IS FOUND: " + sessionID + "\n\n\n\n\n");
         if(!cusRepo.existsById(id)){
             throw new CustomerNotFoundException(id);
         }
-        // This statement searches based on the customer, instead of the userId
-        return accRepo.findByCustomer(cusRepo.findById(id));
-        // return accRepo.findByCustomerCustomerId(id);
+        return accRepo.findByCustomer(id);
     }
-    
-    // put as id instead of account_id for now, need to check with prof again
-    @GetMapping("/accounts/{id}")
-    public Account getAccount(@PathVariable Long id){
-        getSessionDetails();
-        Long session = sessionID;
 
-        Account acc = accService.getAccount(id);
+    @GetMapping("/accounts/{accounts_id}")
+    public Account getAccount(@PathVariable (value = "account_id") Long accId){
+        Account acc = accService.getAccount(accId);
 
         if(acc == null){
-            throw new AccountNotFoundException(id);
+            throw new AccountNotFoundException(accId);
         }
-        
-        if(session != acc.getCustomer_id()){
-            throw new CustomerUnauthorizedException("Account does not belong to this customer");
-        }
-
-        return acc;
+        return accService.getAccount(accId);
     }
     
 
+    //not checking if customer exist
     @PostMapping("/accounts")
     public Account createAccount(@RequestBody Account newAccInfo){
-        // if(cusRepo.existsById(newAccInfo.getCustId())){
-        //     newAccInfo.setCustomer(cusRepo.getOne(newAccInfo.getCustId()));
-        //     return accService.addAccount(newAccInfo);
-        // } else {
-        //     throw new  CustomerNotFoundException(newAccInfo.getCustId());
-        // }
-        return cusRepo.findById(newAccInfo.getCustomer_id()).map(aCustomer -> {
-            newAccInfo.setCustomer(aCustomer);
+        if(cusRepo.existsById(newAccInfo.getCustomer())){
             return accService.addAccount(newAccInfo);
-
-        }).orElseThrow(() -> new CustomerNotFoundException(newAccInfo.getCustomer_id()));
+        } else {
+            throw new  CustomerNotFoundException(newAccInfo.getCustomer());
+        }
         // return cusRepo.findById(id).map(customer -> {
             // newAccInfo.setCustomer(newAccInfo.getId());
             // newAccInfo.setTransactions(null);
         // }).orElseThrow(() -> new CustomerNotFoundException(newAccInfo.getId()));
     }
 
-    @GetMapping("/accounts/{id}/transactions")
-    public List<Transaction> getAllTransaction(@PathVariable Long id){
-        getSessionDetails();
-        Long session = sessionID;
-
-        Account acc = accService.getAccount(id);
-        //check if acc belong to the customer
-        if(acc.getCustomer_id() != session){
-            throw new CustomerUnauthorizedException("Account does not belong to this customer");
+    @GetMapping("/accounts/{accounts_id}/transactions")
+    public List<Transaction> getAllTransaction(@PathVariable (value = "accounts_id") Long accId){
+        if(!accRepo.existsById(accId)){
+             throw new AccountNotFoundException(accId);
         }
-
-        //check if the account is valid
-        if(acc == null){
-            throw new AccountNotFoundException(id);
-        }
-
-        return transRepo.findByAccount1OrAccount2(id, id);
+        return transRepo.findByAccount1OrAccount2(accId, accId);
     }
 
-    @PostMapping("/accounts/{id}")
-    public Transaction addTransaction(@PathVariable Long id,
+    @PostMapping("/accounts/{accounts_id}")
+    public Transaction addTransaction(@PathVariable (value = "accounts_id") Long accId,
                                         @RequestBody Transaction newTransInfo){
-        getSessionDetails();
-        Long session = sessionID;
-        Long sender = newTransInfo.getAccount1();
-        Long receiver = newTransInfo.getAccount2();
-        return accRepo.findById(id).map(account -> {
-            //check if the accounts_id belong to the customer
-            if(account.getCustomer_id() != session){
-                throw new CustomerUnauthorizedException("Account does not belong to this customer");
-            }
-            //check if the transaction serder account belong to the customer
-            if(sender != id){
-                throw new CustomerUnauthorizedException("Account does not belong to this customer");
-            }
-            //check if sender and receiver are the same
-            if(sender == receiver){
-                throw new InvalidEntryException("Cannot transfer to same account");
-            }
 
-            //check if the receiver is valid
-            if(!accRepo.existsById(receiver)){
-                throw new AccountNotFoundException(receiver);
-            }
+        return accRepo.findById(accId).map(account -> {
             return transService.addTransaction(newTransInfo);
-        }).orElseThrow(() -> new AccountNotFoundException(id));
+        }).orElseThrow(() -> new AccountNotFoundException(accId));
     }
 } 

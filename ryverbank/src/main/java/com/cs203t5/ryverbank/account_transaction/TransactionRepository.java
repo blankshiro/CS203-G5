@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransactionRepository extends JpaRepository <Transaction, Long>{
-    // find all the transaction based on account id
+    //find all the transaction based on account id
     List<Transaction> findByAccount1OrAccount2(Long fromAccId, Long toAccId);
 }

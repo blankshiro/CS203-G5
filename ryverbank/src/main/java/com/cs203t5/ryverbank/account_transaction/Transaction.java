@@ -16,23 +16,19 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Transaction {
-    
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     
     private double amount;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "accfrom", referencedColumnName = "id")
-    // @JsonProperty("from")
-    // private Account account1;
-    private Long account1;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accfrom", referencedColumnName = "id")
+    @JsonProperty("from")
+    private Account account1;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "accTo", referencedColumnName = "id")
-    // @JsonProperty("to")
-    // private Account account2;
-    private Long account2;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accTo", referencedColumnName = "id")
+    @JsonProperty("to")
+    private Account account2;
 
     public Transaction(Long id, double amt) {
         this.id = id;

@@ -1,23 +1,19 @@
 package com.cs203t5.ryverbank.customer;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.cs203t5.ryverbank.account_transaction.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.*;
+
+import com.cs203t5.ryverbank.account_transaction.*;
 
 @Entity
 @Setter
@@ -29,10 +25,7 @@ import lombok.*;
 public class Customer implements UserDetails {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    @JsonProperty("id")
-    private Long customerId;
+    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 
     @NotNull(message = "Username should not be null")
     @Size(min = 5, max = 20, message = "Username should be between 5 and 20 characters")
@@ -62,15 +55,9 @@ public class Customer implements UserDetails {
     @NotNull(message = "Active should not be null")
     private Boolean active = null ;
 
-    //One person can have many accounts, that is why @OneToMany - One customer is given many accoutns
-    //mappedBy: The list of accoutns is owned by a "customer"
-    
-    // @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true);
-    //The owner of the field "accounts" is the customer
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Account> accounts;
-
+    // @OneToMany(mappedBy = "id", cascade = CascadeType.PERSIST, fetch =
+    // FetchType.LAZY)
+    // private List<Account> accounts;
 
     public Customer(String username, String password, String full_name, String nric, String phone, String address,
             String authorities, boolean active) {
