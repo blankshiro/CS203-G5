@@ -43,7 +43,7 @@ public class CustomerController {
 
         }
         user.setPassword(encoder.encode(user.getPassword()));
-        return userService.createCustomer(user);
+        return userService.createUser(user);
 
     }
 
