@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 public class CustomerController {
     private CustomerRepository users;
@@ -75,16 +76,8 @@ public class CustomerController {
         return userService.getUser(id,  authenticatedUsername, authenticatedUserRole);
     }
 
-    /**
-     * If there is no user with the given id, throw a UserNotFoundException
-     * 
-     * @param idssss
-     * @param newUserInfo
-     * @return the updated, or newly added book
-     */
-
       // This method should only be accessible to managers/user, with the
-    // exception being approving the content
+    // exception being deactivate the customer
     /*
      * This method will be in charge of calling all the updating methods on User
      * 

@@ -1,13 +1,16 @@
 package com.cs203t5.ryverbank.trading;
+import com.cs203t5.ryverbank.customer.Customer;
 
 import java.util.List;
 
 public interface TradeServices {
     
-    Trade buyAtMarket(String symbol);
-    Trade buyAtLimit(String symbol);
+    List <Trade> getAllTrades();
+    Trade createMarketBuyTrade(Trade trade, Customer  customer, CustomStock customStock);
+    Trade createMarketSellTrade(Trade trade, Customer  customer, CustomStock customStock);
 
-    Trade sellAtMarket(String symbol);
-    Trade sellAtLimit(String symbol);
+    Trade getTrade(Long tradeId, Customer customer);
+    Trade cancelTrade(Long tradeId, Customer customer);
+    
     
 }

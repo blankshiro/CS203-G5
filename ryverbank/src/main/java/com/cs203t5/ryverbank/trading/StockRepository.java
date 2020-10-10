@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface StockRepository extends JpaRepository <CustomStock, String>{
     Optional<CustomStock> findBySymbol(String symbol);
 
+
     
 
 }

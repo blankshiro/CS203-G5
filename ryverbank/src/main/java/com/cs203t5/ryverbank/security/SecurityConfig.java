@@ -42,6 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .httpBasic()
         .and()
         .authorizeRequests()
+            //Following lines are for user management
             //create a customer profile
             .antMatchers(HttpMethod.POST, "/customers").hasRole("MANAGER")
             //Get all customers
@@ -51,8 +52,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             //update specific customer profile
             .antMatchers(HttpMethod.PUT, "/customers/*").hasAnyRole("USER","MANAGER")
-            // .antMatchers(HttpMethod.DELETE, "/customers/*").authenticated()
-        
+
+             //Following lines are for online banking system 
             .antMatchers(HttpMethod.GET, "/accounts").hasRole("USER")
             .antMatchers(HttpMethod.GET, "/accounts/*").hasRole("USER")
             .antMatchers(HttpMethod.POST, "/accounts").hasRole("MANAGER")
@@ -69,6 +70,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             //Only managers and analysts can perform C.R.U.D into this URL
             .antMatchers(HttpMethod.PUT, "/contents").hasAnyRole("ANALYST","MANAGER")
             .antMatchers(HttpMethod.DELETE, "/contents/*").hasAnyRole("ANALYST","MANAGER")
+
+             //Following lines are for stock management
+              //Everyone that wants to access the stock page needs to be authenticated
+             .antMatchers(HttpMethod.GET, "/stocks", "/stocks/*").authenticated()
+
+               //Following lines are for trade management
+              //Only user can access the following URLS
+              .antMatchers(HttpMethod.POST, "/stocks").hasRole("USER")
+
+              .antMatchers(HttpMethod.GET, "/stocks", "/stocks/*").hasRole("USER")
+
+              .antMatchers(HttpMethod.PUT, "/stocks/*").hasRole("USER")
             
         .and()
         .logout()

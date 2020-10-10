@@ -1,14 +1,14 @@
 package com.cs203t5.ryverbank.trading;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public class StockServiceImpl implements StockServices {
     private StockRepository stocks;
-    private StockCrawler crawler;
 
-    public StockServiceImpl (StockRepository stocks, StockCrawler crawler) {
+    public StockServiceImpl (StockRepository stocks) {
         this.stocks = stocks;
-        this.crawler = crawler;
     }
 
     public List<CustomStock> listStocks() {
@@ -16,8 +16,9 @@ public class StockServiceImpl implements StockServices {
     }
 
     public CustomStock getStock(String symbol) {
-        Optional<CustomStock> optionalStock = stocks.findBySymbol(symbol);
-        CustomStock stock = optionalStock.get();
-        return stock;
+        return stocks.findBySymbol(symbol).map(stock -> 
+        {
+            return stocks.save(stock);
+        }).orElse(null);
     }
 }
