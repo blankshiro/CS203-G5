@@ -52,7 +52,12 @@ public class CustomerController {
 
         }
         user.setPassword(encoder.encode(user.getPassword()));
+<<<<<<< Updated upstream
         return userService.createCustomer(user);
+=======
+        return userService.createUser(user);
+
+>>>>>>> Stashed changes
     }
 
     //FOR TESTING ONLY, NOT TO BE RUN

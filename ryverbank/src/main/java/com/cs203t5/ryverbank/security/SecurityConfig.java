@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     * Note: '*' matches zero or more characters, e.g., /customers/* matches /customers/20
             '**' matches zero or more 'directories' in a path, e.g., /accounts/** matches /accounts/1/transactions
     */
-
+    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -87,7 +87,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
         //allow max 1 session , direct to expired url
         http.sessionManagement().maximumSessions(1).expiredUrl("/login?expired=true"); 
-
     }
 
     /**

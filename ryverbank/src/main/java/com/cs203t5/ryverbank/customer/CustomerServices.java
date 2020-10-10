@@ -9,13 +9,13 @@ public interface CustomerServices {
 
     // Creating new User (C of C.R.U.D)
     // Roles: Manager
-    Customer createCustomer(Customer user);
+    Customer createUser(Customer user);
 
     // Get User (R of C.R.U.D)
     // Roles: Customer & Manager
     Customer getUser(Long userId, String authenticatedUsername, String authenticatedUserRole);
 
-    Customer addUser(Customer user);
+    //Customer addUser(Customer user);
 
     // Update user's information (U of C.R.U.D)
     // Roles: Customer & Manager
