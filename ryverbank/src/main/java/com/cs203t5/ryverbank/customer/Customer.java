@@ -77,6 +77,7 @@ public class Customer implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.asList(new SimpleGrantedAuthority(authorities));
     }
+    
 
     @Override
     public boolean isAccountNonExpired() {

@@ -1,5 +1,7 @@
 package com.cs203t5.ryverbank.content;
 
+import java.util.Optional;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +16,6 @@ import lombok.*;
 @Entity
 @Setter
 @Getter
-@ToString
 @NoArgsConstructor
 public class Content {
 
