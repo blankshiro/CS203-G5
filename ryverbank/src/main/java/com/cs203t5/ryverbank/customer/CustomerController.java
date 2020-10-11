@@ -15,23 +15,22 @@ public class CustomerController {
     private CustomerServices userService;
     private BCryptPasswordEncoder encoder;
 
+    /**
+     * Constructor for CustomerController.
+     * 
+     * @param users The Customer Repository.
+     * @param userSvc The Customer Services.
+     * @param encoder BCryptPasswordEcnoder.
+     */
     public CustomerController(CustomerRepository users, CustomerServices userSvc, BCryptPasswordEncoder encoder) {
         this.users = users;
         this.userService = userSvc;
         this.encoder = encoder;
     }
 
-    // @GetMapping("/user")
-    // public String loggedInUserInfo(Authentication authentication){
-    // String userName = authentication.getName();
-    // String role =
-    // authentication.getAuthorities().stream().findAny().get().getAuthority();
-    // return role;
-    // }
-
     /**
      * Registers a new user and uses BCrypt encoder to encrypt the password for
-     * storage
+     * storage.
      * 
      * @param user
      * @return the user
@@ -49,7 +48,7 @@ public class CustomerController {
     }
 
     /**
-     * List all users in the system
+     * List all users in the system.
      * 
      * @return list of all users
      */
@@ -59,8 +58,8 @@ public class CustomerController {
     }
 
     /**
-     * Search for user with the given id If there is not user with the given "id",
-     * throw a UserNotFoundException
+     * Search for user with the given id. If there is not user with the given "id",
+     * throw a CustomerNotFoundException.
      * 
      * @param id
      * @return user with the given id
@@ -69,24 +68,25 @@ public class CustomerController {
     public Customer getUser(@PathVariable Long id, Authentication authentication) {
         String authenticatedUserRole = authentication.getAuthorities().stream().findAny().get().getAuthority();
         String authenticatedUsername = authentication.getName();
+
+        // Gets the user based on the authenticated username + role.
         Customer user = userService.getUser(id, authenticatedUsername, authenticatedUserRole);
 
+        // If user is null, throw CustomerNotFoundException.
         if (user == null)
             throw new CustomerNotFoundException(id);
         return userService.getUser(id, authenticatedUsername, authenticatedUserRole);
     }
 
-    // This method should only be accessible to managers/user, with the
-    // exception being deactivate the customer
-    /*
-     * This method will be in charge of calling all the updating methods on User
+    /**
+     * Updates customer's information based on the new information given. This
+     * method should only be accessible to managers/user, with the exception of
+     * deactivate the customer's account.
      * 
-     * Roles that can call these methods: User, Manager updateAddress()
-     * updatePhone() updatePassword()
-     * 
-     * This method disable customer
-     * 
-     * Roles that can call these methods: Manager disableCustomer()
+     * @param id             The id of the customer.
+     * @param newUserInfo    The customer's new information.
+     * @param authentication Authentication checker.
+     * @return The updated customer's information.
      */
 
     @PutMapping("/customers/{id}")

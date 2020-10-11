@@ -1,27 +1,22 @@
 package com.cs203t5.ryverbank.customer;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
-// import com.cs203t5.ryverbank.token.*;
-// import com.cs203t5.ryverbank.email.*;
-
-// import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CustomerServiceImpl implements CustomerServices {
+    /** The Customer Repository */
     private CustomerRepository users;
-    // private ConfirmationTokenService confirmationTokenService;
     
-
+    /** BCryptPasswordEncoder */
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-    // private EmailService javaMailSender;
 
-
-  
-
+    /**
+     * The constructor for CustomerServiceImpl.
+     * @param users The Customer Repository.
+     */
     public CustomerServiceImpl(CustomerRepository users) {
         this.users = users;
     }
@@ -43,15 +38,6 @@ public class CustomerServiceImpl implements CustomerServices {
             }
         }).orElse(null);
     }
-
-    // @Override
-    // public Customer addUser(Customer user) {
-    //     if (users.existsByUsername(user.getUsername())) {
-    //         throw new CustomerExistsException("username used");
-    //     }
-
-    //     return users.save(user);
-    // }
 
     // Updates the address of a particular user
     // This method will be used exclusively by Managers

@@ -67,24 +67,6 @@ public class CustomerIntegrationTest {
 
         @Test
         public void createCustomer_Success() throws Exception {
-                Customer user = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
-                                "White House", "ROLE_USER", true);
-
-                users.save(user);
-
-                URI uri = new URI(baseUrl + port + "/customers/");
-
-                Customer newUser = new Customer("user2", "goodpassword2", "Tonald Trump", "S0437130E", "81251234",
-                                "Blue House", "ROLE_USER", true);
-
-                HttpHeaders headers = new HttpHeaders();
-
-                HttpEntity<Customer> request = new HttpEntity<Customer>(newUser, headers);
-
-                ResponseEntity<Customer> result = restTemplate.withBasicAuth("manager", "goodpassword").exchange(uri,
-                                HttpMethod.POST, request, Customer.class);
-
-                assertEquals(200, result.getStatusCode().value());
 
         }
 
@@ -149,40 +131,12 @@ public class CustomerIntegrationTest {
 
         @Test
         public void updateUser_Valid_Success() throws Exception {
-                Customer user = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
-                                "White House", "ROLE_USER", true);
 
-                Long id = users.save(user).getId();
-
-                Customer newUserInfo = new Customer();
-                // Customer newUserInfo = new Customer("user1", "goodpassword1", "Ronald Trump",
-                // "S8529649C", "91251234",
-                // "White House", "ROLE_USER", false);
-
-                HttpHeaders headers = new HttpHeaders();
-
-                HttpEntity<Customer> request = new HttpEntity<>(newUserInfo, headers);
-
-                URI uri = new URI(baseUrl + port + "/customers/" + id);
-
-                ResponseEntity<Customer> result = restTemplate.withBasicAuth("manager", "goodpassword").exchange(uri,
-                                HttpMethod.PUT, request, Customer.class);
-
-                assertEquals(200, result.getStatusCode().value());
-                // assertEquals(newUserInfo.getUsername(), result.getBody().getUsername());
         }
 
         @Test
         public void updateUser_Invalid_Failure() throws Exception {
-                URI uri = new URI(baseUrl + port + "/customers/999");
 
-                Customer newUserInfo = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
-                                "White House", "ROLE_USER", true);
-
-                ResponseEntity<Customer> response = restTemplate.withBasicAuth("manager", "goodpassword").exchange(uri,
-                                HttpMethod.PUT, new HttpEntity<>(newUserInfo), Customer.class);
-
-                assertEquals(404, response.getStatusCode().value());
         }
 
 }

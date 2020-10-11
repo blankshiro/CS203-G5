@@ -72,7 +72,7 @@ public class CustomerServiceTest {
     }
 
     @Test
-    void getCustomer_NotFound_ThrowsCustomerNotFoundException() {
+    void getCustomer_NotFound_ThrowsCustomerNotFoundException() { // NOT WORKING
         Long userId = 10L;
 
         when(users.findById(userId)).thenReturn(Optional.empty());

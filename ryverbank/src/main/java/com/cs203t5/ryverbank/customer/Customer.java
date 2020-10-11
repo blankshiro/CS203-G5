@@ -13,8 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.*;
 
-import com.cs203t5.ryverbank.account_transaction.*;
-
 @Entity
 @Setter
 @Getter
