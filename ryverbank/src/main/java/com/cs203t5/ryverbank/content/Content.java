@@ -50,5 +50,14 @@ public class Content {
         this.link = link;
     }
 
+    //This constructor is only used for testing purposes
+    public Content (String title, String summary, String newsContent, String link, Boolean approved){
+        this.title = title;
+        this.summary = summary;
+        this.newsContent = newsContent;
+        this.link = link;
+        this.approved = approved;
+    }
+
 
 }

@@ -65,6 +65,7 @@ public class ContentController {
             }
             return meinContent.findByApproved(true);
         } else {
+            //Code will never reach here if the security config is functional
             throw new CustomerUnauthorizedException("You do not have permission to access the content");
         }
     }
