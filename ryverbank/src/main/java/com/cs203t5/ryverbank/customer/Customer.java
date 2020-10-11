@@ -53,7 +53,7 @@ public class Customer implements UserDetails {
     private String authorities;
 
     @NotNull(message = "Active should not be null")
-    private Boolean active = null ;
+    private Boolean active = null;
 
     // @OneToMany(mappedBy = "id", cascade = CascadeType.PERSIST, fetch =
     // FetchType.LAZY)
@@ -99,8 +99,6 @@ public class Customer implements UserDetails {
         boolean actives = active.booleanValue();
         return actives;
     }
-
-  
 
     /**
      * Validates Singapore NRIC / FIN in 2 stages: 1) Ensure first letter starts

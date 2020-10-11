@@ -86,3 +86,8 @@ Authorization: Basic manager:goodpassword
 ###
 #Logout
 GET http://localhost:8080/logout
+
+###
+Get http://localhost:8080/customers
+Content-Type: application/json
+Authorization: Basic manager:goodpassword

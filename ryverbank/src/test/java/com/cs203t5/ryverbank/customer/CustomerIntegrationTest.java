@@ -13,9 +13,13 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.*;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class CustomerIntegrationTest {
@@ -50,34 +54,52 @@ public class CustomerIntegrationTest {
 
                 Customer user = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                                 "White House", "ROLE_USER", true);
+
                 users.save(user);
+                
+                HttpHeaders requestHeaders = new HttpHeaders();
+                requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+                requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+                HttpEntity<Customer[]> requestEntity = new HttpEntity<Customer[]>(null, requestHeaders);
 
-                ResponseEntity<Customer[]> result = restTemplate.withBasicAuth("manager", "goodpassword")
-                                .getForEntity(uri, Customer[].class);
+                
 
-                System.out.println("it works");
+                // ResponseEntity<Customer[]> result = restTemplate.withBasicAuth("manager", "goodpassword")
+                //                 .getForEntity(uri, Customer[].class);
+
+                ResponseEntity<Customer[]> result = restTemplate.exchange(uri, HttpMethod.GET,
+                                requestEntity, Customer[].class);
 
                 Customer[] users = result.getBody();
 
-                System.out.println("works until here 3");
                 assertEquals(200, result.getStatusCode().value());
-                assertEquals(1, users.length);
+                assertEquals(2, users.length);
         }
 
         @Test
         public void getCustomer_ValidCustomerId_Success() throws Exception {
                 Customer user = new Customer("user1", "goodpassword1", "Hibiki", "S8529649C", "91251234", "White House",
                                 "ROLE_USER", true);
-                Long id = user.getId();
 
                 users.save(user);
 
+                Long id = user.getId();
+
                 URI uri = new URI(baseUrl + port + "/customers/" + id);
 
-                ResponseEntity<Customer> result = restTemplate.withBasicAuth("manager1", "goodpassword1")
-                                .getForEntity(uri, Customer.class);
+                HttpHeaders requestHeaders = new HttpHeaders();
+                requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+                requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-                assertEquals(401, result.getStatusCode().value());
+                HttpEntity<Customer> requestEntity = new HttpEntity<Customer>(null, requestHeaders);
+                
+                ResponseEntity<Customer> result = restTemplate.exchange(uri, HttpMethod.GET, requestEntity,
+                                Customer.class);
+
+               // ResponseEntity<Customer> result = restTemplate.withBasicAuth("manager1", "goodpassword1")
+                               // .getForEntity(uri, Customer.class);
+
+                assertEquals(200, result.getStatusCode().value());
                 assertEquals(user.getUsername(), result.getBody().getUsername());
         }
 

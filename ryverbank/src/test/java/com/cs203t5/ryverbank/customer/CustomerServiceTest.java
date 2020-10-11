@@ -26,6 +26,9 @@ public class CustomerServiceTest {
     @InjectMocks
     private CustomerServiceImpl userService;
 
+    @InjectMocks
+    private CustomerController userController;
+
     @Test
     void createUser_NewUser_ReturnNewUser() {
         // Arrange
@@ -41,7 +44,7 @@ public class CustomerServiceTest {
         verify(users).save(newUser);
     }
 
-    @Test // This is not working!
+    @Test
     void createUser_SameUser_ThrowCustomerExistsException() {
         // Arrange
         Customer sameUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
@@ -70,7 +73,35 @@ public class CustomerServiceTest {
 
     @Test
     void getCustomer_NotFound_ThrowsCustomerNotFoundException() {
+        Long userId = 10L;
+
+        when(users.findById(userId)).thenReturn(Optional.empty());
+
+        //assertThrows(CustomerNotFoundException.class, () -> userController.getUser(userId, ));
+    }
+
+    @Test
+    void createUser_InvalidNric_ThrowsInvalidEntryExcepton() {
+        Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S1", "91251234",
+                "White House", "ROLE_USER", true);
         
+        // when(users.save(any(Customer.class))).thenReturn(newUser);
+
+        // Customer savedCustomer = userController.createCustomer(newUser);
+
+        assertThrows(InvalidEntryException.class, () -> userController.createCustomer(newUser));
+    }
+
+    @Test
+    void createCustomer_InvalidPhone_ThrowsInvalidEntryExcepton() {
+        Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "11111111", "White House",
+                "ROLE_USER", true);
+
+        // when(users.save(any(Customer.class))).thenReturn(newUser);
+
+        // Customer savedCustomer = userController.createCustomer(newUser);
+
+        assertThrows(InvalidEntryException.class, () -> userController.createCustomer(newUser));
     }
 
     @Test
@@ -87,6 +118,14 @@ public class CustomerServiceTest {
     }
 
     @Test
+    void customerUpdateAddress_UserNotFound_ReturnNull() {
+        Long userId = 10L;
+        when(users.findById(userId)).thenReturn(Optional.empty());
+        Customer updatedAddress = userService.updateAddress(userId, "No Such Place");
+        assertNull(updatedAddress);
+    }
+
+    @Test
     void customerUpdatePhone_FoundUser_ReturnUpdatedPhone() {
         Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
@@ -97,6 +136,14 @@ public class CustomerServiceTest {
 
         assertNull(updatedCustomerPhone);
         verify(users).findById(userId);
+    }
+
+    @Test
+    void customerUpdatePhone_UserNotFound_ReturnNull() {
+        Long userId = 10L;
+        when(users.findById(userId)).thenReturn(Optional.empty());
+        Customer updatedPhone = userService.updatePhone(userId, "00000000");
+        assertNull(updatedPhone);
     }
 
     @Test
@@ -113,6 +160,14 @@ public class CustomerServiceTest {
     }
 
     @Test
+    void customerUpdatePassword_UserNotFound_ReturnNull() {
+        Long userId = 10L;
+        when(users.findById(userId)).thenReturn(Optional.empty());
+        Customer updatedPassword = userService.updatePassword(userId, "canchangemeh?");
+        assertNull(updatedPassword);
+    }
+
+    @Test
     void updateActiveStatus_FoundUser_ReturnUpdatedActiveStatus() {
         Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
@@ -124,6 +179,14 @@ public class CustomerServiceTest {
 
         assertNull(updatedActiveStatus);
         verify(users).findById(userId);
+    }
+
+    @Test
+    void updateActiveStatus_UserNotFound_ReturnNull() {
+        Long userId = 10L;
+        when(users.findById(userId)).thenReturn(Optional.empty());
+        Customer updatedStatus = userService.updateActiveStatus(userId, false);
+        assertNull(updatedStatus);
     }
 
 }
