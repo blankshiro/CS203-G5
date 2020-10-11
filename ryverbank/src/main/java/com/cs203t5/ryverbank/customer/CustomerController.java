@@ -56,7 +56,6 @@ public class CustomerController {
      * @return list of all users
      */
     @GetMapping("/customers")
-    
     public List<Customer> getUsers() {
         return users.findAll();
     }
