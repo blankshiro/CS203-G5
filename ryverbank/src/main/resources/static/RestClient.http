@@ -91,3 +91,35 @@ GET http://localhost:8080/logout
 Get http://localhost:8080/customers
 Content-Type: application/json
 Authorization: Basic manager:goodpassword
+
+###
+POST http://localhost:8080/customers
+Content-Type: application/json
+Authorization: Basic manager:goodpassword
+
+{
+            "full_name":"Mark Tan",
+            "nric":"S7982834C", 
+            "phone":"91251234", 
+            "address":"27 Jalan Alamak S680234", 
+            "username":"gooduser",
+            "password":"password" ,
+            "authorities":"ROLE_USER",
+            "active": true 
+}
+
+###
+PUT http://localhost:8080/customers/4
+Content-Type: application/json
+Authorization: Basic gooduser:password
+
+{
+            "full_name":"Mark Tan",
+            "nric":"S7982834C", 
+            "phone":"91251234", 
+            "address":"WTF", 
+            "username":"gooduser",
+            "password":"password" ,
+            "authorities":"ROLE_USER",
+            "active": true 
+}
