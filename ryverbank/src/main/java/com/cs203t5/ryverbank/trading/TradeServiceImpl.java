@@ -39,11 +39,11 @@ public class TradeServiceImpl implements TradeServices {
     @Override
     public Trade getTrade(Long tradeId, Customer customer){
         return tradeRepository.findById(tradeId).map(trade -> {
-            if(trade.getCustomerId() == customer.getId()){
+            if(trade.getCustomerId() == customer.getCustomerId()){
                 return tradeRepository.save(trade);
             }
             else{
-                throw new CustomerUnauthorizedException(customer.getId());
+                throw new CustomerUnauthorizedException(customer.getCustomerId());
             }
         }).orElse(null);      
      
@@ -57,7 +57,7 @@ public class TradeServiceImpl implements TradeServices {
     @Override
     public Trade cancelTrade(Long tradeId, Customer customer){
         return tradeRepository.findById(tradeId).map(trade ->{
-            if(trade.getCustomerId() == customer.getId()){
+            if(trade.getCustomerId() == customer.getCustomerId()){
                 if(trade.getStatus().equals("open")){
                     trade.setStatus("cancelled");
                     return tradeRepository.save(trade);
@@ -65,7 +65,7 @@ public class TradeServiceImpl implements TradeServices {
                     throw new TradeInvalidException("Invalid action");
                 }
             }else{
-                throw new CustomerUnauthorizedException(customer.getId());
+                throw new CustomerUnauthorizedException(customer.getCustomerId());
             }
         }).orElse(null);
     }
@@ -78,7 +78,7 @@ public class TradeServiceImpl implements TradeServices {
         long currentTimestamp = Instant.now().getEpochSecond();
     
         //Set the customer_id for the trade
-        trade.setCustomerId(customer.getId());
+        trade.setCustomerId(customer.getCustomerId());
 
         //Set the time when trade is submitted
         trade.setDate(currentTimestamp);
@@ -250,7 +250,7 @@ public class TradeServiceImpl implements TradeServices {
         long currentTimestamp = Instant.now().getEpochSecond();
     
         //Set the customer_id for the trade
-        trade.setCustomerId(customer.getId());
+        trade.setCustomerId(customer.getCustomerId());
 
         //Set the time when trade is submitted
         trade.setDate(currentTimestamp);
@@ -408,7 +408,7 @@ public class TradeServiceImpl implements TradeServices {
         long currentTimestamp = Instant.now().getEpochSecond();
     
         //Set the customer_id for the trade
-        trade.setCustomerId(customer.getId());
+        trade.setCustomerId(customer.getCustomerId());
 
         //Set the time when trade is submitted
         trade.setDate(currentTimestamp);
@@ -562,7 +562,7 @@ public class TradeServiceImpl implements TradeServices {
         long currentTimestamp = Instant.now().getEpochSecond();
     
         //Set the customer_id for the trade
-        trade.setCustomerId(customer.getId());
+        trade.setCustomerId(customer.getCustomerId());
 
         //Set the time when trade is submitted
         trade.setDate(currentTimestamp);

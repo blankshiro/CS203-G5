@@ -57,13 +57,13 @@ public class TradeController {
         //To do, check if account exists
         //Find the accounts that customer owns
         boolean accountExist = false;
-        List<Account> accountList = accountRepository.findByCustomer(customer.getId());
+        List<Account> accountList = accountRepository.findByCustomer(optionalCustomer);
 
         if(accountList.size() == 0){
             throw new AccountNotFoundException(trade.getAccountId());
         }else{
             for(Account account: accountList){
-                if(account.getId() == trade.getAccountId()){
+                if(account.getAccountID() == trade.getAccountId()){
                     accountExist = true;
                 }
 
