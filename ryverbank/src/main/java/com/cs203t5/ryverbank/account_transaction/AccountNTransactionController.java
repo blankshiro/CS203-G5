@@ -47,7 +47,7 @@ public class AccountNTransactionController {
         //get customer object from optional object
         if(optionalCustomer != null && optionalCustomer.isPresent()){
             Customer customer = optionalCustomer.get();
-            this.sessionID = customer.getId();
+            this.sessionID = customer.getCustomerId();
         }
         
     }

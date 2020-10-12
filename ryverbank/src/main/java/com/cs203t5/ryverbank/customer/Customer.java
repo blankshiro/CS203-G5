@@ -30,7 +30,7 @@ public class Customer implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @JsonProperty("id")
-    private Long id;
+    private Long customerId;
 
     @NotNull(message = "Username should not be null")
     @Size(min = 5, max = 20, message = "Username should be between 5 and 20 characters")
@@ -65,7 +65,7 @@ public class Customer implements UserDetails {
     
     // @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true);
     //The owner of the field "accounts" is the customer
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    // @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Account> accounts;
 
@@ -82,6 +82,10 @@ public class Customer implements UserDetails {
         this.active = active;
     }
 
+
+
+
+    
     /*
      * Return a collection of authorities (roles) granted to the user.
      */
@@ -111,6 +115,8 @@ public class Customer implements UserDetails {
         boolean actives = active.booleanValue();
         return actives;
     }
+
+   
 
   
 

@@ -29,9 +29,9 @@ public class Account {
 
     */
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    //This statement says that my customer is the foreign key that cannot be null
-    @JoinColumn(name = "customer_fk", nullable = false)
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // //This statement says that my customer is the foreign key that cannot be null
+    // @JoinColumn(name = "customer_fk", nullable = false)
     //By this logic, we can find accounts based on the customer 
     //JsonIgnore is important so that we don't see the Customer information
     @JsonIgnore
