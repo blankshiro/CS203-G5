@@ -51,12 +51,14 @@ public class Trade {
 
     @JsonIgnore
     @ManyToOne(optional = false)
-    @JoinColumn(name = "customerId", referencedColumnName = "id", updatable = false, insertable = false)
+    @JoinColumn(name = "customerId", referencedColumnName = "customerId", updatable = false, insertable = false)
+    // @JoinColumn(name = "customerId", updatable = false, insertable = false)
     private Customer user;
 
     @JsonIgnore
     @ManyToOne(optional = false)
-    @JoinColumn(name = "accountId", referencedColumnName = "id", updatable = false, insertable = false)
+    @JoinColumn(name = "accountId", referencedColumnName = "accountID", updatable = false, insertable = false)
+    // @JoinColumn(name = "accountId", updatable = false, insertable = false)
     private Account account;
 
     public Trade(String action, String symbol, int quantity, double bid, double ask, double avgPrice, int filledQuantity, 

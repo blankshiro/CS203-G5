@@ -27,7 +27,19 @@ public class StockCrawler {
         try{
             String[] symbols  = new String[] {"A17U", "C61U", "C31", "C38U", "C09", "C52","D01","D05","G13","H78",
             "C07","J36","J37","BN4","N2IU","ME8U","M44U", "O39", "S58", "U96","S68","C6L", "Z74","S63","Y92","U11","U14","V03","F34","BS6"};
+            // System.out.println(symbols.length);
+            // Stock stock = YahooFinance.get("A17U.SI");
+            // Map<String, Stock> stocks = YahooFinance.get(symbols); 
 
+            // for(Stock s : stocks.values()) {
+            //     System.out.println(s.getName() + ": " + s.getQuote().getPrice());
+            // }
+            // YahooFinance.get(symbol)
+                // double bid = stock.getQuote().getBid().doubleValue();
+            // double bid = 0.0;
+            // double price = stock.getQuote().getPrice().doubleValue();
+            // System.out.println(bid);
+            // System.out.println(price);
             for(String symbol : symbols){
                 Stock stock = YahooFinance.get(symbol + ".SI");
                 // double bid = stock.getQuote().getBid().doubleValue();

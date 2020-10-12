@@ -65,7 +65,8 @@ public class Customer implements UserDetails {
     
     // @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true);
     //The owner of the field "accounts" is the customer
-    // @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ElementCollection
     @JsonIgnore
     private List<Account> accounts;
 

@@ -13,6 +13,7 @@ import com.cs203t5.ryverbank.content.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
@@ -40,10 +41,11 @@ public class RyverbankApplication {
 		System.out.println("[Add user]: " + users.save(
 			new Customer("user1", encoder.encode("goodpassword"),null, null, null, null, "ROLE_USER", true)).getUsername());
 		
-		int customerId = 3;
-		long customer_id = customerId;
-		System.out.println("[Add acccount for user1" + accounts.save(
-			new Account(customer_id,100000.0,100000.0)).getCustomer());
+		// int customerId = 3;
+		// long customer_id = customerId;
+		// System.out.println("[Add acccount for user1" + accounts.save(
+		// 	new Account(customer_id,100000.0,100000.0)).getCustomer());
+			// new Account()).getCustomer());
 	
 		ContentRepository meinContent = ctx.getBean(ContentRepository.class);
 		System.out.println("[Adding content]: " +  meinContent.save(
