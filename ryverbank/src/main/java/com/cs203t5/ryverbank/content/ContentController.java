@@ -53,6 +53,9 @@ public class ContentController {
         System.out.println("LOGGED IN AS: " + authenticatedUserRole);
         // Return all content that are approved/non-approved
         if (authenticatedUserRole.equals("ROLE_MANAGER") || authenticatedUserRole.equals("ROLE_ANALYST")) {
+            if (meinContent.findAllByOrderByApprovedAsc().isEmpty()){
+                throw new ContentNotFoundException("No content available for viewing");
+            }
             return meinContent.findAllByOrderByApprovedAsc();
 
             // Return all content that are approved
@@ -62,6 +65,7 @@ public class ContentController {
             }
             return meinContent.findByApproved(true);
         } else {
+            //Code will never reach here if the security config is functional
             throw new CustomerUnauthorizedException("You do not have permission to access the content");
         }
     }

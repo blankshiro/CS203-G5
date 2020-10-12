@@ -30,7 +30,7 @@ public class Customer implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @JsonProperty("id")
-    private Long customerId;
+    private Long id;
 
     @NotNull(message = "Username should not be null")
     @Size(min = 5, max = 20, message = "Username should be between 5 and 20 characters")
@@ -89,6 +89,7 @@ public class Customer implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.asList(new SimpleGrantedAuthority(authorities));
     }
+    
 
     @Override
     public boolean isAccountNonExpired() {
