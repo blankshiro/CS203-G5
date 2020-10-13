@@ -56,24 +56,24 @@ public class TradeController {
 
         //To do, check if account exists
         //Find the accounts that customer owns
-        boolean accountExist = false;
-        List<Account> accountList = accountRepository.findByCustomer(optionalCustomer);
+    //     boolean accountExist = false;
+    //     List<Account> accountList = accountRepository.findByCustomer(optionalCustomer);
 
-        if(accountList.size() == 0){
-            throw new AccountNotFoundException(trade.getAccountId());
-        }else{
-            for(Account account: accountList){
-                if(account.getAccountID() == trade.getAccountId()){
-                    accountExist = true;
-                }
+    //     if(accountList.size() == 0){
+    //         throw new AccountNotFoundException(trade.getAccountId());
+    //     }else{
+    //         for(Account account: accountList){
+    //             if(account.getAccountID() == trade.getAccountId()){
+    //                 accountExist = true;
+    //             }
 
-            }
-        }
+    //         }
+    //     }
 
-      //If there account does not exist, throw AccountNotFoundException 
-       if(!accountExist){
-            throw new AccountNotFoundException(trade.getAccountId());
-        }
+    //   //If there account does not exist, throw AccountNotFoundException 
+    //    if(!accountExist){
+    //         throw new AccountNotFoundException(trade.getAccountId());
+    //     }
 
         
 
@@ -103,12 +103,12 @@ public class TradeController {
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
-                if(trade.getBid() > customStock.getAsk() || trade.getBid() == customStock.getAsk()){
-                    return tradeServices.createMarketBuyTrade(trade,customer,customStock);
-                }else if(trade.getBid() < customStock.getAsk()){
-                    return tradeServices.createLimitBuyTrade(trade, customer, customStock);
-                }
-             
+                // if(trade.getBid() > customStock.getAsk() || trade.getBid() == customStock.getAsk()){
+                //     return tradeServices.createMarketBuyTrade(trade,customer,customStock);
+                // }else if(trade.getBid() < customStock.getAsk()){
+                //     return tradeServices.createLimitBuyTrade(trade, customer, customStock);
+                // }
+                return tradeServices.createLimitBuyTrade(trade, customer, customStock);
             }
         }
 
@@ -119,12 +119,12 @@ public class TradeController {
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
-                if(trade.getAsk() < customStock.getBid() || trade.getAsk() == customStock.getBid()){
-                    return tradeServices.createMarketSellTrade(trade,customer,customStock);
-                }else if(trade.getAsk() > customStock.getBid()){
-                    return tradeServices.createLimitSellTrade(trade, customer, customStock);
-                }
-              
+                // if(trade.getAsk() < customStock.getBid() || trade.getAsk() == customStock.getBid()){
+                //     return tradeServices.createMarketSellTrade(trade,customer,customStock);
+                // }else if(trade.getAsk() > customStock.getBid()){
+                //     return tradeServices.createLimitSellTrade(trade, customer, customStock);
+                // }
+                return tradeServices.createLimitSellTrade(trade, customer, customStock);
             }
        
         }

@@ -956,3 +956,9 @@ Caused by: java.lang.IllegalStateException: The file is locked: nio:D:/GitHub/CS
 2020-10-09 17:15:17 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CUSTOMER_ID[*]"; expected "COMMIT, CREATE, CALL, CHECKPOINT, COMMENT"; SQL statement:
 CUSTOMER_ID [42001-200]
+2020-10-13 02:20:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "CUSTOMER VARBINARY(255)": "X'aced000573720027636f6d2e637332303374352e727976657262616e6b2e637573746f6d65722e437573746f6d6572000000000000000102000a4c00086163... (1026)"; SQL statement:
+insert into account (accountid, available_balance, balance, customer, customer_id) values (null, ?, ?, ?, ?) [22001-200]
+2020-10-13 02:20:38 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "CUSTOMER VARBINARY(255)": "X'aced000573720027636f6d2e637332303374352e727976657262616e6b2e637573746f6d65722e437573746f6d6572000000000000000102000a4c00086163... (1026)"; SQL statement:
+insert into account (accountid, available_balance, balance, customer, customer_id) values (null, ?, ?, ?, ?) [22001-200]
