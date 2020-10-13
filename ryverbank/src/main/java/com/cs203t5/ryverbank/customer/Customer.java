@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.*;
 
 import com.cs203t5.ryverbank.account_transaction.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Setter
@@ -25,7 +27,10 @@ import com.cs203t5.ryverbank.account_transaction.*;
 public class Customer implements UserDetails {
     private static final long serialVersionUID = 1L;
 
-    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    @JsonProperty("id")
+    private Long customerId;
 
     @NotNull(message = "Username should not be null")
     @Size(min = 5, max = 20, message = "Username should be between 5 and 20 characters")
@@ -55,8 +60,15 @@ public class Customer implements UserDetails {
     @NotNull(message = "Active should not be null")
     private Boolean active = null ;
 
-    // @OneToMany(mappedBy = "id", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    // private List<Account> accounts;
+    //One person can have many accounts, that is why @OneToMany - One customer is given many accoutns
+    //mappedBy: The list of accoutns is owned by a "customer"
+    
+    // @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true);
+    //The owner of the field "accounts" is the customer
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Account> accounts;
+
 
     public Customer(String username, String password, String full_name, String nric, String phone, String address,
             String authorities, boolean active) {
@@ -70,6 +82,10 @@ public class Customer implements UserDetails {
         this.active = active;
     }
 
+
+
+
+    
     /*
      * Return a collection of authorities (roles) granted to the user.
      */
@@ -99,6 +115,8 @@ public class Customer implements UserDetails {
         boolean actives = active.booleanValue();
         return actives;
     }
+
+   
 
   
 
