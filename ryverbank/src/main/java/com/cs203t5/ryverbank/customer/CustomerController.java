@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 
 @RestController
@@ -37,6 +38,7 @@ public class CustomerController {
      * @param user
      * @return the user
      */
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/customers")
     public Customer createCustomer(@Valid @RequestBody Customer user) {
         System.out.println("TEST1: " + user.validateNric(user.getNric()));
