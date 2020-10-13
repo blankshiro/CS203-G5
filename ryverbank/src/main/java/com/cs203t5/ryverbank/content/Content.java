@@ -1,7 +1,5 @@
 package com.cs203t5.ryverbank.content;
 
-import java.util.Optional;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,7 +19,7 @@ public class Content {
 
     //Primary key for all content 
     @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @NotNull(message = "Title cannot be null")

@@ -175,7 +175,6 @@ class ContentIntegrationTest {
 
         ResponseEntity<Content> result2 = restTemplate.withBasicAuth("meinAnalyst", "meinPassword")
         .postForEntity(uri, c2, Content.class);
-        
         assertEquals(201, result1.getStatusCode().value());
         assertEquals(201, result2.getStatusCode().value());
         assertEquals(c1.getTitle(), result1.getBody().getTitle());
