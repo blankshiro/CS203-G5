@@ -2,9 +2,12 @@ package com.cs203t5.ryverbank.portfolio;
 
 import javax.persistence.*;
 
+import com.cs203t5.ryverbank.customer.Customer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
+
+//all the details of asset can be obtain from trade repository
 
 @Entity
 @Setter
@@ -33,8 +36,8 @@ public class Asset {
     @JsonProperty("gain_loss")
     private double gainLoss;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Portfolio portfolio;
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // private Customer customer;
 
     public Asset(String code, int quantity, double avgPrice, double currentPrice){
         this.code = code;

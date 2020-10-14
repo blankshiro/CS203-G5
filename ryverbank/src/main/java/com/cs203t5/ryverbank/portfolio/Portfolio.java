@@ -20,16 +20,16 @@ import lombok.*;
 @EqualsAndHashCode
 public class Portfolio {
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
     private Customer customer;
 
 
     @Id
-    @NotNull(message = "Must have customer id")
+    // @NotNull(message = "Must have customer id")
     @JsonProperty("customer_id")
     private Long customerId;
 
-    // @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    // @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @ElementCollection
     private List<Asset> assets;
 
