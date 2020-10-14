@@ -29,14 +29,31 @@ public class Portfolio {
     @JsonProperty("customer_id")
     private Long customerId;
 
-
+    // @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @ElementCollection
     private List<Asset> assets;
 
-    private double unrealized_gain_loss;
-    private double total_gain_loss;
+    @JsonProperty("unrealized_gain_loss")
+    private double unrealizedGainLoss;
+
+    @JsonProperty("total_gain_loss")
+    private double totalGainLoss;
 
     public Portfolio(Long id){
         this.customerId = id;
+    }
+
+    public void setGainLoss(){
+
+        double unrealized_gain_loss = 0; 
+        if (!assets.isEmpty()){
+            for(Asset asset : assets){
+                unrealized_gain_loss += asset.getGainLoss();
+            }
+        }
+
+        this.unrealizedGainLoss = unrealized_gain_loss;
+        this.totalGainLoss += unrealized_gain_loss;
     }
 
     

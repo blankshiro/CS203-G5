@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.*;
 
 import com.cs203t5.ryverbank.account_transaction.*;
+import com.cs203t5.ryverbank.portfolio.Portfolio;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -69,6 +70,9 @@ public class Customer implements UserDetails {
     @JsonIgnore
     private List<Account> accounts;
 
+    //have to add portfolio to customer
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Portfolio portfolio;
 
     public Customer(String username, String password, String full_name, String nric, String phone, String address,
             String authorities, boolean active) {
