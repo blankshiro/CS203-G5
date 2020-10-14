@@ -3,7 +3,6 @@ package com.cs203t5.ryverbank.customer;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URI;
-import java.util.Arrays;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import net.minidev.json.JSONObject;
 
-import org.json.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class CustomerIntegrationTest {
@@ -51,7 +50,7 @@ public class CustomerIntegrationTest {
                 users.deleteAll();
         }
 
-        @Test 
+        @Test
         public void createCustomer_Success() throws Exception {
                 URI uri = new URI(baseUrl + port + "/customers");
 
@@ -65,9 +64,8 @@ public class CustomerIntegrationTest {
                 jsonObject.put("authorities", "ROLE_USER");
                 jsonObject.put("active", "true");
 
-                System.out.println(jsonObject);
-
-                ResponseEntity<Object> result = restTemplate.withBasicAuth("manager", "goodpassword").postForEntity(uri, jsonObject, Object.class);
+                ResponseEntity<Object> result = restTemplate.withBasicAuth("manager", "goodpassword").postForEntity(uri,
+                                jsonObject, Object.class);
 
                 System.out.println(result.getBody());
 
@@ -127,15 +125,12 @@ public class CustomerIntegrationTest {
                                 Object.class);
 
                 String jsonString = om.writeValueAsString(result.getBody());
-                // System.out.println("JSONSTRING = " + jsonString);
+                System.out.println("JSONSTRING = " + jsonString);
 
-                //JSONObject jsonObject = new JSONObject(jsonString);
-                // System.out.println("JSONOBJECT = " + jsonObject);
-                // System.out.println(jsonObject.getString("username"));
+                JsonObject jsonObject = new Gson().fromJson(jsonString, JsonObject.class);
 
                 assertEquals(200, result.getStatusCode().value());
-                //assertEquals(user.getUsername(), jsonObject.getString("username"));
-
+                assertEquals(user.getUsername(), jsonObject.get("username").getAsString());
         }
 
         @Test
@@ -148,7 +143,7 @@ public class CustomerIntegrationTest {
                 assertEquals(404, result.getStatusCode().value());
         }
 
-        @Test // error 400
+        @Test
         public void updateUser_Valid_Success() throws Exception {
                 Customer user = new Customer("user1", "goodpassword1", "Hibiki", "S8529649C", "91251234", "White House",
                                 "ROLE_USER", true);
@@ -159,13 +154,19 @@ public class CustomerIntegrationTest {
 
                 URI uri = new URI(baseUrl + port + "/customers/" + id);
 
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("username", "user1");
+                jsonObject.put("password", encoder.encode("goodpassword1"));
+                jsonObject.put("full_name", "Hibiki");
+                jsonObject.put("nric", "S8529649C");
+                jsonObject.put("phone", "91251234");
+                jsonObject.put("address", "Condo");
+                jsonObject.put("authorities", "ROLE_USER");
+                jsonObject.put("active", "true");
+
                 HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
 
-                Customer newUserInfo = new Customer("user1", "goodpassword1", "Hibiki", "S8529649C", "91251234",
-                                "Condo", "ROLE_USER", true);
-
-                HttpEntity<Object> requestEntity = new HttpEntity<>(user, headers);
+                HttpEntity<Object> requestEntity = new HttpEntity<>(jsonObject, headers);
 
                 ResponseEntity<Object> result = restTemplate.withBasicAuth("manager", "goodpassword").exchange(uri,
                                 HttpMethod.PUT, requestEntity, Object.class);
@@ -173,29 +174,29 @@ public class CustomerIntegrationTest {
                 System.out.println("result = " + result);
 
                 String jsonString = om.writeValueAsString(result.getBody());
-                System.out.println("JSONSTRING = " + jsonString);
+                JsonObject obj = new Gson().fromJson(jsonString, JsonObject.class);
 
-                //JSONObject jsonObject = new JSONObject(jsonString);
-                //System.out.println("JSONObject =" + jsonObject);
-
-                // assertNotNull(result);
-                // assertEquals(newUserInfo.getAddress(), jsonObject.getString("address"));
-                // assertEquals(user.getId(), jsonObject.getString("id"));
+                assertNotNull(result);
+                assertEquals("Condo", obj.get("address").getAsString());
         }
 
-        @Test // error 400
+        @Test
         public void updateUser_Invalid_Failure() throws Exception {
                 URI uri = new URI(baseUrl + port + "/customers/999");
 
                 HttpHeaders headers = new HttpHeaders();
 
-                headers.setContentType(MediaType.APPLICATION_JSON);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("username", "user1");
+                jsonObject.put("password", encoder.encode("goodpassword1"));
+                jsonObject.put("full_name", "Hibiki");
+                jsonObject.put("nric", "S8529649C");
+                jsonObject.put("phone", "91251234");
+                jsonObject.put("address", "Condo");
+                jsonObject.put("authorities", "ROLE_USER");
+                jsonObject.put("active", "true");
 
-                Customer fakeUser = new Customer("user1", "goodpassword1", "Hibiki", "S8529649C", "91251234", "Condo",
-                                "ROLE_USER", true);
-
-                HttpEntity<Object> requestEntity = new HttpEntity<>(fakeUser, headers);
-
+                HttpEntity<Object> requestEntity = new HttpEntity<>(jsonObject, headers);
 
                 ResponseEntity<Object> result = restTemplate.withBasicAuth("manager", "goodpassword").exchange(uri,
                                 HttpMethod.PUT, requestEntity, Object.class);
