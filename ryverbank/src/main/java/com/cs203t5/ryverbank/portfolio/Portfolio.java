@@ -1,6 +1,6 @@
 package com.cs203t5.ryverbank.portfolio;
 
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -41,6 +41,7 @@ public class Portfolio {
 
     public Portfolio(Long id){
         this.customerId = id;
+        this.assets = new ArrayList<>();
     }
 
     public void setGainLoss(){
