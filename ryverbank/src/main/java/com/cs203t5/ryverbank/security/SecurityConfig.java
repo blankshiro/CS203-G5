@@ -69,6 +69,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             //Only managers and analysts can perform C.R.U.D into this URL
             .antMatchers(HttpMethod.PUT, "/contents").hasAnyRole("ANALYST","MANAGER")
             .antMatchers(HttpMethod.DELETE, "/contents/*").hasAnyRole("ANALYST","MANAGER")
+
+            //only users get to see their portfolio
+            .antMatchers(HttpMethod.GET, "/portfolio").hasRole("USER")
+            .antMatchers(HttpMethod.GET, "/portfolio").authenticated()
             
         .and()
         .logout()

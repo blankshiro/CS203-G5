@@ -5,9 +5,11 @@ import java.util.*;
 import javax.persistence.*;
 
 import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.cs203t5.ryverbank.customer.Customer;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.hibernate.annotations.Where;
 
 import lombok.*;
 
@@ -20,18 +22,19 @@ import lombok.*;
 @EqualsAndHashCode
 public class Portfolio {
     
-    @OneToOne(fetch = FetchType.LAZY, optional = true)
-    private Customer customer;
-
-
+   
     @Id
     // @NotNull(message = "Must have customer id")
     @JsonProperty("customer_id")
     private Long customerId;
 
     // @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    @ElementCollection
+    // @ElementCollection
+    @JsonProperty("assets")
+    // @Where(clause = "isTraded='false'")
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
     private List<Asset> assets;
+
 
     @JsonProperty("unrealized_gain_loss")
     private double unrealizedGainLoss;
@@ -39,9 +42,18 @@ public class Portfolio {
     @JsonProperty("total_gain_loss")
     private double totalGainLoss;
 
+
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "customerId")
+    // @MapsId
+    @JsonIgnore
+    private Customer customer;
+
+    
+
     public Portfolio(Long id){
         this.customerId = id;
-        this.assets = new ArrayList<>();
+        // this.assets = new ArrayList<>();
     }
 
     public void setGainLoss(){
@@ -54,8 +66,11 @@ public class Portfolio {
         }
 
         this.unrealizedGainLoss = unrealized_gain_loss;
-        this.totalGainLoss += unrealized_gain_loss;
+        // this.totalGainLoss += unrealized_gain_loss;
     }
 
+    public void calTotalGainLoss(){
+
+    }
     
 }

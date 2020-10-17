@@ -3,6 +3,7 @@ package com.cs203t5.ryverbank.portfolio;
 import javax.persistence.*;
 
 import com.cs203t5.ryverbank.customer.Customer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
@@ -18,6 +19,10 @@ import lombok.*;
 public class Asset {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
+    private Long id;
+
     @JsonProperty("code")
     private String code;
 
@@ -36,17 +41,29 @@ public class Asset {
     @JsonProperty("gain_loss")
     private double gainLoss;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // private Customer customer;
+    @JsonIgnore
+    Long customerId;
 
-    public Asset(String code, int quantity, double avgPrice, double currentPrice){
+    //if not traded should be false
+    @JsonIgnore
+    String isTraded;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "portfolioId", referencedColumnName = "customerId", updatable = false, insertable = false)
+    private Portfolio portfolio;
+
+    public Asset(String code, int quantity, double avgPrice, double currentPrice, Long customerId, String isTraded){
+        
         this.code = code;
         this.quantity = quantity;
         this.avgPrice = avgPrice;
         this.currentPrice = currentPrice;
-
+        this.customerId = customerId;
+        this.isTraded = isTraded;
         this.value = this.currentPrice * quantity;
         this.gainLoss = value - (avgPrice * quantity);
+        
     }
     
 }
