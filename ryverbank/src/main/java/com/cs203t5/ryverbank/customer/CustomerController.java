@@ -52,7 +52,7 @@ public class CustomerController {
     /**
      * List all users in the system.
      * 
-     * @return list of all users
+     * @return List of all users
      */
     @GetMapping("/customers")
 
@@ -153,6 +153,8 @@ public class CustomerController {
 
         }
 
+        // If the input passed into the Json is not null for the "active" field, it
+        // means that the Manager wishes to update the active status of a specific user.
         if (newUserInfo.getActive() != null) {
             if (authenticatedUserRole.equals("ROLE_MANAGER")) {
                 userService.updateActiveStatus(id, newUserInfo.getActive());
