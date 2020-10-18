@@ -24,14 +24,18 @@ public class Portfolio {
     
    
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     // @NotNull(message = "Must have customer id")
-    @JsonProperty("customer_id")
-    private Long customerId;
+    @JsonIgnore
+    private Long id;
 
+    @JsonProperty("customer_id")
+    Long customerId;
     // @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     // @ElementCollection
     @JsonProperty("assets")
-    // @Where(clause = "isTraded='false'")
+    @Column(name = "assets")
+    @Where(clause = "istraded = false")
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
     private List<Asset> assets;
 
@@ -44,16 +48,18 @@ public class Portfolio {
 
 
     @OneToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "customerId")
-    // @MapsId
+    @JoinColumn(name = "customerId", referencedColumnName = "customerId", updatable = false, insertable = false)
+    // @MapsId("customerId")
     @JsonIgnore
     private Customer customer;
+
+   
 
     
 
     public Portfolio(Long id){
         this.customerId = id;
-        // this.assets = new ArrayList<>();
+        this.assets = new ArrayList<>();
     }
 
     public void setGainLoss(){

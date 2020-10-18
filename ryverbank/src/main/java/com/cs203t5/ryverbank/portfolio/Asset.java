@@ -41,25 +41,27 @@ public class Asset {
     @JsonProperty("gain_loss")
     private double gainLoss;
 
-    @JsonIgnore
-    Long customerId;
-
     //if not traded should be false
     @JsonIgnore
-    String isTraded;
+    @Column(name = "istraded")
+    boolean isTraded;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinColumn(name = "portfolioId", referencedColumnName = "customerId", updatable = false, insertable = false)
+    // @MapsId("customerId")
+    @JoinColumn(name = "portfolioId", referencedColumnName = "id", updatable = false, insertable = false)
     private Portfolio portfolio;
 
-    public Asset(String code, int quantity, double avgPrice, double currentPrice, Long customerId, String isTraded){
+    @JsonIgnore
+    Long portfolioId;
+
+    public Asset(String code, int quantity, double avgPrice, double currentPrice, Long portfolioId, boolean isTraded){
         
         this.code = code;
         this.quantity = quantity;
         this.avgPrice = avgPrice;
         this.currentPrice = currentPrice;
-        this.customerId = customerId;
+        this.portfolioId = portfolioId;
         this.isTraded = isTraded;
         this.value = this.currentPrice * quantity;
         this.gainLoss = value - (avgPrice * quantity);

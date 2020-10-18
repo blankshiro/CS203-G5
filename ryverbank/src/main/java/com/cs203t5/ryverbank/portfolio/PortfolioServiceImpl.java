@@ -23,31 +23,48 @@ public class PortfolioServiceImpl implements PortfolioService {
     //get portfolio using customer id
     public Portfolio getPortfolio(Long id){
         return portfolios.findByCustomerId(id).map(portfolio ->
-            {return portfolios.save(portfolio);})
+            {
+                calGainLoss(portfolio);
+                calTotalGainLoss(portfolio);
+                return portfolios.save(portfolio);
+            })
             .orElseGet(() -> 
             {return portfolios.save(new Portfolio(id));});
     }
 
+    public void calGainLoss(Portfolio portfolio){
+        // Optional<Portfolio> p = portfolios.findByCustomerId(id);
+        // Portfolio portfolio = p.get();
+
+        List<Asset> list = new ArrayList<>();
+        list = portfolio.getAssets();
+
+        double unrealizedGainLoss = 0.0; 
+        if (!list.isEmpty()){
+            for(Asset asset : list){
+                if(asset.isTraded == false)
+                unrealizedGainLoss += asset.getGainLoss();
+            }
+        }
+        portfolio.setUnrealizedGainLoss(unrealizedGainLoss);
+        // this.unrealizedGainLoss = unrealized_gain_loss;
+        // this.totalGainLoss += unrealized_gain_loss;
+        // portfolios.save(portfolio);
+    }
     
-    //adding asset by converting buy trade into asset class
-    // public void addAsset(Trade trade){
-       
-    //     if(trade.getStatus().equals("filled") && trade.getStatus().equals("partial-filled")){
-    //         String code = trade.getSymbol();
-    //         int quantity = trade.getFilledQuantity();
-    //         double avg_price = trade.getAvgPrice();
-    //         double current_price = trade.getAsk();
-    //         Long id = trade.getCustomerId();
+    public void calTotalGainLoss(Portfolio portfolio){
+        List<Asset> list = new ArrayList<>();
+        Long id = portfolio.getId();
+        list = assets.findAllByPortfolioId(id);
 
-    //         Asset asset = new Asset(code, quantity, avg_price, current_price, id, false);
-    //         assets.save(asset);
-    //     }
-        
-    // }
-
-    // public void deleteAsset(String symbol, Long id){
-
-    // }
+        double totalGainLoss = 0.0;
+        if(!list.isEmpty()){
+            for(Asset asset : list){
+                totalGainLoss += asset.getGainLoss();
+            }
+        }
+        portfolio.setTotalGainLoss(totalGainLoss);
+    }
 
     
 }
