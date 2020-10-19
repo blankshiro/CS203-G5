@@ -55,7 +55,10 @@ public class Asset {
     @JsonIgnore
     Long portfolioId;
 
-    public Asset(String code, int quantity, double avgPrice, double currentPrice, Long portfolioId, boolean isTraded){
+    @JsonIgnore
+    String record;
+
+    public Asset(String code, int quantity, double avgPrice, double currentPrice, Long portfolioId, boolean isTraded, String record){
         
         this.code = code;
         this.quantity = quantity;
@@ -63,6 +66,7 @@ public class Asset {
         this.currentPrice = currentPrice;
         this.portfolioId = portfolioId;
         this.isTraded = isTraded;
+        this.record = record;
         this.value = this.currentPrice * quantity;
         this.gainLoss = value - (avgPrice * quantity);
         

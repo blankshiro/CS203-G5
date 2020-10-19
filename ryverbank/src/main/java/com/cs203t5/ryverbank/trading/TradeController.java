@@ -91,6 +91,7 @@ public class TradeController {
          //Sell at market order
         if(trade.getAction().equals("sell") && trade.getAsk() == 0.0){
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
+
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
                 return tradeServices.createMarketSellTrade(trade,customer,customStock);

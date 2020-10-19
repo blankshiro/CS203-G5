@@ -126,11 +126,8 @@ public class TradeServiceImpl implements TradeServices {
 
                 //trade successful then store into user's asset list
                 // assetService.addAsset(trade)
-                assetService.addAsset(trade);
-                System.out.println("Hello!");
-                System.out.println("Hello!");
-                System.out.println("Hello!");
-                System.out.println("Hello!");
+                assetService.addAsset(trade, customStock);
+               
                 return tradeRepository.save(trade);
             }
             //If is a new trade, meaning no status has been set yet, set the trade to open
@@ -281,11 +278,7 @@ public class TradeServiceImpl implements TradeServices {
     count = 0;
      //if it reaches here, straight away count as success
     // portfolioService.addAsset(trade, trade.getCustomerId());
-    assetService.addAsset(trade);
-    System.out.println("Hello!");
-    System.out.println("Hello!");
-    System.out.println("Hello!");
-    System.out.println("Hello!");
+    assetService.addAsset(trade, customStock);
     return tradeRepository.save(trade);
 
     }
@@ -528,7 +521,7 @@ public class TradeServiceImpl implements TradeServices {
                 count = 0;
 
                 //save the trade as an asset here
-                assetService.addAsset(trade);
+                assetService.addAsset(trade, customStock);
 
                 return tradeRepository.save(trade);
             } //when it is a new trade so there is no status
@@ -664,7 +657,7 @@ public class TradeServiceImpl implements TradeServices {
     
     //will add trade into the portfolio here
     // portfolioService.addAsset(trade, trade.getCustomerId());
-    assetService.addAsset(trade);
+    assetService.addAsset(trade, customStock);
     return tradeRepository.save(trade);
 
         
