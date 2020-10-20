@@ -1,5 +1,7 @@
 package com.cs203t5.ryverbank.trading;
+
 import com.cs203t5.ryverbank.customer.*;
+import com.cs203t5.ryverbank.portfolio.AssetService;
 import com.cs203t5.ryverbank.account_transaction.*;
 
 import java.util.List;
@@ -20,15 +22,19 @@ public class TradeController {
     private CustomerRepository customerRepository;
     private AccountRepository accountRepository;
     private StockRepository stockRepository;
+    private AssetService assetService;
 
  
 
-    public TradeController( TradeRepository trackRepository, TradeServices tradeServices, CustomerRepository customerRepository,AccountRepository accountRepository,StockRepository stockRepository ) {
+    public TradeController( TradeRepository trackRepository, TradeServices tradeServices, 
+    CustomerRepository customerRepository,AccountRepository accountRepository,StockRepository stockRepository,
+    AssetService assetService) {
         this.trackRepository = trackRepository;
         this.tradeServices = tradeServices;
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
         this.stockRepository = stockRepository;
+        this.assetService = assetService;
      
     }
 
@@ -91,8 +97,13 @@ public class TradeController {
          //Sell at market order
         if(trade.getAction().equals("sell") && trade.getAsk() == 0.0){
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
+
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
+                //make sure owner have this asset, and quantity do not exceed the amount of asset
+                //which the owner currently owns.
+                //if successful, quantity will be deducted and details of the asset will recompute again
+                assetService.sellAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
                 return tradeServices.createMarketSellTrade(trade,customer,customStock);
             }
        
@@ -124,6 +135,7 @@ public class TradeController {
                 // }else if(trade.getAsk() > customStock.getBid()){
                 //     return tradeServices.createLimitSellTrade(trade, customer, customStock);
                 // }
+                assetService.sellAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
                 return tradeServices.createLimitSellTrade(trade, customer, customStock);
             }
        

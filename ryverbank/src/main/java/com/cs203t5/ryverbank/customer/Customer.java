@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.*;
 
 import com.cs203t5.ryverbank.account_transaction.*;
+import com.cs203t5.ryverbank.portfolio.Portfolio;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -71,18 +72,10 @@ public class Customer implements UserDetails {
     @JsonIgnore
     private List<Account> accounts;
 
-    /**
-     * Constructs a user with the specified attributes.
-     * 
-     * @param username    The username of the user.
-     * @param password    The password of the user.
-     * @param full_name   The full name of the user.
-     * @param nric        The nric of the user.
-     * @param phone       The phone of the user.
-     * @param address     The address of the user.
-     * @param authorities The authority level of the user.
-     * @param active      The active status of the user.
-     */
+    //have to add portfolio to customer
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Portfolio portfolio;
+
     public Customer(String username, String password, String full_name, String nric, String phone, String address,
             String authorities, boolean active) {
         this.full_name = full_name;

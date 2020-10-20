@@ -1,9 +1,11 @@
 package com.cs203t5.ryverbank.trading;
+
 import org.springframework.stereotype.Service;
 
-
 import com.cs203t5.ryverbank.customer.*;
-
+import com.cs203t5.ryverbank.portfolio.AssetService;
+import com.cs203t5.ryverbank.portfolio.PortfolioService;
+import com.cs203t5.ryverbank.portfolio.PortfolioServiceImpl;
 
 import java.security.Timestamp;
 import java.time.Instant;
@@ -17,15 +19,18 @@ import java.util.*;
 @Service
 public class TradeServiceImpl implements TradeServices {
     private TradeRepository tradeRepository;
+    
+    //addded asset service impl here by junan
+    private AssetService assetService;
     private int count = 0;
     
  
    
 
 
-    public TradeServiceImpl(TradeRepository tradeRepository ) {
+    public TradeServiceImpl(TradeRepository tradeRepository, AssetService assetService) {
         this.tradeRepository = tradeRepository;
-        
+        this.assetService = assetService;
     }
 
     //Get All trades on the market
@@ -62,6 +67,10 @@ public class TradeServiceImpl implements TradeServices {
             if(trade.getCustomerId() == customer.getCustomerId()){
                 if(trade.getStatus().equals("open")){
                     trade.setStatus("cancelled");
+                    //if it is sell then asset quantity will be put back into portfolio
+                    if(trade.getAction().equals("sell")){
+                        assetService.retrieveAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
+                    }
                     return tradeRepository.save(trade);
                 }else{
                     throw new TradeInvalidException("Invalid action");
@@ -118,6 +127,11 @@ public class TradeServiceImpl implements TradeServices {
                 customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
                 customStock.setAskVolume(customStock.getAskVolume() - trade.getFilledQuantity());
                 count = 0;
+
+                //trade successful then store into user's asset list
+                // assetService.addAsset(trade)
+                assetService.addAsset(trade, customStock);
+               
                 return tradeRepository.save(trade);
             }
             //If is a new trade, meaning no status has been set yet, set the trade to open
@@ -159,6 +173,7 @@ public class TradeServiceImpl implements TradeServices {
 
             //add the number of matched trade by one
             count++;
+            
 
             //When submitted trade has more quantity than match trade
             if(matchTrade.getQuantity() - trade.getQuantity() < 0){
@@ -196,6 +211,7 @@ public class TradeServiceImpl implements TradeServices {
             }
             if(trade.getQuantity()  != 0){
                 trade.setStatus("partial-filled");
+
             }else{
                 trade.setStatus("filled");
             }
@@ -225,7 +241,7 @@ public class TradeServiceImpl implements TradeServices {
 
             tradeRepository.save(trade);
             tradeRepository.save(matchTrade);
-
+            // portfolioService.addAsset(trade, trade.getCustomerId());
 
         }
             
@@ -260,6 +276,9 @@ public class TradeServiceImpl implements TradeServices {
      
 
     count = 0;
+     //if it reaches here, straight away count as success
+    // portfolioService.addAsset(trade, trade.getCustomerId());
+    assetService.addAsset(trade, customStock);
     return tradeRepository.save(trade);
 
     }
@@ -441,6 +460,7 @@ public class TradeServiceImpl implements TradeServices {
         //Set stock ask price
         customStock.setAsk(customStock.getAsk());
 
+       
         return tradeRepository.save(trade);
 
     }
@@ -499,6 +519,10 @@ public class TradeServiceImpl implements TradeServices {
                 customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
                 customStock.setAskVolume(customStock.getAskVolume() - trade.getFilledQuantity());
                 count = 0;
+
+                //save the trade as an asset here
+                assetService.addAsset(trade, customStock);
+
                 return tradeRepository.save(trade);
             } //when it is a new trade so there is no status
         }catch(NullPointerException e){
@@ -630,6 +654,10 @@ public class TradeServiceImpl implements TradeServices {
         customStock.setAskVolume(customStock.getAskVolume() - trade.getFilledQuantity());
 
     count = 0;
+    
+    //will add trade into the portfolio here
+    // portfolioService.addAsset(trade, trade.getCustomerId());
+    assetService.addAsset(trade, customStock);
     return tradeRepository.save(trade);
 
         
