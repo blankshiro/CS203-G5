@@ -67,6 +67,10 @@ public class TradeServiceImpl implements TradeServices {
             if(trade.getCustomerId() == customer.getCustomerId()){
                 if(trade.getStatus().equals("open")){
                     trade.setStatus("cancelled");
+                    //if it is sell then asset quantity will be put back into portfolio
+                    if(trade.getAction().equals("sell")){
+                        assetService.retrieveAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
+                    }
                     return tradeRepository.save(trade);
                 }else{
                     throw new TradeInvalidException("Invalid action");
@@ -135,10 +139,6 @@ public class TradeServiceImpl implements TradeServices {
             trade.setStatus("open");
             customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
             count = 0;
-            System.out.println("Hello!");
-            System.out.println("Hello!");
-            System.out.println("Hello!");
-            System.out.println("Hello!");
             return tradeRepository.save(trade);
         }
     

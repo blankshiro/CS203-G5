@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 import com.cs203t5.ryverbank.customer.Customer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;

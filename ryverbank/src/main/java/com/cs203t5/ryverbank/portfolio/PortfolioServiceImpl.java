@@ -50,8 +50,8 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
 
-    public void calTotalGainLoss(double gainLoss, Portfolio portfolio){
-        portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + gainLoss);
-        portfolios.save(portfolio);
-    }
+    // public void calTotalGainLoss(double gainLoss, Portfolio portfolio){
+    //     portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + gainLoss);
+    //     portfolios.save(portfolio);
+    // }
 }
