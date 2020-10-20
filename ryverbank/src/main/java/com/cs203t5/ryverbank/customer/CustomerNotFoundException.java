@@ -6,23 +6,24 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * CustomerNotFoundException will be thrown when the specified customer cannot
  * be found in the repository.
+ * 
+ * @see RuntimeException
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class CustomerNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Throws this exception if the id of the specified user cannot be found in the
-     * repository.
+     * Constructs a new CustomerNotFoundException with the specified id.
      * 
-     * @param id The id of the customer.
+     * @param id The id of the customer that cannot be found.
      */
     public CustomerNotFoundException(Long id) {
         super("Could not find user " + id);
     }
 
     /**
-     * Throws this exception if the customer does not exist in the repository.
+     * Constructs a new CustomerNotFoundException with the specified detail message.
      * 
      * @param message The message to be printed.
      */
