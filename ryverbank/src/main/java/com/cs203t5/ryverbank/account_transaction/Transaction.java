@@ -2,10 +2,6 @@ package com.cs203t5.ryverbank.account_transaction;
 
 import javax.persistence.*;
 
-import com.cs203t5.ryverbank.account_transaction.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.*;
 
 @Entity
