@@ -4,6 +4,9 @@ import java.util.*;
 
 import javax.validation.Valid;
 
+import com.cs203t5.ryverbank.portfolio.Portfolio;
+import com.cs203t5.ryverbank.portfolio.PortfolioRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +17,7 @@ public class CustomerController {
     private CustomerRepository users;
     private CustomerService userService;
     private BCryptPasswordEncoder encoder;
+    
 
     /**
      * Constructor for CustomerController.
