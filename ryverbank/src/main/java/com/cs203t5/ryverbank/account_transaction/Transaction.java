@@ -30,8 +30,7 @@ public class Transaction {
     private Long account2;
 
 
-    public Transaction(Long id, double amt) {
-        this.id = id;
+    public Transaction(Long account1, Long account2, double amt) {
         this.amount = amt;
     }
 
