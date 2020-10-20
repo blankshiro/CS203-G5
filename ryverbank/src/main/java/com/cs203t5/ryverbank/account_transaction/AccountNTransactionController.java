@@ -111,14 +111,15 @@ public class AccountNTransactionController {
         Long session = sessionID;
 
         Account acc = accService.getAccount(id);
-        //check if acc belong to the customer
-        if(acc.getCustomer_id() != session){
-            throw new CustomerUnauthorizedException("Account does not belong to this customer");
-        }
 
         //check if the account is valid
         if(acc == null){
             throw new AccountNotFoundException(id);
+        }
+
+        //check if acc belong to the customer
+        if(acc.getCustomer_id() != session){
+            throw new CustomerUnauthorizedException("Account does not belong to this customer");
         }
 
         return transRepo.findByAccount1OrAccount2(id, id);

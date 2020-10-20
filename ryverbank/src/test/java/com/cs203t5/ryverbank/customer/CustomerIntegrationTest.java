@@ -180,6 +180,44 @@ public class CustomerIntegrationTest {
                 assertEquals("Condo", obj.get("address").getAsString());
         }
 
+        /*
+        @Test
+        public void updateUserSelf_Valid_Success() throws Exception {
+                Customer user = new Customer("user1", encoder.encode("goodpassword1"), "Hibiki", "S8529649C",
+                                "91251234", "White House", "ROLE_USER", true);
+
+                users.save(user);
+
+                Long id = user.getCustomerId();
+
+                URI uri = new URI(baseUrl + port + "/customers/" + id);
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("username", "user1");
+                jsonObject.put("password", encoder.encode("goodpassword1"));
+                jsonObject.put("full_name", "Hibiki");
+                jsonObject.put("nric", "S8529649C");
+                jsonObject.put("phone", "91251234");
+                jsonObject.put("address", "Condo");
+                jsonObject.put("authorities", "ROLE_USER");
+                jsonObject.put("active", "true");
+
+                HttpHeaders headers = new HttpHeaders();
+
+                HttpEntity<Object> requestEntity = new HttpEntity<>(jsonObject, headers);
+
+                ResponseEntity<Object> result = restTemplate.withBasicAuth("user1", "goodpassword1").exchange(uri,
+                                HttpMethod.PUT, requestEntity, Object.class);
+
+                System.out.println("result = " + result);
+
+                String jsonString = om.writeValueAsString(result.getBody());
+                JsonObject obj = new Gson().fromJson(jsonString, JsonObject.class);
+
+                assertNotNull(result);
+                assertEquals("Condo", obj.get("address").getAsString());
+        } */
+
         @Test
         public void updateUser_Invalid_Failure() throws Exception {
                 URI uri = new URI(baseUrl + port + "/customers/999");

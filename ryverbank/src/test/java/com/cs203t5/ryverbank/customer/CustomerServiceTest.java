@@ -28,9 +28,9 @@ public class CustomerServiceTest {
     void createUser_NewUser_ReturnNewUser() {
         Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
-        
+
         when(users.save(any(Customer.class))).thenReturn(newUser);
-        
+
         Customer savedCustomer = userService.createUser(newUser);
 
         assertNotNull(savedCustomer);
@@ -42,9 +42,9 @@ public class CustomerServiceTest {
         Customer sameUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
         users.save(sameUser);
-     
+
         when(users.existsByUsername(any(String.class))).thenReturn(true);
-        
+
         assertThrows(CustomerExistsException.class, () -> userService.createUser(sameUser));
     }
 
@@ -64,9 +64,9 @@ public class CustomerServiceTest {
 
     @Test
     void createUser_InvalidNric_ThrowsInvalidEntryExcepton() {
-        Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S1", "91251234",
-                "White House", "ROLE_USER", true);
-        
+        Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S1", "91251234", "White House",
+                "ROLE_USER", true);
+
         when(users.save(any(Customer.class))).thenReturn(newUser);
 
         Customer savedCustomer = users.save(newUser);
@@ -76,8 +76,8 @@ public class CustomerServiceTest {
 
     @Test
     void createCustomer_InvalidPhone_ThrowsInvalidEntryExcepton() {
-        Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "11111111", "White House",
-                "ROLE_USER", true);
+        Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "11111111",
+                "White House", "ROLE_USER", true);
 
         when(users.save(any(Customer.class))).thenReturn(newUser);
 
@@ -93,11 +93,33 @@ public class CustomerServiceTest {
         Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
-        Customer updatedCustomerAddress = userService.updateAddress(userId, "Blue House", "USER_ROLE");
+        Customer updatedCustomerAddress = userService.updateAddress(userId, "Blue House", "user1");
 
         assertNull(updatedCustomerAddress);
         verify(users).findById(userId);
     }
+
+
+    /*
+    @Test
+    void customerUpdateAddress_UnauthorizedUser_ReturnUpdatedAddress() {
+        Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
+                "White House", "ROLE_USER", true);
+        Long userId = foundUser.getCustomerId();
+
+        // return something not nothing
+        //when(users.findById(userId)).thenReturn();
+
+        Customer updatedCustomerAddress = userService.updateAddress(userId, "Blue House", "user2");
+
+        assertThrows(CustomerUnauthorizedException.class,
+                () -> userService.updateAddress(userId, "Blue House", "user2"));
+
+        // assertNull(updatedCustomerAddress);
+        // verify(users).findById(userId);
+    }
+    */
+    
 
     @Test
     void customerUpdateAddress_UserNotFound_ReturnNull() {
@@ -114,7 +136,7 @@ public class CustomerServiceTest {
         Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
-        Customer updatedCustomerPhone = userService.updatePhone(userId, "81234567", "ROLE_USER");
+        Customer updatedCustomerPhone = userService.updatePhone(userId, "81234567", "user1");
 
         assertNull(updatedCustomerPhone);
         verify(users).findById(userId);
@@ -135,7 +157,7 @@ public class CustomerServiceTest {
         Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
-        Customer updatedCustomerPassword = userService.updatePhone(userId, "betterpassword1", "USER_ROLE");
+        Customer updatedCustomerPassword = userService.updatePhone(userId, "betterpassword1", "user1");
 
         assertNull(updatedCustomerPassword);
         verify(users).findById(userId);

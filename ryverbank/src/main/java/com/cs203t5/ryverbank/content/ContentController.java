@@ -24,11 +24,26 @@ public class ContentController {
     private ContentRepository meinContent;
     private ContentService contentService;
 
+    /**
+     * Constructor for ContentController.
+     * 
+     * @param meinContent    The Content Repository
+     * @param contentService The Content Services.
+     */
     public ContentController(ContentRepository meinContent, ContentService contentService) {
         this.meinContent = meinContent;
         this.contentService = contentService;
     }
 
+    /**
+     * Creates a new content. This method should only be accessible by the manager
+     * or the analyst. If the user is unauthorized, the method will throw a
+     * CustomerUnauthorizedException.
+     * 
+     * @param aContent The content to be created.
+     * @param auth     Checks for user authenticated role.
+     * @return The created content.
+     */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/contents")
     public Content createContent(@Valid @RequestBody Content aContent, Authentication auth) {
@@ -46,6 +61,14 @@ public class ContentController {
 
     }
 
+    /**
+     * List all the contents in the system. This method should only be accessible by
+     * the manager. If the method is used by the user, throw a ContentNotFound
+     * Exception.
+     * 
+     * @param auth Checks for authenticated user role.
+     * @return The list of all contents.
+     */
     @GetMapping("/contents")
     public List<Content> getContents(Authentication auth) {
         String authenticatedUserRole = auth.getAuthorities().stream().findAny().get().getAuthority();
@@ -53,19 +76,19 @@ public class ContentController {
         System.out.println("LOGGED IN AS: " + authenticatedUserRole);
         // Return all content that are approved/non-approved
         if (authenticatedUserRole.equals("ROLE_MANAGER") || authenticatedUserRole.equals("ROLE_ANALYST")) {
-            if (meinContent.findAllByOrderByApprovedAsc().isEmpty()){
+            if (meinContent.findAllByOrderByApprovedAsc().isEmpty()) {
                 throw new ContentNotFoundException("No content available for viewing");
             }
             return meinContent.findAllByOrderByApprovedAsc();
 
             // Return all content that are approved
         } else if (authenticatedUserRole.equals("ROLE_USER")) {
-            if (meinContent.findByApproved(true).isEmpty()){
+            if (meinContent.findByApproved(true).isEmpty()) {
                 throw new ContentNotFoundException("No content available for viewing");
             }
             return meinContent.findByApproved(true);
         } else {
-            //Code will never reach here if the security config is functional
+            // Code will never reach here if the security config is functional
             throw new CustomerUnauthorizedException("You do not have permission to access the content");
         }
     }
@@ -75,16 +98,12 @@ public class ContentController {
     /*
      * This method will be in charge of calling all the updating methods on content
      * 
-     * Roles that can call these methods: Analyst, Manager 
-     * updateTitle()
-     * updateSummary() 
-     * updateContent() 
-     * updateLink()
+     * Roles that can call these methods: Analyst, Manager updateTitle()
+     * updateSummary() updateContent() updateLink()
      * 
      * This method approves the content so that it can be seen by users
      * 
-     * Roles that can call these methods: Manager 
-     * approveContent()
+     * Roles that can call these methods: Manager approveContent()
      */
     @PutMapping(value = "/contents/{id}")
     public Optional<Content> updateContentFields(@PathVariable Long id, @RequestBody Content aContent,
@@ -92,59 +111,71 @@ public class ContentController {
 
         String authenticatedUserRole = auth.getAuthorities().stream().findAny().get().getAuthority();
         /*
-            A normal user should not be able to access this page based on the securityConfig
-        */
-        //If the content does not exist, throw error 404 handled by ContentNotFoundException
-        //Code ends here if the book is not found
-        if (!meinContent.existsById(id)){
+         * A normal user should not be able to access this page based on the
+         * securityConfig
+         */
+        // If the content does not exist, throw error 404 handled by
+        // ContentNotFoundException
+        // Code ends here if the book is not found
+        if (!meinContent.existsById(id)) {
             throw new ContentNotFoundException(id);
         }
         /*
-            If the Json input passed in is not null for the fields, it means that someone wishes to edit the link
-            This same process is repeated for every field that is available for updates.
-        */
-        //If the input passed into the Json is not null for the "link" field, it means that someone wishes to edit the link
-        if (aContent.getTitle() != null){
-                contentService.updateTitle(id, aContent.getTitle());
-            }
+         * If the Json input passed in is not null for the fields, it means that someone
+         * wishes to edit the link This same process is repeated for every field that is
+         * available for updates.
+         */
+        // If the input passed into the Json is not null for the "link" field, it means
+        // that someone wishes to edit the link
+        if (aContent.getTitle() != null) {
+            contentService.updateTitle(id, aContent.getTitle());
+        }
 
-        //If the input passed into the Json is not null for the "summary" field, it means that someone wishes to edit the summary
-        if (aContent.getSummary() != null){
-                contentService.updateSummary(id, aContent.getSummary());
-            }      
+        // If the input passed into the Json is not null for the "summary" field, it
+        // means that someone wishes to edit the summary
+        if (aContent.getSummary() != null) {
+            contentService.updateSummary(id, aContent.getSummary());
+        }
 
-        //If the input passed into the Json is not null for the "content" field, it means that someone wishes to edit the content
-        if (aContent.getNewsContent() != null){
+        // If the input passed into the Json is not null for the "content" field, it
+        // means that someone wishes to edit the content
+        if (aContent.getNewsContent() != null) {
             contentService.updateContent(id, aContent.getNewsContent());
-        }      
+        }
 
-        //If the input passed into the Json is not null for the "link" field, it means that someone wishes to edit the link
-        if (aContent.getLink() != null){
+        // If the input passed into the Json is not null for the "link" field, it means
+        // that someone wishes to edit the link
+        if (aContent.getLink() != null) {
             contentService.updateLink(id, aContent.getLink());
         }
-        
-        //Only managers can access this function, so a role check needs to be performed
-        if (aContent.isApproved()){
-            //A nested-if is required here to throw an error if an analyst tries to approve content
-            if(authenticatedUserRole.equals("ROLE_MANAGER")){
+
+        // Only managers can access this function, so a role check needs to be performed
+        if (aContent.isApproved()) {
+            // A nested-if is required here to throw an error if an analyst tries to approve
+            // content
+            if (authenticatedUserRole.equals("ROLE_MANAGER")) {
                 contentService.approveContent(id);
             } else {
                 throw new CustomerUnauthorizedException("Analysts cannot approve content");
             }
-        }             
+        }
         return meinContent.findById(id);
     }
 
-    
+    /**
+     * Deletes the content with the specified id from the system. If there is no
+     * such content, throw a ContentNotFoundException.
+     * 
+     * @param id The id of the content.
+     */
     @DeleteMapping(value = "/contents/{id}")
-    public void deleteContent(@PathVariable Long id){
-        try{
+    public void deleteContent(@PathVariable Long id) {
+        try {
             meinContent.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ContentNotFoundException(id);
         }
 
     }
-
 
 }

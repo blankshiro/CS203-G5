@@ -9,7 +9,12 @@ package com.cs203t5.ryverbank.customer;
 public class CustomerExistsException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public CustomerExistsException(String error) {
-        super("Error: " + error);
+    /**
+     * Constructs a new CustomerExistsException with the specified detail message.
+     * 
+     * @param message The message to be printed.
+     */
+    public CustomerExistsException(String message) {
+        super("Error: " + message);
     }
 }
