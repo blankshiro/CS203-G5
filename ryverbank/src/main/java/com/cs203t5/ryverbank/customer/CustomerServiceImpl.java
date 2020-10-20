@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-    /** The Customer Repository */
     private CustomerRepository users;
-
-    /** BCryptPasswordEncoder */
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     /**
@@ -31,9 +28,11 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer createUser(Customer user) {
         if (users.existsByUsername(user.getUsername())) {
             throw new CustomerExistsException("username used");
-        } else if (!user.validateNric(user.getNric()) || !user.validatePhone(user.getPhone())) {
-            throw new InvalidEntryException("Invalid NRIC/Phone number");
-        } 
+        } else if (!user.validateNric(user.getNric())) {
+            throw new InvalidEntryException("Invalid NRIC");
+        } else if (!user.validatePhone(user.getPhone())) {
+            throw new InvalidEntryException("Invalid phone number");
+        }
 
         return users.save(user);
     }

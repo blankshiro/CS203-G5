@@ -1,7 +1,5 @@
 package com.cs203t5.ryverbank.customer;
 
-import org.springframework.security.core.Authentication;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,37 +26,33 @@ public class CustomerServiceTest {
 
     @Test
     void createUser_NewUser_ReturnNewUser() {
-        // Arrange
         Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
-        // Mock the save function
+        
         when(users.save(any(Customer.class))).thenReturn(newUser);
-        // Act
+        
         Customer savedCustomer = userService.createUser(newUser);
 
-        // Assert
         assertNotNull(savedCustomer);
         verify(users).save(newUser);
     }
 
     @Test
     void createUser_SameUser_ThrowCustomerExistsException() {
-        // Arrange
         Customer sameUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
         users.save(sameUser);
-        // Mock
+     
         when(users.existsByUsername(any(String.class))).thenReturn(true);
-        // Act
+        
         assertThrows(CustomerExistsException.class, () -> userService.createUser(sameUser));
     }
 
     @Test
     void getUser_FoundUser_ReturnUser() {
-        // Arrange
         Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
-        // Mock
+
         Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
@@ -66,15 +60,6 @@ public class CustomerServiceTest {
         assertNull(gCustomer);
         verify(users).findById(userId);
 
-    }
-
-    @Test
-    void getCustomer_NotFound_ThrowsCustomerNotFoundException() { // NOT WORKING
-        Long userId = 10L;
-
-        when(users.findById(userId)).thenReturn(Optional.empty());
-
-        //assertThrows(CustomerNotFoundException.class, () -> userController.getUser(userId, ));
     }
 
     @Test
