@@ -25,11 +25,10 @@ public class PortfolioServiceImpl implements PortfolioService {
         return portfolios.findByCustomerId(id).map(portfolio ->
             {
                 calGainLoss(portfolio);
-                // calTotalGainLoss(portfolio);
                 return portfolios.save(portfolio);
-            })
-            .orElseGet(() -> 
-            {return portfolios.save(new Portfolio(id));});
+            }).orElse(null);
+            // .orElseGet(() -> 
+            // {return portfolios.save(new Portfolio(id));});
     }
 
     public void calGainLoss(Portfolio portfolio){

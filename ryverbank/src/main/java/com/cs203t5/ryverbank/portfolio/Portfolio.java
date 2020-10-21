@@ -55,30 +55,11 @@ public class Portfolio {
     @JsonIgnore
     private Customer customer;
 
-   
-
-    
 
     public Portfolio(Long id){
         this.customerId = id;
         this.assets = new ArrayList<>();
     }
 
-    public void setGainLoss(){
-
-        double unrealized_gain_loss = 0; 
-        if (!assets.isEmpty()){
-            for(Asset asset : assets){
-                unrealized_gain_loss += asset.getGainLoss();
-            }
-        }
-
-        this.unrealizedGainLoss = unrealized_gain_loss;
-        // this.totalGainLoss += unrealized_gain_loss;
-    }
-
-    public void calTotalGainLoss(){
-
-    }
     
 }

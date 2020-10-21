@@ -22,9 +22,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Setter
 @Getter
 @ToString
-@AllArgsConstructor
+// @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+// @EqualsAndHashCode
 public class Customer implements UserDetails {
     private static final long serialVersionUID = 1L;
 
