@@ -55,7 +55,9 @@ public class TransactionServiceImpl implements TransactionServices {
         if(amt < 0.0){
             give = acc1;
             take = acc2;
+            //buyer balance will reduce
             accService.accTradeApproved(give, amt);
+            //seller balance will increase
             accService.accTradeApproved(take, Math.abs(amt));
             total = Math.abs(amt);
         } else {

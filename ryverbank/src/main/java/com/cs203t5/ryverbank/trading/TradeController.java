@@ -80,13 +80,18 @@ public class TradeController {
     //    if(!accountExist){
     //         throw new AccountNotFoundException(trade.getAccountId());
     //     }
-
-        
-
+        if(trade.getQuantity() < 0){
+            throw new TradeInvalidException("invalid quantity");
+        }
 
         //Buy at market price
         if(trade.getAction().equals("buy") && trade.getBid() == 0.0){
+            if(trade.getBid() < 0){
+                throw new TradeInvalidException("invalid bid price");
+            }
+            
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
+
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
                 return tradeServices.createMarketBuyTrade(trade,customer,customStock);
@@ -96,6 +101,10 @@ public class TradeController {
 
          //Sell at market order
         if(trade.getAction().equals("sell") && trade.getAsk() == 0.0){
+            if(trade.getAsk() < 0){
+                throw new TradeInvalidException("invalid ask price");
+            }
+
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
 
             if(optionalStock != null && optionalStock.isPresent()){
@@ -111,14 +120,14 @@ public class TradeController {
 
         //Buy at limit order
         if(trade.getAction().equals("buy") && trade.getBid() != 0.0){
+            if(trade.getBid() < 0){
+                throw new TradeInvalidException("invalid bid price");
+            }
+
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
+
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
-                // if(trade.getBid() > customStock.getAsk() || trade.getBid() == customStock.getAsk()){
-                //     return tradeServices.createMarketBuyTrade(trade,customer,customStock);
-                // }else if(trade.getBid() < customStock.getAsk()){
-                //     return tradeServices.createLimitBuyTrade(trade, customer, customStock);
-                // }
                 return tradeServices.createLimitBuyTrade(trade, customer, customStock);
             }
         }
@@ -127,14 +136,14 @@ public class TradeController {
 
          //Sell at limit order
          if(trade.getAction().equals("sell") && trade.getAsk() != 0.0){
+            if(trade.getAsk() < 0){
+                throw new TradeInvalidException("invalid ask price");
+            }
+
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
+
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
-                // if(trade.getAsk() < customStock.getBid() || trade.getAsk() == customStock.getBid()){
-                //     return tradeServices.createMarketSellTrade(trade,customer,customStock);
-                // }else if(trade.getAsk() > customStock.getBid()){
-                //     return tradeServices.createLimitSellTrade(trade, customer, customStock);
-                // }
                 assetService.sellAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
                 return tradeServices.createLimitSellTrade(trade, customer, customStock);
             }
