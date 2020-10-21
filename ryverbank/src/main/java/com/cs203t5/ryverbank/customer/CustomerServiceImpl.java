@@ -4,19 +4,22 @@ import java.util.List;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.cs203t5.ryverbank.portfolio.Portfolio;
+import com.cs203t5.ryverbank.portfolio.PortfolioRepository;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository users;
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
+    private PortfolioRepository portfolios;
     /**
      * The constructor for CustomerServiceImpl.
      * 
      * @param users The Customer Repository.
      */
-    public CustomerServiceImpl(CustomerRepository users) {
+    public CustomerServiceImpl(CustomerRepository users, PortfolioRepository portfolios) {
         this.users = users;
+        this.portfolios = portfolios;
     }
 
     @Override
@@ -33,8 +36,11 @@ public class CustomerServiceImpl implements CustomerService {
         } else if (!user.validatePhone(user.getPhone())) {
             throw new InvalidEntryException("Invalid phone number");
         }
-
-        return users.save(user);
+        users.save(user);
+        Portfolio portfolio = new Portfolio(user.getCustomerId());
+        user.setPortfolio(portfolio);
+        portfolios.save(portfolio);
+        return user;
     }
 
     @Override

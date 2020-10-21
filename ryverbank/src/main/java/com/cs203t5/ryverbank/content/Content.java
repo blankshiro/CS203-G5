@@ -41,6 +41,14 @@ public class Content {
     @Column(name = "approved")
     private boolean approved = false;
 
+    /**
+     * Constructs a content with the specified attributes.
+     * 
+     * @param title The titlte of the content.
+     * @param summary The summary of the content.
+     * @param newsContent The actual content.
+     * @param link The link to the content.
+     */
     public Content (String title, String summary, String newsContent, String link){
         this.title = title;
         this.summary = summary;

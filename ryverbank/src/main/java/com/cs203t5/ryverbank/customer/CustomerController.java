@@ -4,6 +4,9 @@ import java.util.*;
 
 import javax.validation.Valid;
 
+import com.cs203t5.ryverbank.portfolio.Portfolio;
+import com.cs203t5.ryverbank.portfolio.PortfolioRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +17,7 @@ public class CustomerController {
     private CustomerRepository users;
     private CustomerService userService;
     private BCryptPasswordEncoder encoder;
+    
 
     /**
      * Constructor for CustomerController.
@@ -30,10 +34,12 @@ public class CustomerController {
 
     /**
      * Registers a new user and uses BCrypt encoder to encrypt the password for
-     * storage.
+     * storage. This method should only be accessible by the manager. If the user is
+     * unauthorized, the method will throw a CustomerUnauthorizedException.
      * 
-     * @param user
-     * @return the user
+     * @param user           The user to create.
+     * @param authentication Checks for user authenticated role.
+     * @return The created user.
      */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/customers")
@@ -52,7 +58,7 @@ public class CustomerController {
     /**
      * List all users in the system.
      * 
-     * @return List of all users
+     * @return The list of all users
      */
     @GetMapping("/customers")
 
@@ -61,11 +67,14 @@ public class CustomerController {
     }
 
     /**
-     * Search for user with the given id. If there is not user with the given "id",
-     * throw a CustomerNotFoundException.
+     * Search for the user with the given id. This method should only be accessible
+     * by the manager or the authenticated user. If there is no user with the
+     * given "id", throw a CustomerNotFoundException.
      * 
-     * @param id
-     * @return user with the given id
+     * @param id             The id of the user to get.
+     * @param authentication Checks for the user's authenticated username and user
+     *                       role.
+     * @return The user found.
      */
     @GetMapping("/customers/{id}")
     public Customer getUser(@PathVariable Long id, Authentication authentication) {
@@ -83,12 +92,13 @@ public class CustomerController {
 
     /**
      * Updates customer's information based on the new information given. This
-     * method should only be accessible to managers/user, with the exception of
+     * method should only be accessible to the manager or the authenticated user, with the exception of
      * deactivate the customer's account.
      * 
      * @param id             The id of the customer.
      * @param newUserInfo    The customer's new information.
-     * @param authentication Authentication checker.
+     * @param authentication Checks for the user's authenticated username and user
+     *                       role.
      * @return The updated customer's information.
      */
 
