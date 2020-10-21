@@ -1,10 +1,10 @@
 ###
 #Logout
-GET http://localhost:8080/logout
+GET http://ryverbank.vision/logout
 
 ###
 #Try to get without authorization to contents
-GET http://localhost:8080/contents
+GET http://ryverbank.vision/contents
 
 ####
 #Try to get with authorization as manager

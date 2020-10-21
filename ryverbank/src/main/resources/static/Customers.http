@@ -1,12 +1,15 @@
 #Logout
 GET http://localhost:8080/logout
 
+####
+GET https://ryverbank.vision/
+
 #####
-GET http://localhost:8080/customers
-Authorization: Basic manager:goodpassword
+GET https://ryverbank.vision/customers
+Authorization: Basic user1:goodpassword
 
 ####
-POST http://localhost:8080/customers
+POST https://ryverbank.vision/customers
 Content-Type: application/json
 Authorization: Basic manager:goodpassword
 

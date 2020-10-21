@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LandingController {
-    @GetMapping("/")docker
+    @GetMapping("/")
     public String welcome(){
         return "Welcome to Ryverbank - Connection successful";
     }
