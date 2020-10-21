@@ -27,7 +27,6 @@ public class Trade {
     @NotNull(message = "Quantity cannot be null")
     private int quantity;
 
-    private double bid;
 
     private double ask;
 

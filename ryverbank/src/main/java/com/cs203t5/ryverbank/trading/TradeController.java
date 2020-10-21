@@ -2,8 +2,10 @@ package com.cs203t5.ryverbank.trading;
 import com.cs203t5.ryverbank.customer.*;
 import com.cs203t5.ryverbank.account_transaction.*;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.ToDoubleBiFunction;
 
 import javax.validation.Valid;
 
@@ -12,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
+
 
 @RestController
 public class TradeController {
@@ -41,6 +44,33 @@ public class TradeController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/trades")
     public Trade createTrade(@Valid @RequestBody Trade trade, Authentication auth){
+        //If customer submit a trade on weekend OR submit on weekday BUT before 9am and after 5pm,
+        //Throw an error that shows market is close
+        Calendar startDateTime=Calendar.getInstance();
+        startDateTime.set(Calendar.HOUR_OF_DAY,9);
+        startDateTime.set(Calendar.MINUTE,0);
+        startDateTime.set(Calendar.SECOND,0);
+    
+        Calendar endDateTime=Calendar.getInstance();
+        endDateTime.set(Calendar.HOUR_OF_DAY,17);
+        endDateTime.set(Calendar.MINUTE,0);
+        endDateTime.set(Calendar.SECOND,0);
+    
+    
+        Calendar saturday = Calendar.getInstance();
+        saturday.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
+
+        Calendar sunday = Calendar.getInstance();
+        sunday.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+    
+        Calendar today = Calendar.getInstance();
+
+
+       if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
+       {
+           throw new TradeInvalidException("Market is close");
+       }
+
         String authenticatedUsername = auth.getName();
 
         //retrieve optionalCustomer object from Customer repository
@@ -54,28 +84,38 @@ public class TradeController {
         Customer customer = optionalCustomer.get();
         
 
-        //To do, check if account exists
-        //Find the accounts that customer owns
-    //     boolean accountExist = false;
-    //     List<Account> accountList = accountRepository.findByCustomer(optionalCustomer);
+ 
+        // To do, check if account exists
+        // Find the accounts that customer owns
+        boolean accountExist = false;
+        List<Account> accountList = accountRepository.findByCustomer(optionalCustomer);
 
-    //     if(accountList.size() == 0){
-    //         throw new AccountNotFoundException(trade.getAccountId());
-    //     }else{
-    //         for(Account account: accountList){
-    //             if(account.getAccountID() == trade.getAccountId()){
-    //                 accountExist = true;
-    //             }
+        if(accountList.size() == 0){
+            throw new AccountNotFoundException(trade.getAccountId());
+        }else{
+            for(Account account: accountList){
+                if(account.getAccountID() == trade.getAccountId()){
+                    accountExist = true;
+                }
 
-    //         }
-    //     }
+            }
+        }
 
-    //   //If there account does not exist, throw AccountNotFoundException 
-    //    if(!accountExist){
-    //         throw new AccountNotFoundException(trade.getAccountId());
-    //     }
+      //If there account does not exist, throw AccountNotFoundException 
+       if(!accountExist){
+            throw new AccountNotFoundException(trade.getAccountId());
+        }
 
-        
+
+        Optional <Account> optionalAccount = accountRepository.findById(trade.getAccountId());
+
+
+        //Checking quantity, if quantity is not multiple of 100
+        //throw exception
+        if(trade.getQuantity() % 100 != 0){
+            throw new TradeInvalidException("Invalid Quantity");
+        }
+
 
 
         //Buy at market price
@@ -83,7 +123,12 @@ public class TradeController {
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
-                return tradeServices.createMarketBuyTrade(trade,customer,customStock);
+                if(optionalAccount.get().getAvailableBalance() < (customStock.getAsk() * trade.getQuantity())){
+                    throw new TradeInvalidException("Available Balance Not Enough");
+                }else{
+                    return tradeServices.createMarketBuyTrade(trade,customer,customStock);
+                }
+                
             }
        
         }
@@ -93,7 +138,11 @@ public class TradeController {
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
-                return tradeServices.createMarketSellTrade(trade,customer,customStock);
+                if(optionalAccount.get().getAvailableBalance() < (customStock.getAsk() * trade.getQuantity())){
+                    throw new TradeInvalidException("Available Balance Not Enough");
+                }else{
+                    return tradeServices.createMarketSellTrade(trade,customer,customStock);
+                }
             }
        
         }
@@ -103,12 +152,11 @@ public class TradeController {
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
-                // if(trade.getBid() > customStock.getAsk() || trade.getBid() == customStock.getAsk()){
-                //     return tradeServices.createMarketBuyTrade(trade,customer,customStock);
-                // }else if(trade.getBid() < customStock.getAsk()){
-                //     return tradeServices.createLimitBuyTrade(trade, customer, customStock);
-                // }
-                return tradeServices.createLimitBuyTrade(trade, customer, customStock);
+                if(optionalAccount.get().getAvailableBalance() < (trade.getBid() * trade.getQuantity())){
+                    throw new TradeInvalidException("Available Balance Not Enough");
+                }else{
+                    return tradeServices.createLimitBuyTrade(trade, customer, customStock);
+                }
             }
         }
 
@@ -119,12 +167,11 @@ public class TradeController {
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
             if(optionalStock != null && optionalStock.isPresent()){
                 CustomStock customStock = optionalStock.get();
-                // if(trade.getAsk() < customStock.getBid() || trade.getAsk() == customStock.getBid()){
-                //     return tradeServices.createMarketSellTrade(trade,customer,customStock);
-                // }else if(trade.getAsk() > customStock.getBid()){
-                //     return tradeServices.createLimitSellTrade(trade, customer, customStock);
-                // }
-                return tradeServices.createLimitSellTrade(trade, customer, customStock);
+                if(optionalAccount.get().getAvailableBalance() < (trade.getAsk() * trade.getQuantity())){
+                    throw new TradeInvalidException("Available Balance Not Enough");
+                }else{
+                    return tradeServices.createLimitSellTrade(trade, customer, customStock);
+                }
             }
        
         }

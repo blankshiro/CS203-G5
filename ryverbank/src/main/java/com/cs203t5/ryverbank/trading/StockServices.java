@@ -8,11 +8,5 @@ public interface StockServices {
 
     CustomStock getStock(String symbol);
 
-    //CustomStock addStock(CustomStock stock);
 
-    //CustomStock updateStock(String symbol, CustomStock stock);
-
-    //void deleteStock(String symbol);
-
-    //CustomStock createStock(CustomStock stock);
 }
