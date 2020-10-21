@@ -1,6 +1,5 @@
 package com.cs203t5.ryverbank.account_transaction;
 
-import java.util.*;
 import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

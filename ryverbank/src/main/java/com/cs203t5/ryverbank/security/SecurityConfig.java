@@ -1,7 +1,5 @@
 package com.cs203t5.ryverbank.security;
 
-import java.text.Normalizer.Form;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.context.request.RequestContextHolder;
 
 @EnableWebSecurity
 @Configuration
@@ -69,6 +66,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             //Only managers and analysts can perform C.R.U.D into this URL
             .antMatchers(HttpMethod.PUT, "/contents").hasAnyRole("ANALYST","MANAGER")
             .antMatchers(HttpMethod.DELETE, "/contents/*").hasAnyRole("ANALYST","MANAGER")
+
+            //only users get to see their portfolio
+            .antMatchers(HttpMethod.GET, "/portfolio").hasRole("USER")
+            .antMatchers(HttpMethod.GET, "/portfolio").authenticated()
             
         .and()
         .logout()

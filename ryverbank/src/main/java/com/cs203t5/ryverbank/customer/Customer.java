@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.*;
 
 import com.cs203t5.ryverbank.account_transaction.*;
+import com.cs203t5.ryverbank.portfolio.Portfolio;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -21,14 +22,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Setter
 @Getter
 @ToString
-@AllArgsConstructor
+// @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+// @EqualsAndHashCode
 public class Customer implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     private Long customerId;
 
@@ -58,17 +59,22 @@ public class Customer implements UserDetails {
     private String authorities;
 
     @NotNull(message = "Active should not be null")
-    private Boolean active = null ;
+    private Boolean active = null;
 
-    //One person can have many accounts, that is why @OneToMany - One customer is given many accoutns
-    //mappedBy: The list of accoutns is owned by a "customer"
-    
-    // @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true);
-    //The owner of the field "accounts" is the customer
+    // One person can have many accounts, that is why @OneToMany - One customer is
+    // given many accoutns
+    // mappedBy: The list of accoutns is owned by a "customer"
+
+    // @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, fetch =
+    // FetchType.LAZY, orphanRemoval = true);
+    // The owner of the field "accounts" is the customer
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Account> accounts;
 
+    //have to add portfolio to customer
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Portfolio portfolio;
 
     public Customer(String username, String password, String full_name, String nric, String phone, String address,
             String authorities, boolean active) {
@@ -82,10 +88,6 @@ public class Customer implements UserDetails {
         this.active = active;
     }
 
-
-
-
-    
     /*
      * Return a collection of authorities (roles) granted to the user.
      */
@@ -93,32 +95,43 @@ public class Customer implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.asList(new SimpleGrantedAuthority(authorities));
     }
-    
 
+    /**
+     * Indicates whether the user's account has expired. An expired account cannot be
+     * authenticated.
+     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    /**
+     * Indicates whether the user is locked or unlocked. A locked user cannot be
+     * authenticated.
+     */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /**
+     * Indicates whether the user's credentials (password) has expired. Expired
+     * credentials prevent authentication.
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /**
+     * Indicates whether the user is enabled or disabled. A disabled user cannot be
+     * authenticated.
+     */
     @Override
     public boolean isEnabled() {
         boolean actives = active.booleanValue();
         return actives;
     }
-
-   
-
-  
 
     /**
      * Validates Singapore NRIC / FIN in 2 stages: 1) Ensure first letter starts
@@ -170,6 +183,13 @@ public class Customer implements UserDetails {
         }
     }
 
+    /**
+     * A method to validate whether the user's phone is valid or not. A valid phone
+     * number will begin with 6/8/9 and has a total of 8 digits.
+     * 
+     * @param phone The phone number of the user.
+     * @return True if the phone number is valid, otherwise return false.
+     */
     public boolean validatePhone(String phone) {
         // validate phone numbers of format "1234567890"
         if (phone.matches("^[6|8|9]\\d{7}$"))

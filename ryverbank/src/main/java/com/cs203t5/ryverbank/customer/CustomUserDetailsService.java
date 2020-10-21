@@ -13,11 +13,11 @@ public class CustomUserDetailsService implements UserDetailsService{
         this.users = users;
     }
 
+    /**
+     * To return a UserDetails for Spring Security Note that the method takes only a
+     * username. The UserDetails interface has methods to get the password.
+     */
     @Override
-    /** To return a UserDetails for Spring Security 
-     *  Note that the method takes only a username.
-        The UserDetails interface has methods to get the password.
-    */
     public UserDetails loadUserByUsername(String username)  throws UsernameNotFoundException {
         return users.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found"));

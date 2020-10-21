@@ -35,15 +35,18 @@ public class RyverbankApplication {
 		AccountRepository accounts = ctx.getBean(AccountRepository.class);
 		BCryptPasswordEncoder encoder = ctx.getBean(BCryptPasswordEncoder.class);
 		System.out.println("[Add admin]: " + users.save(
-			new Customer("manager", encoder.encode("goodpassword"),null, null, null, null, "ROLE_MANAGER", true)).getUsername());
+			new Customer("manager_1", encoder.encode("01_manager_01"),null, null, null, null, "ROLE_MANAGER", true)).getUsername());
 		
 		System.out.println("[Add analyst]: " + users.save(
-			new Customer("analyst", encoder.encode("goodpassword"),null, null, null, null, "ROLE_ANALYST", true)).getUsername());
+			new Customer("analyst_1", encoder.encode("01_analyst_01"),null, null, null, null, "ROLE_ANALYST", true)).getUsername());
+
+		System.out.println("[Add analyst]: " + users.save(
+			new Customer("analyst_2", encoder.encode("02_analyst_02"),null, null, null, null, "ROLE_ANALYST", true)).getUsername());
 
 		System.out.println("[Add user]: " + users.save(
 			new Customer("user1", encoder.encode("goodpassword"),null, null, null, null, "ROLE_USER", true)).getUsername());
 		
-		int customerId = 3;
+		int customerId = 4;
 		long customer_id = customerId;
 		System.out.println("[Add acccount for user1" + accounts.save(
 			new Account(customer_id,100000.0,100000.0)).getCustomer());

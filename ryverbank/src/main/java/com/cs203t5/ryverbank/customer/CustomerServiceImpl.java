@@ -4,22 +4,22 @@ import java.util.List;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.cs203t5.ryverbank.portfolio.Portfolio;
+import com.cs203t5.ryverbank.portfolio.PortfolioRepository;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-    /** The Customer Repository */
     private CustomerRepository users;
-
-    /** BCryptPasswordEncoder */
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
+    private PortfolioRepository portfolios;
     /**
      * The constructor for CustomerServiceImpl.
      * 
      * @param users The Customer Repository.
      */
-    public CustomerServiceImpl(CustomerRepository users) {
+    public CustomerServiceImpl(CustomerRepository users, PortfolioRepository portfolios) {
         this.users = users;
+        this.portfolios = portfolios;
     }
 
     @Override
@@ -31,11 +31,16 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer createUser(Customer user) {
         if (users.existsByUsername(user.getUsername())) {
             throw new CustomerExistsException("username used");
-        } else if (!user.validateNric(user.getNric()) || !user.validatePhone(user.getPhone())) {
-            throw new InvalidEntryException("Invalid NRIC/Phone number");
-        } 
-
-        return users.save(user);
+        } else if (!user.validateNric(user.getNric())) {
+            throw new InvalidEntryException("Invalid NRIC");
+        } else if (!user.validatePhone(user.getPhone())) {
+            throw new InvalidEntryException("Invalid phone number");
+        }
+        users.save(user);
+        Portfolio portfolio = new Portfolio(user.getCustomerId());
+        user.setPortfolio(portfolio);
+        portfolios.save(portfolio);
+        return user;
     }
 
     @Override
