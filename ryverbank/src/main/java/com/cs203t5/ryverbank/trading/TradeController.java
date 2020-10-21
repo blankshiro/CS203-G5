@@ -123,10 +123,7 @@ public class TradeController {
         }
 
 
-    //   //If there account does not exist, throw AccountNotFoundException 
-    //    if(!accountExist){
-    //         throw new AccountNotFoundException(trade.getAccountId());
-    //     }
+
         if(trade.getQuantity() < 0){
             throw new TradeInvalidException("invalid quantity");
         }
@@ -191,7 +188,7 @@ public class TradeController {
                 }else{
                     return tradeServices.createLimitBuyTrade(trade, customer, customStock);
                 }
-                return tradeServices.createLimitBuyTrade(trade, customer, customStock);
+                
             }
         }
 
