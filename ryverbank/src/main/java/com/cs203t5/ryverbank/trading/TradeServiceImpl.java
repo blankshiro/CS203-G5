@@ -4,10 +4,8 @@ import org.springframework.stereotype.Service;
 
 import com.cs203t5.ryverbank.customer.*;
 import com.cs203t5.ryverbank.portfolio.AssetService;
-import com.cs203t5.ryverbank.portfolio.PortfolioService;
-import com.cs203t5.ryverbank.portfolio.PortfolioServiceImpl;
+import com.cs203t5.ryverbank.account_transaction.*;
 
-import java.security.Timestamp;
 import java.time.Instant;
 
 
@@ -22,15 +20,15 @@ public class TradeServiceImpl implements TradeServices {
     
     //addded asset service impl here by junan
     private AssetService assetService;
+    private TransactionServices tranService;
+    private AccountServices accService;
     private int count = 0;
     
- 
-   
-
-
-    public TradeServiceImpl(TradeRepository tradeRepository, AssetService assetService) {
+    public TradeServiceImpl(TradeRepository tradeRepository, AssetService assetService, TransactionServices tranService, AccountServices accService) {
         this.tradeRepository = tradeRepository;
         this.assetService = assetService;
+        this.tranService = tranService;
+        this.accService = accService;
     }
 
     //Get All trades on the market
@@ -85,7 +83,8 @@ public class TradeServiceImpl implements TradeServices {
     //This method will be used exclusively by Customer
     @Override
     public Trade createMarketBuyTrade(Trade trade, Customer customer, CustomStock customStock){
-        
+        /* ACCOUNT GET THE BUYER ID FROM TRADE HERE */
+        accService.accTradeOnHold(trade.getAccountId(), trade.getQuantity()*customStock.getBid()*-1);
         long currentTimestamp = Instant.now().getEpochSecond();
     
         //Set the customer_id for the trade
@@ -239,10 +238,15 @@ public class TradeServiceImpl implements TradeServices {
 
             lastPrice = matchTrade.getAsk();
 
+            
             tradeRepository.save(trade);
+            /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE*/
+            Long give = trade.getAccountId();
+            Long take = matchTrade.getAccountId();
+            double amt = matchTrade.getFilledQuantity()*customStock.getBid();
+            accService.accTradeOnHold(take, amt);
+            tranService.addTransaction(give, take, amt*-1);
             tradeRepository.save(matchTrade);
-            // portfolioService.addAsset(trade, trade.getCustomerId());
-
         }
             
         
@@ -287,7 +291,6 @@ public class TradeServiceImpl implements TradeServices {
     //This method will be used exclusively by Customer
     @Override
     public Trade createMarketSellTrade(Trade trade, Customer customer, CustomStock customStock){
-        
         long currentTimestamp = Instant.now().getEpochSecond();
     
         //Set the customer_id for the trade
@@ -429,10 +432,15 @@ public class TradeServiceImpl implements TradeServices {
             //Set the last price
             lastPrice = matchTrade.getBid();
                       
-            
             tradeRepository.save(trade);
+            /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE*/
+            Long take = trade.getAccountId();
+            Long give = matchTrade.getAccountId();
+            double amt = matchTrade.getFilledQuantity()*customStock.getAsk();
+            accService.accTradeOnHold(take, amt);
+            accService.accTradeOnHold(give, amt*-1);
+            tranService.addTransaction(take, give, amt);
             tradeRepository.save(matchTrade);
-
         }
         
     
@@ -469,6 +477,8 @@ public class TradeServiceImpl implements TradeServices {
     //This method will be used exclusively by Customer
     @Override
     public Trade createLimitBuyTrade(Trade trade, Customer  customer, CustomStock customStock){
+        /* ACCOUNT GET THE BUYER ID FROM TRADE HERE */
+        accService.accTradeOnHold(trade.getAccountId(), trade.getQuantity()*trade.getBid()*-1);
         long currentTimestamp = Instant.now().getEpochSecond();
     
         //Set the customer_id for the trade
@@ -631,9 +641,15 @@ public class TradeServiceImpl implements TradeServices {
 
             lastPrice = matchTrade.getAsk();
             tradeRepository.save(trade);
+            /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE*/
+            Long give = trade.getAccountId();
+            Long take = matchTrade.getAccountId();
+            double amt = matchTrade.getFilledQuantity()*tradeBidPrice;
+            //seller available balance will increase
+            accService.accTradeOnHold(take, amt);
+            //add in transaction
+            tranService.addTransaction(give, take, amt*-1);
             tradeRepository.save(matchTrade);
-
-
         }
             
         
@@ -822,8 +838,14 @@ public class TradeServiceImpl implements TradeServices {
                       
             
             tradeRepository.save(trade);
+            /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE*/
+            Long take = trade.getAccountId();
+            Long give = matchTrade.getAccountId();
+            double amt = matchTrade.getFilledQuantity()*tradeAskPrice;
+            accService.accTradeOnHold(take, amt);
+            accService.accTradeOnHold(give, amt*-1);
+            tranService.addTransaction(take, give, amt);
             tradeRepository.save(matchTrade);
-
         }
         
     
@@ -846,6 +868,4 @@ public class TradeServiceImpl implements TradeServices {
         count = 0;
         return tradeRepository.save(trade);
     }
-
-   
 }
