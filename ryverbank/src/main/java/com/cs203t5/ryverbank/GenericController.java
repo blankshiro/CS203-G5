@@ -28,16 +28,18 @@ public class GenericController {
     private AccountRepository meinAccounts;
     private StockRepository meinStocks;
     private TransactionRepository meinTransactions;
+    private PortfolioRepository meinPortfolios;
 
     public GenericController(ContentRepository meinContent, CustomerRepository meinCustomers,
             TradeRepository meinTrades, AccountRepository meinAccounts, StockRepository meinStocks
-            , TransactionRepository meinTransactions) {
+            , TransactionRepository meinTransactions, PortfolioRepository meinPortfolios) {
         this.meinContent = meinContent;
         this.meinCustomers = meinCustomers;
         this.meinTrades = meinTrades;
         this.meinAccounts = meinAccounts;
         this.meinStocks = meinStocks;
         this.meinTransactions = meinTransactions;
+        this.meinPortfolios = meinPortfolios;
     }
 
     @GetMapping("/")
@@ -47,6 +49,11 @@ public class GenericController {
 
     @GetMapping("/reset")
     public void resetRepos() {
+        //Delete all portfolios 
+        System.out.println("Deleting all Portfolios");
+        meinPortfolios.deleteImmediate();
+        System.out.println(meinPortfolios.count());
+        
         // Delete all existing customers & content
         System.out.println("Deleting all customers");
         // Everyone but the marketmaker will be deleted
@@ -64,7 +71,7 @@ public class GenericController {
         System.out.println("Deleting all transactions records");
         meinTransactions.deleteAll();
         
-        //Reinitializing all the stock and trade information for the marketMaker
+        // Reinitializing all the stock and trade information for the marketMaker
         Optional<Account> marketMakerAcc = meinAccounts.findById(1L);
         try {
             //Resetting the $ for the market maker
@@ -81,7 +88,7 @@ public class GenericController {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        System.out.println("[Add admin]: " + meinCustomers.save(
+        System.out.println("[Creating an Admin]: " + meinCustomers.save(
 			new Customer("manager_1", encoder.encode("01_manager_01"),null, null, null, null, "ROLE_MANAGER", true)).getUsername());
 		
 		System.out.println("[Add analyst]: " + meinCustomers.save(
@@ -91,7 +98,6 @@ public class GenericController {
 			new Customer("analyst_2", encoder.encode("02_analyst_02"),null, null, null, null, "ROLE_ANALYST", true)).getUsername());
         
     }
-
 
 
 }

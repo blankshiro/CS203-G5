@@ -1,0 +1,10 @@
+POST http://localhost:8080/trades
+Content-Type: application/json
+Authorization: Basic manager_1:01_manager_01
+{
+            "action":"sell",
+            "symbol":"A17U",
+            "quantity":25000,
+            "ask":0.0,
+            "account_id":1
+    }

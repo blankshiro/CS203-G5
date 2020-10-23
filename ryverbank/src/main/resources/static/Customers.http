@@ -7,8 +7,8 @@ GET http://localhost:8080/reset
 GET https://ryverbank.vision/
 
 #####
-GET https://ryverbank.vision/customers
-Authorization: Basic user1:goodpassword
+GET http://localhost:8080/customers
+Authorization: Basic manager_1:goodpassword
 
 ####
 POST http://localhost:8080/customers
