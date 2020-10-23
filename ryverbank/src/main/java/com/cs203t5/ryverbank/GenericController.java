@@ -54,6 +54,9 @@ public class GenericController {
         meinPortfolios.deleteImmediate();
         System.out.println(meinPortfolios.count());
         
+        System.out.println("Deleting all accounts");
+        meinAccounts.deleteImmediate();
+        System.out.println(meinAccounts.count());
         // Delete all existing customers & content
         System.out.println("Deleting all customers");
         // Everyone but the marketmaker will be deleted

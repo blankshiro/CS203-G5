@@ -8,7 +8,7 @@ GET https://ryverbank.vision/
 
 #####
 GET http://localhost:8080/customers
-Authorization: Basic manager_1:goodpassword
+Authorization: Basic manager_1:01_manager_01
 
 ####
 POST http://localhost:8080/customers
