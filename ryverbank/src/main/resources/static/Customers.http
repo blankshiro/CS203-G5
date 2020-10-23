@@ -1,6 +1,8 @@
 #Logout
 GET http://localhost:8080/logout
-
+####
+#Reset
+GET http://localhost:8080/reset
 ####
 GET https://ryverbank.vision/
 

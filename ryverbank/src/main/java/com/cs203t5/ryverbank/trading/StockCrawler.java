@@ -70,7 +70,7 @@ public class StockCrawler {
 
             //Customer_Id is the market maker account
                int account_Id = 1;
-               int customer_Id = 3;
+               int customer_Id = 4;
                Long accountId = Long.valueOf(account_Id);
                Long customerId = Long.valueOf(customer_Id);
     
