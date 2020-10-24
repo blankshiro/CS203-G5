@@ -10,5 +10,5 @@ public interface TransactionServices {
 
     Transaction addTransaction(Transaction transaction);
 
-    Transaction addTransaction(Long accFrom, Long accTo, double amt);
+    Transaction addTransaction(Long acc1, Long acc2, double amt);
 }
