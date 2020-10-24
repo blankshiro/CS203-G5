@@ -2,7 +2,7 @@ package com.cs203t5.ryverbank.account_transaction;
 
 import java.util.*;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -85,7 +85,7 @@ public class AccountNTransactionController {
         return acc;
     }
     
-
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/accounts")
     public Account createAccount(@RequestBody Account newAccInfo){
         // if(cusRepo.existsById(newAccInfo.getCustId())){
@@ -96,6 +96,7 @@ public class AccountNTransactionController {
         // }
         return cusRepo.findById(newAccInfo.getCustomer_id()).map(aCustomer -> {
             newAccInfo.setCustomer(aCustomer);
+            newAccInfo.setAvailableBalance(newAccInfo.getBalance());
             return accService.addAccount(newAccInfo);
 
         }).orElseThrow(() -> new CustomerNotFoundException(newAccInfo.getCustomer_id()));
@@ -125,7 +126,8 @@ public class AccountNTransactionController {
         return transRepo.findByAccount1OrAccount2(id, id);
     }
 
-    @PostMapping("/accounts/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/accounts/{id}/transactions")
     public Transaction addTransaction(@PathVariable Long id,
                                         @RequestBody Transaction newTransInfo){
         getSessionDetails();
@@ -142,9 +144,9 @@ public class AccountNTransactionController {
                 throw new CustomerUnauthorizedException("Account does not belong to this customer");
             }
             //check if sender and receiver are the same
-            if(sender == receiver){
-                throw new InvalidEntryException("Cannot transfer to same account");
-            }
+            // if(sender == receiver){
+            //     throw new InvalidEntryException("Cannot transfer to same account");
+            // }
 
             //check if the receiver is valid
             if(!accRepo.existsById(receiver)){
@@ -153,4 +155,5 @@ public class AccountNTransactionController {
             return transService.addTransaction(newTransInfo);
         }).orElseThrow(() -> new AccountNotFoundException(id));
     }
+
 } 

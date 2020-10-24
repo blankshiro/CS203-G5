@@ -24,18 +24,20 @@ public class CustomerServiceTest {
     @InjectMocks
     private CustomerServiceImpl userService;
 
-    // @Test
-    // void createUser_NewUser_ReturnNewUser() {
-    //     Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
-    //             "White House", "ROLE_USER", true);
+    /*
+    @Test
+    void createUser_NewUser_ReturnNewUser() {
+        Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
+                "White House", "ROLE_USER", true);
 
     //     when(users.save(any(Customer.class))).thenReturn(newUser);
 
     //     Customer savedCustomer = userService.createUser(newUser);
 
-    //     assertNotNull(savedCustomer);
-    //     verify(users).save(newUser);
-    // }
+        assertNotNull(savedCustomer);
+        verify(users).save(newUser);
+    }
+    */
 
     @Test
     void createUser_SameUser_ThrowCustomerExistsException() {
@@ -93,7 +95,7 @@ public class CustomerServiceTest {
         Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
-        Customer updatedCustomerAddress = userService.updateAddress(userId, "Blue House", "user1");
+        Customer updatedCustomerAddress = userService.updateAddress(userId, "Blue House");
 
         assertNull(updatedCustomerAddress);
         verify(users).findById(userId);
@@ -136,7 +138,7 @@ public class CustomerServiceTest {
         Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
-        Customer updatedCustomerPhone = userService.updatePhone(userId, "81234567", "user1");
+        Customer updatedCustomerPhone = userService.updatePhone(userId, "81234567");
 
         assertNull(updatedCustomerPhone);
         verify(users).findById(userId);
@@ -157,7 +159,7 @@ public class CustomerServiceTest {
         Long userId = foundUser.getCustomerId();
         when(users.findById(userId)).thenReturn(Optional.empty());
 
-        Customer updatedCustomerPassword = userService.updatePhone(userId, "betterpassword1", "user1");
+        Customer updatedCustomerPassword = userService.updatePhone(userId, "betterpassword1");
 
         assertNull(updatedCustomerPassword);
         verify(users).findById(userId);

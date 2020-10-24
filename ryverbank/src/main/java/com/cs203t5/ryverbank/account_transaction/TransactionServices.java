@@ -9,4 +9,6 @@ public interface TransactionServices {
     Transaction getTransaction(Long id);
 
     Transaction addTransaction(Transaction transaction);
+
+    Transaction addTransaction(Long acc1, Long acc2, double amt);
 }

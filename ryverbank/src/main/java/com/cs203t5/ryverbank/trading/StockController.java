@@ -10,18 +10,28 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+
+/**
+ * A StockController that accepts and returns stock JSON data.
+ */
 @RestController
 public class StockController {
+    /** The stock repository. */
     private StockRepository stockRepository;
+    /** The stock services. */
     private StockServices stockService;
- 
 
-    public StockController( StockRepository stockRepository, StockServices stockService) {
+    /**
+     * Construcst a StockController with the following parameters.
+     * 
+     * @param stockRepository The stock repository.
+     * @param stockService The stock services.
+     */
+    public StockController(StockRepository stockRepository, StockServices stockService) {
         this.stockRepository = stockRepository;
         this.stockService = stockService;
-     
-    }
 
+    }
 
     /**
      * List all stocks in the system
@@ -33,30 +43,18 @@ public class StockController {
         return stockRepository.findAll();
     }
 
-        /**
+    /**
      * Get specific stocks in the system
      * 
      * @return Specific stocls
      */
     @GetMapping("/stocks/{symbol}")
     public CustomStock getStocks(@PathVariable String symbol) {
-       CustomStock stock = stockService.getStock(symbol);
+        CustomStock stock = stockService.getStock(symbol);
 
-       if (stock == null)
+        if (stock == null)
             throw new StockSymbolNotFoundException("No stock information found for " + symbol);
-       return stock;
+        return stock;
     }
 
-    
-
-    
-   
-
- 
-
- 
-
-   
-
- 
 }

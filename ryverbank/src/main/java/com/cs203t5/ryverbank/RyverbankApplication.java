@@ -1,6 +1,8 @@
 package com.cs203t5.ryverbank;
 
 import java.util.Optional;
+import java.util.*;
+import java.text.*;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -14,9 +16,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class RyverbankApplication {
 	public static void main(String[] args) {
 
@@ -59,11 +62,11 @@ public class RyverbankApplication {
 			new Content("Cats", "Cats are cool", "Need I say more?", "www.catsarekewl.com")).getTitle());
 
 
-			StockCrawler stc = ctx.getBean(StockCrawler.class);
-			stc.crawl();
-			stc.marketMarker();		
-
+		
+	
 	}
+
+
 
 
 }

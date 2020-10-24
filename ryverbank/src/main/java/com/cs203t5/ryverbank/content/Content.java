@@ -46,9 +46,9 @@ public class Content {
     private boolean approved = false;
 
     /**
-     * Constructs a content with the specified attributes.
+     * Constructs a content with the following parameters.
      * 
-     * @param title The titlte of the content.
+     * @param title The title of the content.
      * @param summary The summary of the content.
      * @param newsContent The actual content.
      * @param link The link to the content.
