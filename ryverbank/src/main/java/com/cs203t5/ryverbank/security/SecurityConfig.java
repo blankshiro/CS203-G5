@@ -70,6 +70,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             
             .antMatchers(HttpMethod.DELETE, "/contents/*").hasAnyRole("ANALYST","MANAGER")
 
+            .antMatchers(HttpMethod.POST, "/trades").hasRole("USER")
+
+            .antMatchers(HttpMethod.GET, "/trades").authenticated()
+
+            .antMatchers(HttpMethod.GET, "/trades/*").authenticated()
+
             //only users get to see their portfolio
             .antMatchers(HttpMethod.GET, "/portfolio").hasRole("USER")
             .antMatchers(HttpMethod.GET, "/portfolio").authenticated()
