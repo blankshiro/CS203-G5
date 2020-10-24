@@ -61,17 +61,10 @@ public class RyverbankApplication {
 		System.out.println("[Adding content]: " +  meinContent.save(
 			new Content("Cats", "Cats are cool", "Need I say more?", "www.catsarekewl.com")).getTitle());
 
-			StockCrawler crawler = ctx.getBean(StockCrawler.class);
+			// StockCrawler crawler = ctx.getBean(StockCrawler.class);
 
-			crawler.crawl();
+			// crawler.crawl();
 	
-			crawler.marketMarker();
-
-		
-	
+			// crawler.marketMarker();
 	}
-
-
-
-
 }

@@ -89,10 +89,10 @@ public class TradeController {
         Calendar today = Calendar.getInstance();
 
 
-    //    if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
-    //    {
-    //        throw new TradeInvalidException("Market is close");
-    //    }
+       if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
+       {
+           throw new TradeInvalidException("Market is close");
+       }
 
         String authenticatedUsername = auth.getName();
 

@@ -22,6 +22,7 @@ public class StockCrawler {
         this.tradeRepository = tradeRepository;
     }
 
+    @Scheduled(cron = "0 00 09 ? * MON-FRI")
     public void crawl() {
 
         try {
