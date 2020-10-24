@@ -6,19 +6,41 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * A ContentRepository that provides the mechanism for storage, retrieval,
+ * search, update and delete operation on content objects
+ */
 @Repository
 public interface ContentRepository extends JpaRepository<Content, Long> {
-    // This method is used to search for approved list of content for the customer
+    /**
+     * Derived query to search for approved list of content for the customer
+     * 
+     * @param approved The contents that are approved.
+     * @return The approved list of content.
+     */
     List<Content> findByApproved(boolean approved);
 
-    // This method is used to search for ALL content, ordered by False
+    /**
+     * Derived query to search for all content, ordered by False
+     * 
+     * @return The list of all content, ordered by False.
+     */
     List<Content> findAllByOrderByApprovedAsc();
 
-    // This method is used to search for a particular content, based on its Id
+    /**
+     * Derived query to search for a particular content, based on its Id
+     * 
+     * @param id The id of the content.
+     * @return The content found.
+     */
     Optional<Content> findById(Long Id);
 
-
-    // This method is used to check if the title of the content already exists
+    /**
+     * Derived query to check if the title of the content already exists.
+     * 
+     * @param aTitle The title of the content.
+     * @return True if the content exists, otherwise return False.
+     */
     Boolean existsByTitle(String aTitle);
 }
 
