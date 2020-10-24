@@ -18,7 +18,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Asset {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
@@ -42,7 +42,7 @@ public class Asset {
     @JsonProperty("gain_loss")
     private double gainLoss;
 
-    //if not traded should be false
+    // if not traded should be false
     @JsonIgnore
     @Column(name = "istraded")
     boolean isTraded;
@@ -59,8 +59,20 @@ public class Asset {
     @JsonIgnore
     String record;
 
-    public Asset(String code, int quantity, double avgPrice, double currentPrice, Long portfolioId, boolean isTraded, String record){
-        
+    /**
+     * Constructs an asset with the following parameters.
+     * 
+     * @param code
+     * @param quantity
+     * @param avgPrice
+     * @param currentPrice
+     * @param portfolioId
+     * @param isTraded
+     * @param record
+     */
+    public Asset(String code, int quantity, double avgPrice, double currentPrice, Long portfolioId, boolean isTraded,
+            String record) {
+
         this.code = code;
         this.quantity = quantity;
         this.avgPrice = avgPrice;
@@ -70,7 +82,7 @@ public class Asset {
         this.record = record;
         this.value = this.currentPrice * quantity;
         this.gainLoss = value - (avgPrice * quantity);
-        
+
     }
-    
+
 }

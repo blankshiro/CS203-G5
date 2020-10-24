@@ -15,8 +15,7 @@ import lombok.*;
 
 import com.cs203t5.ryverbank.account_transaction.*;
 import com.cs203t5.ryverbank.portfolio.Portfolio;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 
 @Entity
 @Setter
@@ -25,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 // @AllArgsConstructor
 @NoArgsConstructor
 // @EqualsAndHashCode
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Customer implements UserDetails {
     private static final long serialVersionUID = 1L;
 
@@ -72,10 +72,22 @@ public class Customer implements UserDetails {
     @JsonIgnore
     private List<Account> accounts;
 
-    //have to add portfolio to customer
+    // have to add portfolio to customer
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Portfolio portfolio;
 
+    /**
+     * Constructs a new user with the following parameters.
+     * 
+     * @param username    The username of the user.
+     * @param password    The password of the user.
+     * @param full_name   The full name of the user.
+     * @param nric        The nric of the user.
+     * @param phone       The phone number of the user.
+     * @param address     The address of the user.
+     * @param authorities The role of the user.
+     * @param active      The active status of the account.
+     */
     public Customer(String username, String password, String full_name, String nric, String phone, String address,
             String authorities, boolean active) {
         this.full_name = full_name;
@@ -97,8 +109,8 @@ public class Customer implements UserDetails {
     }
 
     /**
-     * Indicates whether the user's account has expired. An expired account cannot be
-     * authenticated.
+     * Indicates whether the user's account has expired. An expired account cannot
+     * be authenticated.
      */
     @Override
     public boolean isAccountNonExpired() {

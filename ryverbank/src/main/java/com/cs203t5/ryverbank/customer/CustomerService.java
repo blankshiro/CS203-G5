@@ -2,12 +2,10 @@ package com.cs203t5.ryverbank.customer;
 
 import java.util.List;
 
-// import com.cs203t5.ryverbank.token.*;
-
+/**
+ * An interface for various customer services.
+ */
 public interface CustomerService {
-    /** Returns the list of all users in the repository. */
-    List<Customer> listUsers();
-
     // Creating new User (C of C.R.U.D)
     // Roles: Manager
     Customer createUser(Customer user);
@@ -23,19 +21,19 @@ public interface CustomerService {
     Customer updateAddress(Long userId, String address);
 
     // Customer update own Address
-    Customer updateAddress(Long userId, String address, String authenticatedUsername);
+    // Customer updateAddress(Long userId, String address, String authenticatedUsername);
 
     // Manager update Customer phone
     Customer updatePhone(Long userId, String phone);
 
     // Customer update own phone
-    Customer updatePhone(Long userId, String phone, String authenticatedUsername);
+    // Customer updatePhone(Long userId, String phone, String authenticatedUsername);
 
     // Manager update Customer password
     Customer updatePassword(Long userId, String password);
 
     // Customer update own password
-    Customer updatePassword(Long userId, String password, String authenticatedUsername);
+    // Customer updatePassword(Long userId, String password, String authenticatedUsername);
 
     // Manager update Customer active field
     Customer updateActiveStatus(Long userId, Boolean activeStatus);

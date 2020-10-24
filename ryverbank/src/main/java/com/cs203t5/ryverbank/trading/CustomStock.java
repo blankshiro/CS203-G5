@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class CustomStock {
-   
+
     @Id
     @NotNull(message = "Symbol cannot be null")
     private String symbol;
@@ -35,6 +35,16 @@ public class CustomStock {
     @NotNull(message = "ask price cannot be null")
     private double ask;
 
+    /**
+     * Constructs a stock object with the following parameters.
+     * 
+     * @param symbol    The symbol of the stock.
+     * @param lastPrice The last price of the stock.
+     * @param bidVolume The bid volume of the stock.
+     * @param bid       The bid price of the stock.
+     * @param askVolume The ask volume of the stock.
+     * @param ask       The ask price of the stock.
+     */
     public CustomStock(String symbol, double lastPrice, int bidVolume, double bid, int askVolume, double ask) {
         this.symbol = symbol;
         this.lastPrice = lastPrice;

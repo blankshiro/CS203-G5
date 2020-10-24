@@ -1,4 +1,5 @@
 package com.cs203t5.ryverbank.trading;
+
 import java.util.Date;
 import javax.persistence.*;
 import com.cs203t5.ryverbank.customer.*;
@@ -31,7 +32,6 @@ public class Trade {
 
     private double ask;
 
-
     @JsonProperty("avg_price")
     private double avgPrice;
 
@@ -47,7 +47,6 @@ public class Trade {
     private Long customerId;
 
     private String status;
-    
 
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -59,8 +58,28 @@ public class Trade {
     @JoinColumn(name = "accountId", referencedColumnName = "accountID", updatable = false, insertable = false)
     private Account account;
 
-    public Trade(String action, String symbol, int quantity, double bid, double ask, double avgPrice, int filledQuantity, 
-    Long date, Long accountId, Long customerId, String status) {
+    /**
+     * Constructs a new trade with the following paramters.
+     * 
+     * @param action         The action by the customer. (specify "buy" for buying
+     *                       and "sell" for selling)
+     * @param symbol         The stock symbol.
+     * @param quantity       The quantity of stock.
+     * @param bid            The bidding price. (specify 0.0 for market order,
+     *                       ignored if action is "sell")
+     * @param ask            The asking price. (specify 0.0 for market order,
+     *                       ignored if action is "buy")
+     * @param avgPrice       The average price. (the average filled price, as one
+     *                       trade can be matched by several other trades)
+     * @param filledQuantity The amount of stock quantity filled.
+     * @param date           The date of the trade.
+     * @param accountId      The account to debit or to deposit to.
+     * @param customerId     The customer performing the trade.
+     * @param status         The status of the trade. ("open", "filled",
+     *                       "partial-filled", "cancelled" or "expired")
+     */
+    public Trade(String action, String symbol, int quantity, double bid, double ask, double avgPrice,
+            int filledQuantity, Long date, Long accountId, Long customerId, String status) {
         this.action = action;
         this.symbol = symbol;
         this.quantity = quantity;
@@ -73,6 +92,6 @@ public class Trade {
         this.customerId = customerId;
         this.status = status;
 
-}
+    }
 
 }

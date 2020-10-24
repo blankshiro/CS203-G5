@@ -25,7 +25,7 @@ public class ContentController {
     private ContentService contentService;
 
     /**
-     * Constructor for ContentController.
+     * Constructs a ContentController with the following parameters.
      * 
      * @param meinContent    The Content Repository
      * @param contentService The Content Services.

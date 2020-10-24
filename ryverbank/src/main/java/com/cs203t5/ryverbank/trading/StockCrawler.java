@@ -10,25 +10,37 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-
 @Component
 public class StockCrawler {
-
+    /** The stock repository. */
     private StockRepository stockRepository;
+
+    /** The trade repository. */
     private TradeRepository tradeRepository;
 
-    public StockCrawler(StockRepository stockRepository,TradeRepository tradeRepository){
+    /**
+     * Constructs a StockCrawler with the following parameters.
+     * 
+     * @param stockRepository The stock repository.
+     * @param tradeRepository The trade repository.
+     */
+    public StockCrawler(StockRepository stockRepository, TradeRepository tradeRepository) {
         this.stockRepository = stockRepository;
         this.tradeRepository = tradeRepository;
     }
 
+    /**
+     * A stock crawler that crawls for all the Straits Times Index stocks at
+     * https://www.sgx.com/indices/products/sti
+     */
     public void crawl() {
-        
-        try{
-            String[] symbols  = new String[] {"A17U", "C61U", "C31", "C38U", "C09", "C52","D01","D05","G13","H78",
-            "C07","J36","J37","BN4","N2IU","ME8U","M44U", "O39", "S58", "U96","S68","C6L", "Z74","S63","Y92","U11","U14","V03","F34","BS6"};
 
-            for(String symbol : symbols){
+        try {
+            String[] symbols = new String[] { "A17U", "C61U", "C31", "C38U", "C09", "C52", "D01", "D05", "G13", "H78",
+                    "C07", "J36", "J37", "BN4", "N2IU", "ME8U", "M44U", "O39", "S58", "U96", "S68", "C6L", "Z74", "S63",
+                    "Y92", "U11", "U14", "V03", "F34", "BS6" };
+
+            for (String symbol : symbols) {
                 Stock stock = YahooFinance.get(symbol + ".SI");
                 // double bid = stock.getQuote().getBid().doubleValue();
                 double bid = 0.0;
@@ -41,23 +53,23 @@ public class StockCrawler {
                 // stock.getQuote().getAskSize().intValue();
                 stockRepository.save(new CustomStock(symbol, price, bidVolume, bid, askVolume, ask));
             }
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             System.out.println("One of the stock is not found");
         }
-        
+
     }
 
-    public void marketMarker(){
+    public void marketMarker() {
 
         long currentTimestamp = Instant.now().getEpochSecond();
 
-        try{
-            String[] symbols  = new String[] {"A17U", "C61U", "C31", "C38U", "C09", "C52","D01","D05","G13","H78",
-            "C07","J36","J37","BN4","N2IU","ME8U","M44U", "O39", "S58", "U96","S68","C6L", "Z74","S63","Y92","U11","U14","V03","F34","BS6"};
-    
-            //Market marker buy and sell trade for each symbol
-            for(String symbol: symbols){
+        try {
+            String[] symbols = new String[] { "A17U", "C61U", "C31", "C38U", "C09", "C52", "D01", "D05", "G13", "H78",
+                    "C07", "J36", "J37", "BN4", "N2IU", "ME8U", "M44U", "O39", "S58", "U96", "S68", "C6L", "Z74", "S63",
+                    "Y92", "U11", "U14", "V03", "F34", "BS6" };
+
+            // Market marker buy and sell trade for each symbol
+            for (String symbol : symbols) {
                 Stock stock = YahooFinance.get(symbol + ".SI");
                 String buyAction = "buy";
                 int quantity = 20000;
@@ -68,17 +80,19 @@ public class StockCrawler {
                 String sellAction = "sell";
                 double ask = stock.getQuote().getAsk().doubleValue();
 
-            //Customer_Id is the market maker account
-               int account_Id = 1;
-               int customer_Id = 3;
-               Long accountId = Long.valueOf(account_Id);
-               Long customerId = Long.valueOf(customer_Id);
-    
-                tradeRepository.save(new Trade(buyAction,symbol,quantity,bid, 0.0, 0.0, 0, date,accountId, customerId,status)); 
-                tradeRepository.save(new Trade(sellAction,symbol,quantity,0.0,ask, 0.0, 0, date,accountId, customerId,status));  
+                // Customer_Id is the market maker account
+                int account_Id = 1;
+                int customer_Id = 3;
+                Long accountId = Long.valueOf(account_Id);
+                Long customerId = Long.valueOf(customer_Id);
 
-                Optional <CustomStock> optionalStocks = stockRepository.findBySymbol(symbol);
-                if(optionalStocks != null || optionalStocks.isPresent()){
+                tradeRepository.save(
+                        new Trade(buyAction, symbol, quantity, bid, 0.0, 0.0, 0, date, accountId, customerId, status));
+                tradeRepository.save(
+                        new Trade(sellAction, symbol, quantity, 0.0, ask, 0.0, 0, date, accountId, customerId, status));
+
+                Optional<CustomStock> optionalStocks = stockRepository.findBySymbol(symbol);
+                if (optionalStocks != null || optionalStocks.isPresent()) {
                     CustomStock customStock = optionalStocks.get();
                     customStock.setAsk(ask);
                     customStock.setBid(bid);
@@ -88,14 +102,11 @@ public class StockCrawler {
                     stockRepository.save(customStock);
                 }
 
-           
             }
 
-          
-        } catch(IOException e){
+        } catch (IOException e) {
             System.out.println("One of the stock is not found");
         }
-        
-      
+
     }
 }
