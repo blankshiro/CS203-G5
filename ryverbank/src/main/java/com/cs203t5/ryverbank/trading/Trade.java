@@ -5,6 +5,7 @@ import javax.persistence.*;
 import com.cs203t5.ryverbank.customer.*;
 import com.cs203t5.ryverbank.account_transaction.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotNull;
 
@@ -16,6 +17,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @EqualsAndHashCode
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Trade {
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 
@@ -24,12 +26,17 @@ public class Trade {
 
     @NotNull(message = "Symbol cannot be null")
     private String symbol;
-
+    
     @NotNull(message = "Quantity cannot be null")
-    private int quantity;
+    @Column(name = "quantity")
+    private int quantity=-531;
 
-    private double bid;
+    @Column(name = "bid")
+    @JsonProperty("bid")
+    private double bid=-1;
 
+    @Column(name = "ask")
+    @JsonProperty("ask")
     private double ask;
 
     @JsonProperty("avg_price")

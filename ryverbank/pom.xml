@@ -99,6 +99,7 @@
 			<artifactId>YahooFinanceAPI</artifactId>
 			<version>3.15.0</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

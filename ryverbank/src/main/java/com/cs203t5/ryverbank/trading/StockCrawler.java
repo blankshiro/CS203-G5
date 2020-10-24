@@ -3,6 +3,7 @@ package com.cs203t5.ryverbank.trading;
 import java.util.*;
 
 import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -33,6 +34,7 @@ public class StockCrawler {
      * A stock crawler that crawls for all the Straits Times Index stocks at
      * https://www.sgx.com/indices/products/sti
      */
+    @Scheduled(cron = "0 00 09 ? * MON-FRI")
     public void crawl() {
 
         try {
@@ -59,17 +61,20 @@ public class StockCrawler {
 
     }
 
-    public void marketMarker() {
+
+    //Open the market at 9am every weekday
+    @Scheduled(cron = "0 00 09 ? * MON-FRI")
+    public void marketMarker(){
 
         long currentTimestamp = Instant.now().getEpochSecond();
 
-        try {
-            String[] symbols = new String[] { "A17U", "C61U", "C31", "C38U", "C09", "C52", "D01", "D05", "G13", "H78",
-                    "C07", "J36", "J37", "BN4", "N2IU", "ME8U", "M44U", "O39", "S58", "U96", "S68", "C6L", "Z74", "S63",
-                    "Y92", "U11", "U14", "V03", "F34", "BS6" };
+        try{ 
+            String[] symbols  = new String[] {"A17U", "C61U", "C31", "C38U", "C09", "C52","D01","D05","G13","H78",
+            "C07","J36","J37","BN4","N2IU","ME8U","M44U", "O39", "S58", "U96","S68","C6L", "Z74","S63","Y92","U11","U14","V03","F34","BS6"};
+    
+            //Market marker buy and sell trade for each symbol
+            for(String symbol: symbols){
 
-            // Market marker buy and sell trade for each symbol
-            for (String symbol : symbols) {
                 Stock stock = YahooFinance.get(symbol + ".SI");
                 String buyAction = "buy";
                 int quantity = 20000;
@@ -107,6 +112,23 @@ public class StockCrawler {
         } catch (IOException e) {
             System.out.println("One of the stock is not found");
         }
+    }
 
+    //Close the market at 5pm every weekday
+    @Scheduled(cron = "0 00 17 ? * MON-FRI")
+    public void closeMarket(){
+        String[] symbols  = new String[] {"A17U", "C61U", "C31", "C38U", "C09", "C52","D01","D05","G13","H78",
+        "C07","J36","J37","BN4","N2IU","ME8U","M44U", "O39", "S58", "U96","S68","C6L", "Z74","S63","Y92","U11","U14","V03","F34","BS6"};
+
+        for(String symbol: symbols){
+            List<Trade> tradeList = tradeRepository.findAllBySymbol(symbol);
+            for(Trade trade: tradeList){
+                if(trade.getStatus().equals("open") || trade.getStatus().equals("partial-filled")){
+                    trade.setStatus("expired");
+                    tradeRepository.save(trade);
+                }
+            }
+        }
+        System.out.println("Market is close");
     }
 }
