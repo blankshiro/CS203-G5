@@ -98,6 +98,26 @@ public class StockCrawler {
             System.out.println("One of the stock is not found");
         }
 
+        System.out.println("Market is open");
+
     }
+
+       //Close the market at 5pm every weekday
+       @Scheduled(cron = "0 00 17 ? * MON-FRI")
+       public void closeMarket(){
+           String[] symbols  = new String[] {"A17U", "C61U", "C31", "C38U", "C09", "C52","D01","D05","G13","H78",
+           "C07","J36","J37","BN4","N2IU","ME8U","M44U", "O39", "S58", "U96","S68","C6L", "Z74","S63","Y92","U11","U14","V03","F34","BS6"};
+   
+           for(String symbol: symbols){
+               List<Trade> tradeList = tradeRepository.findAllBySymbol(symbol);
+               for(Trade trade: tradeList){
+                   if(trade.getStatus().equals("open") || trade.getStatus().equals("partial-filled")){
+                       trade.setStatus("expired");
+                       tradeRepository.save(trade);
+                   }
+               }
+           }
+           System.out.println("Market is close");
+       }
 
 }
