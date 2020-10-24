@@ -24,9 +24,6 @@ public class RyverbankApplication {
 	public static void main(String[] args) {
 
 		ApplicationContext ctx = SpringApplication.run(RyverbankApplication.class, args);
-
-
-		
 		
 		// JPA user repository init
 		//create a manager account 

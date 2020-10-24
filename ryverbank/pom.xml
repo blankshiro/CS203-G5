@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.cs203t5</groupId>
 	<artifactId>ryverbank</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.3-STABLE</version>
 	<name>ryverbank</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Ryver bank application T5</description>
 
 	<properties>
 		<java.version>11</java.version>
@@ -57,12 +57,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.14</version>
+			<scope>provided</scope>
+	</dependency>
+		<!-- <dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 			<optional>true</optional> 
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

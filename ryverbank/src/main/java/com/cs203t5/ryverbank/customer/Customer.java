@@ -15,6 +15,9 @@ import lombok.*;
 
 import com.cs203t5.ryverbank.account_transaction.*;
 import com.cs203t5.ryverbank.portfolio.Portfolio;
+import com.cs203t5.ryverbank.trading.Trade;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.*;
 
 @Entity
@@ -76,6 +79,9 @@ public class Customer implements UserDetails {
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Portfolio portfolio;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Trade> trades;
+    
     /**
      * Constructs a new user with the following parameters.
      * 

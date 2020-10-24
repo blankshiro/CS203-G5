@@ -1,18 +1,23 @@
 #Logout
 GET http://localhost:8080/logout
+####
+#Reset
+GET http://localhost:8080/reset
+####
+GET https://ryverbank.vision/
 
 #####
 GET http://localhost:8080/customers
-Authorization: Basic manager:goodpassword
+Authorization: Basic manager_1:01_manager_01
 
 ####
 POST http://localhost:8080/customers
 Content-Type: application/json
-Authorization: Basic manager:goodpassword
+Authorization: Basic manager_1:01_manager_01
 
 {   
-    "username":"kazuma",
-    "password":"password" ,
+    "username":"good_user_1",
+    "password":"01_user_01" ,
     "full_name":"Satou Kazuma",
     "nric":"S7982834C", 
     "phone":"91251234", 

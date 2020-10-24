@@ -59,12 +59,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             //Following lines are for content
             //Everyone that wants to access the content page needs to be authenticated
             .antMatchers(HttpMethod.GET, "/contents").authenticated()
+            .antMatchers(HttpMethod.GET, "/contents/*").authenticated()
 
             //Only managers and analysts can post into this URL
             .antMatchers(HttpMethod.POST, "/contents").hasAnyRole("ANALYST","MANAGER")
 
             //Only managers and analysts can perform C.R.U.D into this URL
             .antMatchers(HttpMethod.PUT, "/contents").hasAnyRole("ANALYST","MANAGER")
+            .antMatchers(HttpMethod.PUT, "/contents/*").hasAnyRole("ANALYST","MANAGER")
+            
             .antMatchers(HttpMethod.DELETE, "/contents/*").hasAnyRole("ANALYST","MANAGER")
 
             //only users get to see their portfolio

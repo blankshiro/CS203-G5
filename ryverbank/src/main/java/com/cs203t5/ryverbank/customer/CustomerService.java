@@ -38,4 +38,5 @@ public interface CustomerService {
     // Manager update Customer active field
     Customer updateActiveStatus(Long userId, Boolean activeStatus);
 
+
 }
