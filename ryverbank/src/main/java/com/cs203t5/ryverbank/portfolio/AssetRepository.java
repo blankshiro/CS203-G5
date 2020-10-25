@@ -2,12 +2,16 @@ package com.cs203t5.ryverbank.portfolio;
 
 import java.util.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A AssetRepository that provides the mechanism for storage, retrieval,
  * search, update and delete operation on asset objects
  */
+@Transactional
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, Long> {
 
@@ -43,4 +47,8 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     // maybe should return back the asset and save it into another database?
     // void deleteByCodeAndCustomerId(String symbol, Long id);
+
+    @Modifying
+    @Query(value = "DELETE FROM ASSET", nativeQuery = true)
+    void deleteImmediate();
 }

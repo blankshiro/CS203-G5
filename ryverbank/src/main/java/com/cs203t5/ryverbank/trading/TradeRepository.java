@@ -4,12 +4,17 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A TradeRepository that provides the mechanism for storage, retrieval,
  * search, update and delete operation on trade objects
  */
+@Transactional
+@Repository
 public interface TradeRepository extends JpaRepository <Trade, Long> {
     /**
      * Optional query to find the trade by the trade id.
@@ -36,4 +41,8 @@ public interface TradeRepository extends JpaRepository <Trade, Long> {
      * @return The list of all trades that has the stock symbol.
      */
     List<Trade> findAllBySymbol(String symbol);
+    
+    @Modifying
+    @Query(value = "DELETE FROM TRADE", nativeQuery = true)
+    void deleteImmediate();
 }
