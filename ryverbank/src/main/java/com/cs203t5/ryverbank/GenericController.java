@@ -1,6 +1,8 @@
 package com.cs203t5.ryverbank;
 
+import java.util.Calendar;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import com.cs203t5.ryverbank.account_transaction.Account;
 import com.cs203t5.ryverbank.account_transaction.AccountRepository;
@@ -13,6 +15,7 @@ import com.cs203t5.ryverbank.portfolio.Portfolio;
 import com.cs203t5.ryverbank.portfolio.PortfolioRepository;
 import com.cs203t5.ryverbank.trading.StockCrawler;
 import com.cs203t5.ryverbank.trading.StockRepository;
+import com.cs203t5.ryverbank.trading.TradeInvalidException;
 import com.cs203t5.ryverbank.trading.TradeRepository;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -77,6 +80,31 @@ public class GenericController {
         // Reinitializing all the stock and trade information for the marketMaker
         Optional<Account> marketMakerAcc = meinAccounts.findById(1L);
         try {
+            TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
+
+            Calendar startDateTime=Calendar.getInstance(timeZone);
+            startDateTime.set(Calendar.HOUR_OF_DAY,9);
+            startDateTime.set(Calendar.MINUTE,0);
+            startDateTime.set(Calendar.SECOND,0);
+        
+            Calendar endDateTime=Calendar.getInstance(timeZone);
+            endDateTime.set(Calendar.HOUR_OF_DAY,17);
+            endDateTime.set(Calendar.MINUTE,0);
+            endDateTime.set(Calendar.SECOND,0);
+        
+        
+            Calendar saturday = Calendar.getInstance(timeZone);
+            saturday.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
+    
+            Calendar sunday = Calendar.getInstance(timeZone);
+            sunday.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+        
+            Calendar today = Calendar.getInstance(timeZone);
+    
+           if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
+           {
+               throw new TradeInvalidException("Market is close");
+           }
             //Resetting the $ for the market maker
             Account foundAcc = marketMakerAcc.get();
             foundAcc.setAvailableBalance(100000.0);
