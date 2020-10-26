@@ -35,7 +35,7 @@ public class Portfolio {
     @Column(name = "assets")
     @Where(clause = "istraded = false")
     @JsonIgnoreProperties("traded")
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Asset> assets;
 
     @JsonProperty("unrealized_gain_loss")

@@ -140,8 +140,6 @@ public class TradeController {
             throw new TradeInvalidException("Invalid Quantity");
         }
 
-        Customer customer = optionalCustomer.get();
-
 
         if(trade.getQuantity() < 0){
             throw new TradeInvalidException("invalid quantity");

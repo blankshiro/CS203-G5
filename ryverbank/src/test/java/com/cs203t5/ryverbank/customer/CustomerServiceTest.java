@@ -29,9 +29,9 @@ public class CustomerServiceTest {
         Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
                 "White House", "ROLE_USER", true);
 
-        when(users.save(any(Customer.class))).thenReturn(newUser);
+    //     when(users.save(any(Customer.class))).thenReturn(newUser);
 
-        Customer savedCustomer = userService.createUser(newUser);
+    //     Customer savedCustomer = userService.createUser(newUser);
 
         assertNotNull(savedCustomer);
         verify(users).save(newUser);
