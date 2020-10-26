@@ -21,14 +21,14 @@ public class Transaction {
 
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "accfrom", referencedColumnName = "id")
-    // @JsonProperty("from")
+    @JsonProperty("from")
     // private Account account1;
     @JsonProperty("from")
     private Long account1;
 
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "accTo", referencedColumnName = "id")
-    // @JsonProperty("to")
+    @JsonProperty("to")
     // private Account account2;
     @JsonProperty("to")
     private Long account2;

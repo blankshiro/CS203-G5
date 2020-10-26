@@ -24,9 +24,6 @@ public class RyverbankApplication {
 	public static void main(String[] args) {
 
 		ApplicationContext ctx = SpringApplication.run(RyverbankApplication.class, args);
-
-
-		
 		
 		// JPA user repository init
 		//create a manager account 
@@ -48,15 +45,8 @@ public class RyverbankApplication {
 		
 		int customerId = 4;
 		long customer_id = customerId;
-		System.out.println("[Add acccount for user1" + accounts.save(
-			new Account(customer_id,100000.0,100000.0)).getCustomer());
-		
-		users.save(new Customer("user2", encoder.encode("goodpassword"),null, null, null, null, "ROLE_USER", true));
-		users.save(new Customer("user3", encoder.encode("goodpassword"),null, null, null, null, "ROLE_USER", true));
-
-		
-		accounts.save(new Account(5L, 100000.0, 100000.0));
-		accounts.save(new Account(6L, 100000.0, 100000.0));
+		System.out.println("[Add acccount for user1]" + accounts.save(
+			new Account(customer_id,100000.0,100000.0)).getCustomer_id());
 	
 		ContentRepository meinContent = ctx.getBean(ContentRepository.class);
 		System.out.println("[Adding content]: " +  meinContent.save(
@@ -71,12 +61,10 @@ public class RyverbankApplication {
 		System.out.println("[Adding content]: " +  meinContent.save(
 			new Content("Cats", "Cats are cool", "Need I say more?", "www.catsarekewl.com")).getTitle());
 
+			// StockCrawler crawler = ctx.getBean(StockCrawler.class);
 
-		
+			// crawler.crawl();
 	
+			// crawler.marketMaker();
 	}
-
-
-
-
 }

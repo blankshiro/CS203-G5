@@ -2,6 +2,9 @@ package com.cs203t5.ryverbank.content;
 
 import java.util.List;
 
+/**
+ * An interface for content services.
+ */
 public interface ContentService {
     
     //Creating new content (C of C.R.U.D)

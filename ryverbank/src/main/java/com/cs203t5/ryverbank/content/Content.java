@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
@@ -15,6 +16,7 @@ import lombok.*;
 @Setter
 @Getter
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Content {
 
     //Primary key for all content 
@@ -36,15 +38,17 @@ public class Content {
     private String newsContent;
 
     @Column(name = "link")
+    @JsonProperty("link")
     private String link;
 
     @Column(name = "approved")
+    @JsonProperty("approved")
     private boolean approved = false;
 
     /**
-     * Constructs a content with the specified attributes.
+     * Constructs a content with the following parameters.
      * 
-     * @param title The titlte of the content.
+     * @param title The title of the content.
      * @param summary The summary of the content.
      * @param newsContent The actual content.
      * @param link The link to the content.

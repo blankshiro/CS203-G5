@@ -10,4 +10,8 @@ public class AccountNotFoundException extends RuntimeException {
     public AccountNotFoundException(Long accNumber){
         super("Could not find account " + accNumber);
     }
+
+    public AccountNotFoundException(String msg){
+        super(msg);
+    }
 }   

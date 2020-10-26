@@ -25,7 +25,7 @@ public class ContentController {
     private ContentService contentService;
 
     /**
-     * Constructor for ContentController.
+     * Constructs a ContentController with the following parameters.
      * 
      * @param meinContent    The Content Repository
      * @param contentService The Content Services.
@@ -91,6 +91,44 @@ public class ContentController {
             // Code will never reach here if the security config is functional
             throw new CustomerUnauthorizedException("You do not have permission to access the content");
         }
+    }
+
+        /**
+     * List all the contents in the system. This method should only be accessible by
+     * the manager. If the method is used by the user, throw a ContentNotFound
+     * Exception.
+     * 
+     * @param auth Checks for authenticated user role.
+     * @return The list of all contents.
+     */
+    @GetMapping("/contents/{id}")
+    public Optional<Content> getAContent(@PathVariable Long id, Authentication auth) {
+        String authenticatedUserRole = auth.getAuthorities().stream().findAny().get().getAuthority();
+        // Testing code
+        System.out.println("LOGGED IN AS: " + authenticatedUserRole);
+        // Return all content that are approved/non-approved
+        if (authenticatedUserRole.equals("ROLE_MANAGER") || authenticatedUserRole.equals("ROLE_ANALYST")) {
+            if (meinContent.findById(id).isEmpty()) {
+                throw new ContentNotFoundException("No content available for viewing");
+            } 
+            // If the person is a user, we need to check if the content is approved or not
+        } else if (authenticatedUserRole.equals("ROLE_USER")) {
+            if (meinContent.findById(id).isEmpty()) {
+                throw new ContentNotFoundException("No content available for viewing");
+            } 
+            Optional<Content> newContent = meinContent.findById(id);
+            try{
+                Content aContent = newContent.get();
+                if (!aContent.isApproved()){
+                    throw new ContentNotFoundException("No content available for viewing");
+                }
+            } catch (Exception e){
+                throw new ContentNotFoundException("No content available for viewing");
+            } 
+        }
+        
+        return meinContent.findById(id);
+ 
     }
 
     // This method should only be accessible to managers/analysts, with the

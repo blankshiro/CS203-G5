@@ -1,15 +1,35 @@
 ###
 #Logout
-GET http://localhost:8080/logout
+GET http://ryverbank.vision/logout
 
 ###
 #Try to get without authorization to contents
-GET http://localhost:8080/contents
+GET http://ryverbank.vision/contents
 
 ####
 #Try to get with authorization as manager
-GET http://localhost:8080/contents
-Authorization: Basic manager:goodpassword
+GET http://localhost:8080/contents/
+Authorization: Basic manager_1:01_manager_01
+
+####
+#Try to get with authorization as manager
+GET http://localhost:8080/contents/4
+Authorization: Basic good_user_1:01_user_01
+
+####
+#Try to get with authorization as manager
+POST http://localhost:8080/contents
+Content-Type: application/json
+Authorization: Basic manager_1:01_manager_01
+
+{
+    "title":"meinPost4",
+    "summary":"post",
+    "content":"Random content",
+    "lin":"meinLink"
+
+}
+
 ####
 #Try to get with authorization as analyst
 GET http://localhost:8080/contents

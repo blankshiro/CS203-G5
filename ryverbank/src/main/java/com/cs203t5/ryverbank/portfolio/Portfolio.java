@@ -14,7 +14,6 @@ import org.hibernate.annotations.Where;
 
 import lombok.*;
 
-
 @Entity
 @Setter
 @Getter
@@ -22,8 +21,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Portfolio {
-    
-   
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     // @NotNull(message = "Must have customer id")
@@ -38,9 +36,8 @@ public class Portfolio {
     @Column(name = "assets")
     @Where(clause = "istraded = false")
     @JsonIgnoreProperties("traded")
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Asset> assets;
-
 
     @JsonProperty("unrealized_gain_loss")
     private double unrealizedGainLoss;
@@ -48,18 +45,20 @@ public class Portfolio {
     @JsonProperty("total_gain_loss")
     private double totalGainLoss;
 
-
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", updatable = false, insertable = false)
     // @MapsId("customerId")
     @JsonIgnore
     private Customer customer;
 
-
-    public Portfolio(Long id){
+    /**
+     * Constructs a portfolio with the customer id.
+     * 
+     * @param id The id of the user.
+     */
+    public Portfolio(Long id) {
         this.customerId = id;
         this.assets = new ArrayList<>();
     }
 
-    
 }
