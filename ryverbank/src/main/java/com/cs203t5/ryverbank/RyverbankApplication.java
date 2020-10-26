@@ -50,6 +50,13 @@ public class RyverbankApplication {
 		long customer_id = customerId;
 		System.out.println("[Add acccount for user1" + accounts.save(
 			new Account(customer_id,100000.0,100000.0)).getCustomer());
+		
+		users.save(new Customer("user2", encoder.encode("goodpassword"),null, null, null, null, "ROLE_USER", true));
+		users.save(new Customer("user3", encoder.encode("goodpassword"),null, null, null, null, "ROLE_USER", true));
+
+		
+		accounts.save(new Account(5L, 100000.0, 100000.0));
+		accounts.save(new Account(6L, 100000.0, 100000.0));
 	
 		ContentRepository meinContent = ctx.getBean(ContentRepository.class);
 		System.out.println("[Adding content]: " +  meinContent.save(

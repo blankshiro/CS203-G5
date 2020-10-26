@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.cs203t5.ryverbank.customer.*;
 import com.cs203t5.ryverbank.portfolio.AssetService;
+import com.cs203t5.ryverbank.portfolio.PortfolioService;
 import com.cs203t5.ryverbank.account_transaction.*;
 
 import java.time.Instant;
@@ -23,13 +24,15 @@ public class TradeServiceImpl implements TradeServices {
     private AssetService assetService;
     private TransactionServices tranService;
     private AccountServices accService;
+    private PortfolioService portfolioService;
     private int count = 0;
     
-    public TradeServiceImpl(TradeRepository tradeRepository, AssetService assetService, TransactionServices tranService, AccountServices accService) {
+    public TradeServiceImpl(TradeRepository tradeRepository, AssetService assetService, TransactionServices tranService, AccountServices accService, PortfolioService portfolioService) {
         this.tradeRepository = tradeRepository;
         this.assetService = assetService;
         this.tranService = tranService;
         this.accService = accService;
+        this.portfolioService = portfolioService;
     }
 
     //Get All trades on the market
@@ -469,7 +472,7 @@ public class TradeServiceImpl implements TradeServices {
         //Set stock ask price
         customStock.setAsk(customStock.getAsk());
 
-       
+        portfolioService.updateRealizedGainLoss(trade, customStock);
         return tradeRepository.save(trade);
 
     }

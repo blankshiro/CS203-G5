@@ -2,6 +2,8 @@ package com.cs203t5.ryverbank.account_transaction;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.*;
 
 @Entity
@@ -21,12 +23,14 @@ public class Transaction {
     // @JoinColumn(name = "accfrom", referencedColumnName = "id")
     // @JsonProperty("from")
     // private Account account1;
+    @JsonProperty("from")
     private Long account1;
 
     // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "accTo", referencedColumnName = "id")
     // @JsonProperty("to")
     // private Account account2;
+    @JsonProperty("to")
     private Long account2;
 
 
