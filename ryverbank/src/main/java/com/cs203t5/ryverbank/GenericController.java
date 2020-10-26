@@ -83,7 +83,7 @@ public class GenericController {
             foundAcc.setBalance(100000.0);
             StockCrawler stc = new StockCrawler(meinStocks, meinTrades);
             stc.crawl();
-            stc.marketMarker();
+            stc.marketMaker();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

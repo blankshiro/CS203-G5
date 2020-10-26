@@ -22,7 +22,8 @@ public class StockCrawler {
         this.tradeRepository = tradeRepository;
     }
 
-    @Scheduled(cron = "0 00 09 ? * MON-FRI")
+    //Open the market at 9am (GMT+8) every weekday
+    @Scheduled(cron = "0 00 09 ? * MON-FRI", zone = "GMT+8")
     public void crawl() {
 
         try {
@@ -49,8 +50,9 @@ public class StockCrawler {
 
     }
 
-    @Scheduled(cron = "0 00 09 ? * MON-FRI")
-    public void marketMarker() {
+      //Open the market at 9am (GMT+8) every weekday
+    @Scheduled(cron = "0 00 09 ? * MON-FRI",zone = "GMT+8")
+    public void marketMaker() {
 
         long currentTimestamp = Instant.now().getEpochSecond();
 
@@ -103,8 +105,8 @@ public class StockCrawler {
 
     }
 
-       //Close the market at 5pm every weekday
-       @Scheduled(cron = "0 00 17 ? * MON-FRI")
+       //Close the market at 5pm (GMT+8) every weekday
+       @Scheduled(cron = "0 00 17 ? * MON-FRI",zone = "GMT+8")
        public void closeMarket(){
            String[] symbols  = new String[] {"A17U", "C61U", "C31", "C38U", "C09", "C52","D01","D05","G13","H78",
            "C07","J36","J37","BN4","N2IU","ME8U","M44U", "O39", "S58", "U96","S68","C6L", "Z74","S63","Y92","U11","U14","V03","F34","BS6"};
