@@ -16,17 +16,17 @@ public class TransactionServiceImpl implements TransactionServices {
         this.accService = accService;
     }
 
-    @Override
-    public List<Transaction> listTransactions() {
-        return transactions.findAll();
-    }
+    // @Override
+    // public List<Transaction> listTransactions() {
+    //     return transactions.findAll();
+    // }
 
-    @Override
-    public Transaction getTransaction(Long id) {
-        return transactions.findById(id).map(transaction -> {
-            return transaction;
-        }).orElse(null);
-    }
+    // @Override
+    // public Transaction getTransaction(Long id) {
+    //     return transactions.findById(id).map(transaction -> {
+    //         return transaction;
+    //     }).orElse(null);
+    // }
 
     @Override
     public Transaction addTransaction(Transaction transaction) {

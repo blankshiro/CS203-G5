@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface TransactionServices {
 
-    List<Transaction> listTransactions();
+    // List<Transaction> listTransactions();
 
-    Transaction getTransaction(Long id);
+    // Transaction getTransaction(Long id);
 
     Transaction addTransaction(Transaction transaction);
 

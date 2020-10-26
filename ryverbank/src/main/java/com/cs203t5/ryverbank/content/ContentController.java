@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 public class ContentController {
+    /** The content repository. */
     private ContentRepository meinContent;
+    /** The content services. */
     private ContentService contentService;
 
     /**

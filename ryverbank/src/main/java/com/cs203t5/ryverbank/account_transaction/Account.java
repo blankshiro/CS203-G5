@@ -45,8 +45,15 @@ public class Account {
     // @OneToMany(mappedBy = "account1", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     // private List<Transaction> transactions;
 
+    /**
+     * Constructs a new accounts with the following parameters.
+     * 
+     * @param customer_id      The id of the customer.
+     * @param balance          The account balance.
+     * @param availableBalance The available balance (fund can be on-hold due to
+     *                         pending buy trades)
+     */
     public Account(Long customer_id, double balance, double availableBalance){
-        // this.transactions = new ArrayList<Transaction>();
         this.customer_id = customer_id;
         this.balance = balance;
         this.availableBalance = availableBalance;

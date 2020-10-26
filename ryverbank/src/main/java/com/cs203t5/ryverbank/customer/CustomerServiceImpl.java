@@ -1,7 +1,5 @@
 package com.cs203t5.ryverbank.customer;
 
-import java.util.List;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.cs203t5.ryverbank.portfolio.Portfolio;

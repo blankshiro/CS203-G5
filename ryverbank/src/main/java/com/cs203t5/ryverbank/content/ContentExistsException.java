@@ -7,6 +7,7 @@ package com.cs203t5.ryverbank.content;
  * @see RuntimeException
  */
 public class ContentExistsException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Throws the exception if the specified title exists.

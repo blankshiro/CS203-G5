@@ -15,15 +15,17 @@ import lombok.*;
 
 import com.cs203t5.ryverbank.account_transaction.*;
 import com.cs203t5.ryverbank.portfolio.Portfolio;
+<<<<<<< Updated upstream
+=======
+import com.cs203t5.ryverbank.trading.Trade;
+>>>>>>> Stashed changes
 import com.fasterxml.jackson.annotation.*;
 
 @Entity
 @Setter
 @Getter
 @ToString
-// @AllArgsConstructor
 @NoArgsConstructor
-// @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Customer implements UserDetails {
     private static final long serialVersionUID = 1L;
@@ -77,15 +79,15 @@ public class Customer implements UserDetails {
     private Portfolio portfolio;
 
     /**
-     * Constructs a new user with the following parameters.
+     * Constructs a new customer with the following parameters.
      * 
-     * @param username    The username of the user.
-     * @param password    The password of the user.
-     * @param full_name   The full name of the user.
-     * @param nric        The nric of the user.
-     * @param phone       The phone number of the user.
-     * @param address     The address of the user.
-     * @param authorities The role of the user.
+     * @param useranme    The username of the customer.
+     * @param password    The password of the customer.
+     * @param full_name   The full name of the customer.
+     * @param nric        The nric of the customer.
+     * @param phone       The phone number of the customer.
+     * @param address     The address of the customer.
+     * @param authorities The role of the customer.
      * @param active      The active status of the account.
      */
     public Customer(String username, String password, String full_name, String nric, String phone, String address,

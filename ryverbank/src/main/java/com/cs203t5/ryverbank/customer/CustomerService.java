@@ -1,7 +1,5 @@
 package com.cs203t5.ryverbank.customer;
 
-import java.util.List;
-
 /**
  * An interface for various customer services.
  */

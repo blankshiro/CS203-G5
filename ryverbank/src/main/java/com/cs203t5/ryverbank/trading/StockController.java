@@ -1,15 +1,8 @@
 package com.cs203t5.ryverbank.trading;
 
 import java.util.List;
-import java.util.Optional;
 
-import javax.validation.Valid;
-
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
-
 
 /**
  * A StockController that accepts and returns stock JSON data.

@@ -4,7 +4,6 @@ import java.util.*;
 
 import javax.persistence.*;
 
-import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.cs203t5.ryverbank.customer.Customer;

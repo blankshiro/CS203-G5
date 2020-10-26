@@ -11,9 +11,9 @@ public class StockServiceImpl implements StockServices {
         this.stocks = stocks;
     }
 
-    public List<CustomStock> listStocks() {
-        return stocks.findAll();
-    }
+    // public List<CustomStock> listStocks() {
+    //     return stocks.findAll();
+    // }
 
     public CustomStock getStock(String symbol) {
         return stocks.findBySymbol(symbol).map(stock -> 

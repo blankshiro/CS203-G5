@@ -1,7 +1,5 @@
 package com.cs203t5.ryverbank.portfolio;
 
-import java.util.List;
-
 import com.cs203t5.ryverbank.trading.CustomStock;
 import com.cs203t5.ryverbank.trading.Trade;
 
