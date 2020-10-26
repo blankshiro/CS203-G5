@@ -57,12 +57,16 @@ public class AccountNTransactionController {
         //get id
         getSessionDetails();
         Long id = sessionID;
-        System.out.println("USER ID IS FOUND: " + sessionID + "\n\n\n\n\n");
+
         if(!cusRepo.existsById(id)){
             throw new CustomerNotFoundException(id);
         }
+
         // This statement searches based on the customer, instead of the userId
-        return accRepo.findByCustomer(cusRepo.findById(id));
+        if(accService.listAccounts(id).isEmpty()){
+            throw new AccountNotFoundException("No account created for this customer.");
+        }
+        return accService.listAccounts(id);
         // return accRepo.findByCustomerCustomerId(id);
     }
     

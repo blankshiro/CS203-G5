@@ -13,10 +13,10 @@ public class AccountServiceImpl implements AccountServices {
         this.accounts = accounts;
     }
 
-    // @Override
-    // public List<Account> listAccounts(){
-    //     return accounts.findAll();
-    // }
+    @Override
+    public List<Account> listAccounts(Long cusId){
+        return accounts.findAllByCustomerCustomerId(cusId);
+    }
 
     @Override
     public Account getAccount(Long accNumber){
