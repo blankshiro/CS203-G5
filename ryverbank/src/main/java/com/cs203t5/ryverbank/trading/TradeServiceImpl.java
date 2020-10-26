@@ -391,7 +391,8 @@ public class TradeServiceImpl implements TradeServices {
                 customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
                 customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
                 count = 0;
-                //ADD PORTPOLIO HERE
+                
+                portfolioService.updateRealizedGainLoss(trade, customStock);
                 return tradeRepository.save(trade);
                 }
             }catch(NullPointerException e){
@@ -535,7 +536,7 @@ public class TradeServiceImpl implements TradeServices {
        }
 
        
-        // portfolioService.updateRealizedGainLoss(trade,customStock);
+        portfolioService.updateRealizedGainLoss(trade,customStock);
        
         return tradeRepository.save(trade);
 
@@ -857,7 +858,8 @@ public class TradeServiceImpl implements TradeServices {
                 customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
                 customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
                 count = 0;
-                //ADD PORTFOLIO HERE
+                
+                portfolioService.updateRealizedGainLoss(trade,customStock);
                 return tradeRepository.save(trade);
                 }
             }catch(NullPointerException e){
@@ -999,7 +1001,7 @@ public class TradeServiceImpl implements TradeServices {
        }
 
        
-        // portfolioService.updateRealizedGainLoss(trade, customStock);
+        portfolioService.updateRealizedGainLoss(trade, customStock);
         return tradeRepository.save(trade);
     }
 }
