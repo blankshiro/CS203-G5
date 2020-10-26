@@ -14,8 +14,8 @@ public class AccountServiceImpl implements AccountServices {
     }
 
     @Override
-    public List<Account> listAccounts(){
-        return accounts.findAll();
+    public List<Account> listAccounts(Long cusId){
+        return accounts.findAllByCustomerCustomerId(cusId);
     }
 
     @Override
