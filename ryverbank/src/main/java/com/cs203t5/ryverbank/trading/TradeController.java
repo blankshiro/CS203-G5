@@ -68,33 +68,33 @@ public class TradeController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/trades")
     public Trade createTrade(@Valid @RequestBody Trade trade, Authentication auth){
-        //If customer submit a trade on weekend OR submit on weekday BUT before 9am and after 5pm (GMT+8) ,
-        //Throw an error that shows market is close
-        TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
+    //     //If customer submit a trade on weekend OR submit on weekday BUT before 9am and after 5pm (GMT+8) ,
+    //     //Throw an error that shows market is close
+    //     TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
 
-        Calendar startDateTime=Calendar.getInstance(timeZone);
-        startDateTime.set(Calendar.HOUR_OF_DAY,9);
-        startDateTime.set(Calendar.MINUTE,0);
-        startDateTime.set(Calendar.SECOND,0);
+    //     Calendar startDateTime=Calendar.getInstance(timeZone);
+    //     startDateTime.set(Calendar.HOUR_OF_DAY,9);
+    //     startDateTime.set(Calendar.MINUTE,0);
+    //     startDateTime.set(Calendar.SECOND,0);
     
-        Calendar endDateTime=Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY,17);
-        endDateTime.set(Calendar.MINUTE,0);
-        endDateTime.set(Calendar.SECOND,0);
+    //     Calendar endDateTime=Calendar.getInstance(timeZone);
+    //     endDateTime.set(Calendar.HOUR_OF_DAY,17);
+    //     endDateTime.set(Calendar.MINUTE,0);
+    //     endDateTime.set(Calendar.SECOND,0);
     
     
-        Calendar saturday = Calendar.getInstance(timeZone);
-        saturday.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
+    //     Calendar saturday = Calendar.getInstance(timeZone);
+    //     saturday.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
 
-        Calendar sunday = Calendar.getInstance(timeZone);
-        sunday.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+    //     Calendar sunday = Calendar.getInstance(timeZone);
+    //     sunday.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
     
-        Calendar today = Calendar.getInstance(timeZone);
+    //     Calendar today = Calendar.getInstance(timeZone);
 
-       if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
-       {
-           throw new TradeInvalidException("Market is close");
-       }
+    //    if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
+    //    {
+    //        throw new TradeInvalidException("Market is close");
+    //    }
 
         String authenticatedUsername = auth.getName();
 

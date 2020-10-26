@@ -45,8 +45,8 @@ public class RyverbankApplication {
 		
 		int customerId = 4;
 		long customer_id = customerId;
-		System.out.println("[Add acccount for user1" + accounts.save(
-			new Account(customer_id,100000.0,100000.0)).getCustomer());
+		System.out.println("[Add acccount for user1]" + accounts.save(
+			new Account(customer_id,100000.0,100000.0)).getCustomer_id());
 	
 		ContentRepository meinContent = ctx.getBean(ContentRepository.class);
 		System.out.println("[Adding content]: " +  meinContent.save(
@@ -65,6 +65,6 @@ public class RyverbankApplication {
 
 			// crawler.crawl();
 	
-			// crawler.marketMarker();
+			// crawler.marketMaker();
 	}
 }

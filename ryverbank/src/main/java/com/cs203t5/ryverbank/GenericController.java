@@ -4,11 +4,14 @@ import java.util.Optional;
 
 import com.cs203t5.ryverbank.account_transaction.Account;
 import com.cs203t5.ryverbank.account_transaction.AccountRepository;
+import com.cs203t5.ryverbank.account_transaction.AccountServices;
 import com.cs203t5.ryverbank.account_transaction.TransactionRepository;
+import com.cs203t5.ryverbank.account_transaction.TransactionServices;
 import com.cs203t5.ryverbank.content.ContentRepository;
 import com.cs203t5.ryverbank.customer.Customer;
 import com.cs203t5.ryverbank.customer.CustomerRepository;
 import com.cs203t5.ryverbank.portfolio.AssetRepository;
+import com.cs203t5.ryverbank.portfolio.AssetService;
 import com.cs203t5.ryverbank.portfolio.Portfolio;
 import com.cs203t5.ryverbank.portfolio.PortfolioRepository;
 import com.cs203t5.ryverbank.trading.StockCrawler;
@@ -29,10 +32,15 @@ public class GenericController {
     private StockRepository meinStocks;
     private TransactionRepository meinTransactions;
     private PortfolioRepository meinPortfolios;
+    private AssetService meinAssetService;
+    private TransactionServices meinTranServices;
+    private AccountServices meinAccServices;
 
     public GenericController(ContentRepository meinContent, CustomerRepository meinCustomers,
             TradeRepository meinTrades, AccountRepository meinAccounts, StockRepository meinStocks
-            , TransactionRepository meinTransactions, PortfolioRepository meinPortfolios) {
+            , TransactionRepository meinTransactions, PortfolioRepository meinPortfolios, AssetService meinAssetService, 
+            TransactionServices meinTranServices,AccountServices meinAccServices
+            ) {
         this.meinContent = meinContent;
         this.meinCustomers = meinCustomers;
         this.meinTrades = meinTrades;
@@ -40,6 +48,9 @@ public class GenericController {
         this.meinStocks = meinStocks;
         this.meinTransactions = meinTransactions;
         this.meinPortfolios = meinPortfolios;
+        this.meinAssetService = meinAssetService;
+        this.meinTranServices = meinTranServices;
+        this.meinAccServices = meinAccServices;
     }
 
     @GetMapping("/")
@@ -81,7 +92,7 @@ public class GenericController {
             Account foundAcc = marketMakerAcc.get();
             foundAcc.setAvailableBalance(100000.0);
             foundAcc.setBalance(100000.0);
-            StockCrawler stc = new StockCrawler(meinStocks, meinTrades);
+            StockCrawler stc = new StockCrawler(meinStocks, meinTrades, meinAssetService, meinTranServices, meinAccServices);
             stc.crawl();
             stc.marketMaker();
         } catch (Exception e) {

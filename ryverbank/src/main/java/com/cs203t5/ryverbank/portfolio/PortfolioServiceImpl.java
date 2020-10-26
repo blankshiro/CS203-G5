@@ -3,10 +3,14 @@ package com.cs203t5.ryverbank.portfolio;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cs203t5.ryverbank.trading.CustomStock;
 import com.cs203t5.ryverbank.trading.Trade;
 import com.cs203t5.ryverbank.trading.TradeRepository;
 
+
 import org.springframework.stereotype.Service;
+
+import javassist.compiler.ast.DoubleConst;
 
 @Service
 public class PortfolioServiceImpl implements PortfolioService {
@@ -49,8 +53,29 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
 
-    // public void calTotalGainLoss(double gainLoss, Portfolio portfolio){
-    //     portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + gainLoss);
-    //     portfolios.save(portfolio);
-    // }
+    public void updateRealizedGainLoss(Trade trade, CustomStock stock){
+        if(trade.getStatus().equals("filled") || trade.getStatus().equals("partial-filled")){
+            Long id = trade.getCustomerId();
+            Optional<Portfolio> optional = portfolios.findByCustomerId(id);
+            Portfolio portfolio = optional.get();
+            double gain = 0.0;
+            double avg = 0.0;
+            double gainLoss = 0.0;
+
+            if(trade.getAsk() == 0.0){
+                gain = stock.getAsk() * trade.getFilledQuantity();
+                avg = trade.getAvgPrice() * trade.getFilledQuantity();
+                gainLoss = gain - avg;
+            }
+            else{
+                gain = trade.getAsk() * trade.getFilledQuantity();
+                avg = trade.getAvgPrice() * trade.getFilledQuantity();
+                gainLoss = gain - avg;
+
+            }
+            portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + gainLoss);
+            portfolios.save(portfolio);
+        }
+    }
+   
 }
