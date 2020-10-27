@@ -3,63 +3,79 @@ package com.cs203t5.ryverbank.portfolio;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cs203t5.ryverbank.trading.CustomStock;
 import com.cs203t5.ryverbank.trading.Trade;
 import com.cs203t5.ryverbank.trading.TradeRepository;
 
+
 import org.springframework.stereotype.Service;
+
+import javassist.compiler.ast.DoubleConst;
 
 @Service
 public class PortfolioServiceImpl implements PortfolioService {
-    /** The portfolio repository. */
     private PortfolioRepository portfolios;
     // private TradeRepository tradeRepo;
     // private AssetRepository assets;
 
-    public PortfolioServiceImpl(PortfolioRepository portfolios, AssetRepository assets) {
+
+    public PortfolioServiceImpl(PortfolioRepository portfolios,AssetRepository assets){
         this.portfolios = portfolios;
         // this.assets = assets;
     }
 
-    /**
-     * Finds the portfolio based on the customer id. If the portfolio is not found,
-     * this method will return null.
-     * 
-     * @param id The id of the customer.
-     * @return The portfolio found.
-     */
-    public Portfolio getPortfolio(Long id) {
-        return portfolios.findByCustomerId(id).map(portfolio -> {
-            calGainLoss(portfolio);
-            return portfolios.save(portfolio);
-        }).orElse(null);
-        // .orElseGet(() ->
-        // {return portfolios.save(new Portfolio(id));});
+    //get portfolio using customer id
+    public Portfolio getPortfolio(Long id){
+        return portfolios.findByCustomerId(id).map(portfolio ->
+            {
+                calGainLoss(portfolio);
+                return portfolios.save(portfolio);
+            }).orElse(null);
+            // .orElseGet(() -> 
+            // {return portfolios.save(new Portfolio(id));});
     }
 
-    /**
-     * Calculates the total profit and loss for all the trades made.
-     * 
-     * @param portfolio The specified portfolio.
-     */
-    public void calGainLoss(Portfolio portfolio) {
+    public void calGainLoss(Portfolio portfolio){
         // Optional<Portfolio> p = portfolios.findByCustomerId(id);
         // Portfolio portfolio = p.get();
 
         List<Asset> list = new ArrayList<>();
         list = portfolio.getAssets();
 
-        double unrealizedGainLoss = 0.0;
-        if (!list.isEmpty()) {
-            for (Asset asset : list) {
-                if (asset.isTraded == false)
-                    unrealizedGainLoss += asset.getGainLoss();
+        double unrealizedGainLoss = 0.0; 
+        if (!list.isEmpty()){
+            for(Asset asset : list){
+                if(asset.isTraded == false)
+                unrealizedGainLoss += asset.getGainLoss();
             }
         }
         portfolio.setUnrealizedGainLoss(unrealizedGainLoss);
     }
 
-    // public void calTotalGainLoss(double gainLoss, Portfolio portfolio){
-    // portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + gainLoss);
-    // portfolios.save(portfolio);
-    // }
+
+    public void updateRealizedGainLoss(Trade trade, CustomStock stock){
+        if(trade.getStatus().equals("filled") || trade.getStatus().equals("partial-filled")){
+            Long id = trade.getCustomerId();
+            Optional<Portfolio> optional = portfolios.findByCustomerId(id);
+            Portfolio portfolio = optional.get();
+            double gain = 0.0;
+            double avg = 0.0;
+            double gainLoss = 0.0;
+
+            if(trade.getAsk() == 0.0){
+                gain = stock.getAsk() * trade.getFilledQuantity();
+                avg = trade.getAvgPrice() * trade.getFilledQuantity();
+                gainLoss = gain - avg;
+            }
+            else{
+                gain = trade.getAsk() * trade.getFilledQuantity();
+                avg = trade.getAvgPrice() * trade.getFilledQuantity();
+                gainLoss = gain - avg;
+
+            }
+            portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + gainLoss);
+            portfolios.save(portfolio);
+        }
+    }
+   
 }

@@ -39,8 +39,8 @@ public class RyverbankApplication {
 		
 		int customerId = 4;
 		long customer_id = customerId;
-		System.out.println("[Add acccount for user1" + accounts.save(
-			new Account(customer_id,100000.0,100000.0)).getCustomer());
+		System.out.println("[Add acccount for user1]" + accounts.save(
+			new Account(customer_id,100000.0,100000.0)).getCustomer_id());
 	
 		ContentRepository meinContent = ctx.getBean(ContentRepository.class);
 		System.out.println("[Adding content]: " +  meinContent.save(
@@ -55,10 +55,10 @@ public class RyverbankApplication {
 		System.out.println("[Adding content]: " +  meinContent.save(
 			new Content("Cats", "Cats are cool", "Need I say more?", "www.catsarekewl.com")).getTitle());
 
-			StockCrawler crawler = ctx.getBean(StockCrawler.class);
+			// StockCrawler crawler = ctx.getBean(StockCrawler.class);
 
-			crawler.crawl();
+			// crawler.crawl();
 	
-			crawler.marketMarker();
+			// crawler.marketMaker();
 	}
 }
