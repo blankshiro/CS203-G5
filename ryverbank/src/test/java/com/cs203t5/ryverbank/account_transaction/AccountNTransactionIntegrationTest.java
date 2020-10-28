@@ -54,12 +54,6 @@ public class AccountNTransactionIntegrationTest {
     private CustomerRepository customers;
 
     @Autowired
-    private AccountServices accountService;
-
-    @Autowired
-    private TransactionServices transactionServices;
-
-    @Autowired
     private BCryptPasswordEncoder encoder;
 
 
@@ -171,4 +165,174 @@ public class AccountNTransactionIntegrationTest {
         assertEquals(404, response.getStatusCode().value());
     }
 
+    @Test
+    public void getAccount_Unauthorized()throws Exception {
+        Customer customer1 = customers.save(new Customer("user1", encoder.encode("goodpassword1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+
+        customers.save(new Customer("user2", encoder.encode("goodpassword1"), "Woofy Dog", "S1539649C",
+        "95451234", "Dog House", "ROLE_USER", true));
+
+        Account acc = accounts.save(new Account(customer1.getCustomerId(), 8000.0, 1000.0));
+
+        URI uri = new URI(baseURl + port + "/accounts/" + acc.getAccountID());
+
+        ResponseEntity<Object> response = restTemplate.withBasicAuth("user2", "goodpassword1")
+        .getForEntity(uri, Object.class);
+
+        assertEquals(403, response.getStatusCode().value());
+    }
+
+    @Test
+    public void createAccount_Forbidden() throws Exception{
+        Customer customer = customers.save(new Customer("user1", encoder.encode("goodpassword1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("customer_id", customer.getCustomerId());
+        jsonObject.put("balance", 6000.0);
+        jsonObject.put("available_balance", 9000.0);
+
+        URI uri = new URI(baseURl + port + "/accounts");
+
+        ResponseEntity<Object> response = restTemplate.withBasicAuth("user1", "goodpassword1")
+        .postForEntity(uri, jsonObject, Object.class);
+
+        assertEquals(403, response.getStatusCode().value());
+    }
+
+    @Test
+    public void getTransaction_Success() throws Exception {
+        Customer customer1 = customers.save(new Customer("user1", encoder.encode("goodpassword1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+
+        Customer customer2 = customers.save(new Customer("user2", encoder.encode("goodpassword1"), "Woofy Dog", "S1539649C",
+        "95451234", "Dog House", "ROLE_USER", true));
+
+        Account acc1 = accounts.save(new Account(customer1.getCustomerId(), 8000.0, 1000.0));
+        Account acc2 = accounts.save(new Account(customer2.getCustomerId(), 8000.0, 1000.0));
+
+        transactions.save(new Transaction(acc1.getAccountID(), acc2.getAccountID(), 500.0));
+        transactions.save(new Transaction(acc2.getAccountID(), acc1.getAccountID(), 600.0));
+
+        URI uri = new URI(baseURl + port + "/accounts/" + acc1.getAccountID() + "/transactions");
+
+        ResponseEntity<Transaction[]> response = restTemplate.withBasicAuth("user1", "goodpassword1")
+        .getForEntity(uri, Transaction[].class);
+
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(2, transactions.count());
+        assertEquals(2, response.getBody().length);
+    }
+
+    @Test
+    public void getTransaction_AccountNotFound() throws Exception {
+
+        Customer customer1 = customers.save(new Customer("user1", encoder.encode("goodpassword1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+
+        Customer customer2 = customers.save(new Customer("user2", encoder.encode("goodpassword1"), "Woofy Dog", "S1539649C",
+        "95451234", "Dog House", "ROLE_USER", true));
+
+        accounts.save(new Account(customer1.getCustomerId(), 8000.0, 1000.0));
+        accounts.save(new Account(customer2.getCustomerId(), 8000.0, 1000.0));
+
+        URI uri = new URI(baseURl + port + "/accounts/" + 3 + "/transactions");
+
+        ResponseEntity<Object> response = restTemplate.withBasicAuth("user1", "goodpassword1")
+        .getForEntity(uri, Object.class);
+
+        assertEquals(404, response.getStatusCode().value());
+    }
+
+    @Test
+    public void getTransaction_CustomerUnauthorized() throws Exception{
+        
+        Customer customer1 = customers.save(new Customer("user1", encoder.encode("goodpassword1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+
+        Customer customer2 = customers.save(new Customer("user2", encoder.encode("goodpassword1"), "Woofy Dog", "S1539649C",
+        "95451234", "Dog House", "ROLE_USER", true));
+
+        accounts.save(new Account(customer1.getCustomerId(), 8000.0, 1000.0));
+        Account acc = accounts.save(new Account(customer2.getCustomerId(), 8000.0, 1000.0));
+
+        URI uri = new URI(baseURl + port + "/accounts/" + acc.getAccountID() + "/transactions");
+
+        ResponseEntity<Object> response = restTemplate.withBasicAuth("user1", "goodpassword1")
+        .getForEntity(uri, Object.class);
+
+        assertEquals(403, response.getStatusCode().value());
+    }
+
+
+    @Test
+    public void addTransaction_Success() throws Exception {
+        Customer customer1 = customers.save(new Customer("user1", encoder.encode("goodpassword1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+
+        Customer customer2 = customers.save(new Customer("user2", encoder.encode("goodpassword1"), "Woofy Dog", "S1539649C",
+        "95451234", "Dog House", "ROLE_USER", true));
+
+        Account acc1 = accounts.save(new Account(customer1.getCustomerId(), 8000.0, 1000.0));
+        Account acc2 = accounts.save(new Account(customer2.getCustomerId(), 8000.0, 1000.0));
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("from", acc1.getAccountID());
+        jsonObject.put("to", acc2.getAccountID());
+        jsonObject.put("amount", 300.0);
+
+        URI uri = new URI(baseURl + port + "/accounts/" + acc1.getAccountID() + "/transactions");
+        ResponseEntity<Transaction> response = restTemplate.withBasicAuth("user1", "goodpassword1")
+        .postForEntity(uri, jsonObject, Transaction.class);
+
+        assertEquals(201, response.getStatusCode().value());
+        assertEquals(1, transactions.count());
+    }
+
+    @Test
+    public void addTransaction_CustomerUnauthorized() throws Exception {
+        Customer customer1 = customers.save(new Customer("user1", encoder.encode("goodpassword1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+
+        Customer customer2 = customers.save(new Customer("user2", encoder.encode("goodpassword1"), "Woofy Dog", "S1539649C",
+        "95451234", "Dog House", "ROLE_USER", true));
+
+        Account acc1 = accounts.save(new Account(customer1.getCustomerId(), 8000.0, 1000.0));
+        Account acc2 = accounts.save(new Account(customer2.getCustomerId(), 8000.0, 1000.0));
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("from", acc1.getAccountID());
+        jsonObject.put("to", acc2.getAccountID());
+        jsonObject.put("amount", 300.0);
+
+        URI uri = new URI(baseURl + port + "/accounts/" + acc1.getAccountID() + "/transactions");
+
+        ResponseEntity<Object> response = restTemplate.withBasicAuth("user2", "goodpassword1")
+        .postForEntity(uri, jsonObject, Object.class);
+
+        assertEquals(403, response.getStatusCode().value());
+    }
+
+    @Test
+    public void addTransaction_AccountNotFound() throws Exception {
+        Customer customer1 = customers.save(new Customer("user1", encoder.encode("goodpassword1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+
+        customers.save(new Customer("user2", encoder.encode("goodpassword1"), "Woofy Dog", "S1539649C",
+        "95451234", "Dog House", "ROLE_USER", true));
+
+        Account acc1 = accounts.save(new Account(customer1.getCustomerId(), 8000.0, 1000.0));
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("from", acc1.getAccountID());
+        jsonObject.put("to", 2);
+        jsonObject.put("amount", 300.0);
+
+        URI uri = new URI(baseURl + port + "/accounts/" + acc1.getAccountID() + "/transactions");
+        ResponseEntity<Object> response = restTemplate.withBasicAuth("user1", "goodpassword1")
+        .postForEntity(uri, jsonObject, Object.class);
+
+        assertEquals(404, response.getStatusCode().value());
+    }
 }
