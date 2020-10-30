@@ -23,14 +23,11 @@ public class Portfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // @NotNull(message = "Must have customer id")
     @JsonIgnore
     private Long id;
 
     @JsonProperty("customer_id")
     Long customerId;
-    // @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    // @ElementCollection
     @JsonProperty("assets")
     @Column(name = "assets")
     @Where(clause = "istraded = false")
@@ -46,7 +43,6 @@ public class Portfolio {
 
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", updatable = false, insertable = false)
-    // @MapsId("customerId")
     @JsonIgnore
     private Customer customer;
 

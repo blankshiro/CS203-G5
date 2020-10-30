@@ -19,19 +19,20 @@ public class Transaction {
     
     private double amount;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "accfrom", referencedColumnName = "id")
     @JsonProperty("from")
-    // private Account account1;
     private Long account1;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "accTo", referencedColumnName = "id")
     @JsonProperty("to")
-    // private Account account2;
     private Long account2;
 
 
+    /**
+     * Constructs a transaction with the following parameters.
+     * 
+     * @param account1 The transferer account.
+     * @param account2 The receiver account.
+     * @param amt The amount to be transferred.
+     */
     public Transaction(Long account1, Long account2, double amt) {
         this.account1 = account1;
         this.account2 = account2;

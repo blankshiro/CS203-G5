@@ -3,7 +3,7 @@ package com.cs203t5.ryverbank.content;
 import java.util.List;
 
 /**
- * An interface for content services.
+ * An interface for various content services.
  */
 public interface ContentService {
     

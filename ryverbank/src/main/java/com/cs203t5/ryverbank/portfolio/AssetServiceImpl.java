@@ -7,203 +7,240 @@ import com.cs203t5.ryverbank.trading.Trade;
 
 import org.springframework.stereotype.Service;
 
-
-
+/**
+ * Implementation of the AssetService class.
+ * 
+ * @see AssetService
+ */
 @Service
 public class AssetServiceImpl implements AssetService {
+    /** The asset repository. */
     private AssetRepository assets;
+    /** The portfolio repository. */
     private PortfolioRepository portfolios;
 
-    public AssetServiceImpl(AssetRepository assets, PortfolioRepository portfolios){
+    /**
+     * Constructs a new AssetServiceImpl with the following parameters.
+     * 
+     * @param assets     The asset repository.
+     * @param portfolios The portfolio repository.
+     */
+    public AssetServiceImpl(AssetRepository assets, PortfolioRepository portfolios) {
         this.assets = assets;
         this.portfolios = portfolios;
     }
 
-    public void addAsset(Trade trade, CustomStock stock){
+    /**
+     * Creates an asset based on the specified trade and stock. This method will
+     * only work if the trade is filled or partially filled.
+     * 
+     * @param trade The trade filled or partially filled.
+     * @param stock The stock of the trade.
+     */
+    public void addAsset(Trade trade, CustomStock stock) {
         String symbol = trade.getSymbol();
         Long customerId = trade.getCustomerId();
         Optional<Portfolio> p = portfolios.findByCustomerId(customerId);
         Portfolio portfolio = p.get();
-        
-       //make sure it is filled and partial-filled for buy trade!!!
-        if(trade.getStatus().equals("filled") || trade.getStatus().equals("partial-filled")){
+
+        // make sure it is filled and partial-filled for buy trade!!!
+        if (trade.getStatus().equals("filled") || trade.getStatus().equals("partial-filled")) {
             Optional<Asset> optional = assets.findByCodeAndPortfolioIdAndIsTraded(symbol, portfolio.getId(), false);
 
-            //if owner does not have this stock, then create a new asset
-            if(optional.isEmpty()){
+            // if owner does not have this stock, then create a new asset
+            if (optional.isEmpty()) {
                 String code = trade.getSymbol();
                 int quantity = trade.getFilledQuantity();
                 // double avg_price = trade.getAvgPrice();
                 double current_price = trade.getBid();
-                if(current_price == 0.0){
+                if (current_price == 0.0) {
                     current_price = stock.getAsk();
                 }
-                //new asset created
-                Asset asset = new Asset(code, quantity, current_price, current_price, portfolio.getId(), false, Double.toString(current_price));
-                
-                //update on the totalgainloss
+                // new asset created
+                Asset asset = new Asset(code, quantity, current_price, current_price, portfolio.getId(), false,
+                        Double.toString(current_price));
+
+                // update on the totalgainloss
                 portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + asset.getGainLoss());
 
                 assets.save(asset);
                 portfolios.save(portfolio);
 
-
             }
 
-            //else overwrite or update the current asset
-            else{
+            // else overwrite or update the current asset
+            else {
                 Asset asset = optional.get();
                 updateAsset(trade, asset, stock, portfolio);
             }
-            
+
         }
-      
-    }
-
-    //update current asset
-    public void updateAsset(Trade trade, Asset asset, CustomStock stock, Portfolio portfolio){
-                
-            double current_price = 0.0;
-            //if its market buy, ask price should be 0
-            if(trade.getBid() == 0.0){
-                //get stock ask price since trade ask is 0
-                asset.setCurrentPrice(stock.getAsk());
-                current_price = stock.getAsk();
-            }
-            else{
-                //else if it is limit buy, get trade ask price
-                asset.setCurrentPrice(trade.getBid());
-                current_price = trade.getBid();
-            }
-
-            String record = asset.getRecord();
-            //get list of average price collected in string format
-            String[] avglist = record.split(",");
-            //compute average price here
-            double average = 0.0;
-            int count = 1;
-
-            //parse recorded past current prices into double
-            for(String amnt : avglist){
-                average += Double.parseDouble(amnt);
-                count++;
-            }
-            //update the quantity
-            asset.setQuantity(asset.getQuantity() + trade.getFilledQuantity());
-             //update the record of average prices
-            asset.setAvgPrice((average + current_price) / count);
-           
-            asset.setValue(current_price * asset.getQuantity());
-
-            //update the current gainloss of asset
-            asset.setGainLoss(asset.getValue() - (asset.getAvgPrice()*asset.getQuantity()));
-
-            //record down the current price into the asset for future reference as string
-            asset.setRecord(asset.getRecord() + "," + Double.toString(current_price));
-
-            //update the totalgainloss
-            portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + asset.getGainLoss());
-            
-            assets.save(asset);
-            portfolios.save(portfolio);
 
     }
 
+    /**
+     * Updates the asset based on the specified trade, asset, stock and portfolio.
+     * 
+     * @param trade     The updated trade.
+     * @param asset     The asset to update.
+     * @param stock     The stock of the trade.
+     * @param portfolio The portfolio that contains the asset to update.
+     */
+    public void updateAsset(Trade trade, Asset asset, CustomStock stock, Portfolio portfolio) {
 
-    //for selling asset, deduct quantity from asset, make changes to the asset details
-    public void sellAsset(String symbol, int quantity, Long customerId){
+        double current_price = 0.0;
+        // if its market buy, ask price should be 0
+        if (trade.getBid() == 0.0) {
+            // get stock ask price since trade ask is 0
+            asset.setCurrentPrice(stock.getAsk());
+            current_price = stock.getAsk();
+        } else {
+            // else if it is limit buy, get trade ask price
+            asset.setCurrentPrice(trade.getBid());
+            current_price = trade.getBid();
+        }
+
+        String record = asset.getRecord();
+        // get list of average price collected in string format
+        String[] avglist = record.split(",");
+        // compute average price here
+        double average = 0.0;
+        int count = 1;
+
+        // parse recorded past current prices into double
+        for (String amnt : avglist) {
+            average += Double.parseDouble(amnt);
+            count++;
+        }
+        // update the quantity
+        asset.setQuantity(asset.getQuantity() + trade.getFilledQuantity());
+        // update the record of average prices
+        asset.setAvgPrice((average + current_price) / count);
+
+        asset.setValue(current_price * asset.getQuantity());
+
+        // update the current gainloss of asset
+        asset.setGainLoss(asset.getValue() - (asset.getAvgPrice() * asset.getQuantity()));
+
+        // record down the current price into the asset for future reference as string
+        asset.setRecord(asset.getRecord() + "," + Double.toString(current_price));
+
+        // update the totalgainloss
+        portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + asset.getGainLoss());
+
+        assets.save(asset);
+        portfolios.save(portfolio);
+
+    }
+
+    /**
+     * Sells an asset based on the specified symbol of asset, quantity amount and
+     * customer id.
+     * 
+     * @param symbol     The symbol of the asset.
+     * @param quantity   The quantity of the asset to sell.
+     * @param customerId The customer id.
+     */
+    public void sellAsset(String symbol, int quantity, Long customerId) {
         Optional<Portfolio> opPortfolio = portfolios.findByCustomerId(customerId);
         Portfolio portfolio = opPortfolio.get();
 
         Optional<Asset> opAsset = assets.findByCodeAndPortfolioIdAndIsTraded(symbol, portfolio.getId(), false);
-        if(opAsset.isEmpty()){
+        if (opAsset.isEmpty()) {
             throw new AssetNotFoundException("You do not have " + symbol + " asset in your portfolio.");
-        }
-        else if(opAsset.isPresent()){
+        } else if (opAsset.isPresent()) {
             Asset asset = opAsset.get();
 
-            //check quantity not to exceed the quantity that the customer currently owned
-            if(asset.getQuantity() < quantity){
+            // check quantity not to exceed the quantity that the customer currently owned
+            if (asset.getQuantity() < quantity) {
                 throw new SellQuantityExceedException("amount owned:" + asset.getQuantity() + ", quantity:" + quantity);
             }
-            
+
             asset.setQuantity(asset.getQuantity() - quantity);
-            if(asset.getQuantity() == 0){
+            if (asset.getQuantity() == 0) {
                 asset.setTraded(true);
             }
             asset.setValue(asset.getCurrentPrice() * asset.getQuantity());
             asset.setGainLoss(asset.getValue() - (asset.getAvgPrice() * asset.getQuantity()));
-
-            // portfolio.setTotalGainLoss(portfolio.getTotalGainLoss() + asset.getGainLoss());
             assets.save(asset);
         }
     }
 
-    //when owner cancels trade, this will be called to retrieve back the asset
-    public void retrieveAsset(String symbol, int quantity, Long customerId){
+    /**
+     * Retrieves back the asset with the specified asset symbol, quantity and
+     * customer id when the customer cancels a trade.
+     * 
+     * @param symbol     The symbol of the asset.
+     * @param quantity   The quantity of the asset cancelled.
+     * @param customerId The customer id.
+     */
+    public void retrieveAsset(String symbol, int quantity, Long customerId) {
         Optional<Portfolio> opPortfolio = portfolios.findByCustomerId(customerId);
         Portfolio portfolio = opPortfolio.get();
 
-        //check if the owner has a new or current asset to put back in
+        // check if the owner has a new or current asset to put back in
         Optional<Asset> opCurrentAsset = assets.findByCodeAndPortfolioIdAndIsTraded(symbol, portfolio.getId(), false);
 
-        //if the owner have sold all of the asset, retrieve back the old asset class and store back in.
+        // if the owner have sold all of the asset, retrieve back the old asset class
+        // and store back in.
         Optional<Asset> opOldAsset = assets.findByCodeAndPortfolioIdAndIsTraded(symbol, portfolio.getId(), true);
 
-        if(opCurrentAsset.isPresent() && opOldAsset.isPresent()){
+        if (opCurrentAsset.isPresent() && opOldAsset.isPresent()) {
             Asset currentAsset = opCurrentAsset.get();
             Asset oldAsset = opOldAsset.get();
 
-            //transfer old info to new asset, will have to recompute the avg
+            // transfer old info to new asset, will have to recompute the avg
             currentAsset.setRecord(currentAsset.getRecord() + "," + oldAsset.getRecord());
 
-            //added retrieve quantity into current quantity
+            // added retrieve quantity into current quantity
             currentAsset.setQuantity(currentAsset.getQuantity() + quantity);
 
-            //recalculate value and gain loss
+            // recalculate value and gain loss
             currentAsset.setValue(currentAsset.getCurrentPrice() * currentAsset.getQuantity());
-            
+
             String record = currentAsset.getRecord();
-            //get list of average price collected in string format
+            // get list of average price collected in string format
             String[] avglist = record.split(",");
-            //compute average price here
+            // compute average price here
             double average = 0.0;
             int count = 1;
 
-            //parse recorded past current prices into double
-            for(String amnt : avglist){
+            // parse recorded past current prices into double
+            for (String amnt : avglist) {
                 average += Double.parseDouble(amnt);
                 count++;
             }
             currentAsset.setAvgPrice(average / count);
-            currentAsset.setGainLoss(currentAsset.getValue() - (currentAsset.getAvgPrice() * currentAsset.getQuantity()));
+            currentAsset
+                    .setGainLoss(currentAsset.getValue() - (currentAsset.getAvgPrice() * currentAsset.getQuantity()));
 
-            //save newly changes of current asset and sold asset
+            // save newly changes of current asset and sold asset
             assets.save(currentAsset);
             assets.save(oldAsset);
 
         }
-        //if the owner have the current asset, just store back the quantity and recompute the gain loss
-        else if(opCurrentAsset.isPresent()){
+        // if the owner have the current asset, just store back the quantity and
+        // recompute the gain loss
+        else if (opCurrentAsset.isPresent()) {
             Asset currentAsset = opCurrentAsset.get();
             currentAsset.setQuantity(currentAsset.getQuantity() + quantity);
             currentAsset.setValue(currentAsset.getCurrentPrice() * currentAsset.getQuantity());
-            currentAsset.setGainLoss(currentAsset.getValue() - (currentAsset.getAvgPrice() * currentAsset.getQuantity()));
+            currentAsset
+                    .setGainLoss(currentAsset.getValue() - (currentAsset.getAvgPrice() * currentAsset.getQuantity()));
 
             assets.save(currentAsset);
-        }
-        else{
+        } else {
             Asset oldAsset = opOldAsset.get();
             oldAsset.setTraded(false);
             oldAsset.setQuantity(quantity);
             String record = oldAsset.getRecord();
 
             String[] avglist = record.split(",");
-            
+
             double average = 0.0;
             int count = 1;
 
-            for(String amnt : avglist){
+            for (String amnt : avglist) {
                 average += Double.parseDouble(amnt);
                 count++;
             }
@@ -216,5 +253,5 @@ public class AssetServiceImpl implements AssetService {
         }
 
     }
-    
+
 }

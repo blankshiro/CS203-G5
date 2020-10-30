@@ -7,54 +7,74 @@ import com.cs203t5.ryverbank.trading.CustomStock;
 import com.cs203t5.ryverbank.trading.Trade;
 import com.cs203t5.ryverbank.trading.TradeRepository;
 
-
 import org.springframework.stereotype.Service;
 
 import javassist.compiler.ast.DoubleConst;
 
+/**
+ * Implementation of the PortfolioService class.
+ * 
+ * @see PortfolioService
+ */
 @Service
 public class PortfolioServiceImpl implements PortfolioService {
+    /** The portfolio repository. */
     private PortfolioRepository portfolios;
-    // private TradeRepository tradeRepo;
-    // private AssetRepository assets;
 
-
-    public PortfolioServiceImpl(PortfolioRepository portfolios,AssetRepository assets){
+    /**
+     * Constructs a PorfolioServiceImpl with the following parameters.
+     * 
+     * @param portfolios The portfolio repository.
+     * @param assets     The asset repository.
+     */
+    public PortfolioServiceImpl(PortfolioRepository portfolios, AssetRepository assets) {
         this.portfolios = portfolios;
         // this.assets = assets;
     }
 
-    //get portfolio using customer id
-    public Portfolio getPortfolio(Long id){
-        return portfolios.findByCustomerId(id).map(portfolio ->
-            {
-                calGainLoss(portfolio);
-                return portfolios.save(portfolio);
-            }).orElse(null);
-            // .orElseGet(() -> 
-            // {return portfolios.save(new Portfolio(id));});
+    /**
+     * Finds the portfolio with the specified customer id.
+     * 
+     * @param id The customer id.
+     * @return The portfolio found
+     */
+    public Portfolio getPortfolio(Long id) {
+        return portfolios.findByCustomerId(id).map(portfolio -> {
+            calGainLoss(portfolio);
+            return portfolios.save(portfolio);
+        }).orElse(null);
+        // .orElseGet(() ->
+        // {return portfolios.save(new Portfolio(id));});
     }
 
-    public void calGainLoss(Portfolio portfolio){
-        // Optional<Portfolio> p = portfolios.findByCustomerId(id);
-        // Portfolio portfolio = p.get();
-
+    /**
+     * Calculates the unrealized profit or loss for the assets owned based on the
+     * specified portfolio.
+     * 
+     * @param portfolio The portfolio to calculate.
+     */
+    public void calGainLoss(Portfolio portfolio) {
         List<Asset> list = new ArrayList<>();
         list = portfolio.getAssets();
 
-        double unrealizedGainLoss = 0.0; 
-        if (!list.isEmpty()){
-            for(Asset asset : list){
-                if(asset.isTraded == false)
-                unrealizedGainLoss += asset.getGainLoss();
+        double unrealizedGainLoss = 0.0;
+        if (!list.isEmpty()) {
+            for (Asset asset : list) {
+                if (asset.isTraded == false)
+                    unrealizedGainLoss += asset.getGainLoss();
             }
         }
         portfolio.setUnrealizedGainLoss(unrealizedGainLoss);
     }
 
-
-    public void updateRealizedGainLoss(Trade trade, CustomStock stock){
-        if(trade.getStatus().equals("filled") || trade.getStatus().equals("partial-filled")){
+    /**
+     * Updates the realized gain or loss based on the specified trade and stock.
+     * 
+     * @param trade The trade to calculate.
+     * @param stock The stock being traded.
+     */
+    public void updateRealizedGainLoss(Trade trade, CustomStock stock) {
+        if (trade.getStatus().equals("filled") || trade.getStatus().equals("partial-filled")) {
             Long id = trade.getCustomerId();
             Optional<Portfolio> optional = portfolios.findByCustomerId(id);
             Portfolio portfolio = optional.get();
@@ -62,12 +82,11 @@ public class PortfolioServiceImpl implements PortfolioService {
             double avg = 0.0;
             double gainLoss = 0.0;
 
-            if(trade.getAsk() == 0.0){
+            if (trade.getAsk() == 0.0) {
                 gain = stock.getAsk() * trade.getFilledQuantity();
                 avg = trade.getAvgPrice() * trade.getFilledQuantity();
                 gainLoss = gain - avg;
-            }
-            else{
+            } else {
                 gain = trade.getAsk() * trade.getFilledQuantity();
                 avg = trade.getAvgPrice() * trade.getFilledQuantity();
                 gainLoss = gain - avg;
@@ -77,5 +96,5 @@ public class PortfolioServiceImpl implements PortfolioService {
             portfolios.save(portfolio);
         }
     }
-   
+
 }

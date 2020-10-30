@@ -18,7 +18,7 @@ public class StockController {
      * Construcst a StockController with the following parameters.
      * 
      * @param stockRepository The stock repository.
-     * @param stockService The stock services.
+     * @param stockService    The stock services.
      */
     public StockController(StockRepository stockRepository, StockServices stockService) {
         this.stockRepository = stockRepository;
@@ -37,9 +37,10 @@ public class StockController {
     }
 
     /**
-     * Get specific stocks in the system
+     * Finds the stock based on the specified stock symbol. If no stock is found,
+     * throw StockSymbolNotFoundException.
      * 
-     * @return Specific stocls
+     * @return The stock found.
      */
     @GetMapping("/stocks/{symbol}")
     public CustomStock getStocks(@PathVariable String symbol) {

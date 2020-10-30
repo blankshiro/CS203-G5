@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * A ContentController that accepts and returns content JSON data.
+ */
 @RestController
 public class ContentController {
     /** The content repository. */
@@ -135,7 +138,7 @@ public class ContentController {
 
     // This method should only be accessible to managers/analysts, with the
     // exception being approving the content
-    /*
+    /**
      * This method will be in charge of calling all the updating methods on content
      * 
      * Roles that can call these methods: Analyst, Manager updateTitle()

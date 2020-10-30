@@ -111,8 +111,6 @@ public class CustomerController {
             Authentication authentication) {
         String authenticatedUserRole = authentication.getAuthorities().stream().findAny().get().getAuthority();
         String authenticatedUsername = authentication.getName();
-        // Customer user = userService.updateUser(id, newUserInfo,
-        // authenticatedUsername, authenticatedUserRole);
 
         Optional<Customer> optionalCustomer = users.findByUsername(authenticatedUsername);
 
@@ -148,74 +146,6 @@ public class CustomerController {
                 userService.updateActiveStatus(id, newUserInfo.getActive());
             }
         }
-
-        // if (newUserInfo.getAddress() != null) {
-
-        // // If the authenticated role is user, we need to pass in the username to
-        // // validate that the user is updating own profile
-        // if (authenticatedUserRole.equals("ROLE_USER") &&
-        // authenticatedUsername.equals(user.getUsername())) {
-        // userService.updateAddress(id, newUserInfo.getAddress());
-
-        // } else if (authenticatedUserRole.equals("ROLE_MANAGER")) {
-        // userService.updateAddress(id, newUserInfo.getAddress());
-        // }
-        // }
-
-        // if (authenticatedUserRole.equals("ROLE_USER") &&
-        // authenticatedUsername.equals(user.getUsername())) {
-        // userService.updateAddress(id, newUserInfo.getAddress());
-
-        // }
-
-        // if (authenticatedUserRole.equals("ROLE_USER")) {
-        // userService.updateAddress(id, newUserInfo.getAddress(),
-        // authenticatedUsername);
-
-        // }
-
-        // // If the input passed into the Json is not null for the "phone" field, it
-        // means
-        // // that someone wishes to update the phone
-        // if (newUserInfo.getPhone() != null) {
-        // if (authenticatedUserRole.equals("ROLE_USER")) {
-        // userService.updatePhone(id, newUserInfo.getPhone(), authenticatedUsername);
-
-        // } else if (authenticatedUserRole.equals("ROLE_MANAGER")) {
-        // userService.updatePhone(id, newUserInfo.getPhone());
-        // }
-        // }
-
-        // // If the input passed into the Json is not null for the "password" field, it
-        // // means that someone wishes to update the password
-        // if (newUserInfo.getPassword() != null) {
-        // if (newUserInfo.getPassword().length() < 8) {
-        // throw new InvalidEntryException("Password should be at least 8 characters");
-        // } else {
-        // if (authenticatedUserRole.equals("ROLE_USER")) {
-        // userService.updatePassword(id, newUserInfo.getPassword(),
-        // authenticatedUsername);
-
-        // } else if (authenticatedUserRole.equals("ROLE_MANAGER")) {
-        // userService.updatePassword(id, newUserInfo.getPassword());
-        // }
-
-        // }
-
-        // }
-
-        // // If the input passed into the Json is not null for the "active" field, it
-        // // means that the Manager wishes to update the active status of a specific
-        // user.
-        // if (newUserInfo.getActive() != null) {
-        // if (authenticatedUserRole.equals("ROLE_MANAGER")) {
-        // userService.updateActiveStatus(id, newUserInfo.getActive());
-        // } else {
-        // throw new CustomerUnauthorizedException("You do not have permission to access
-        // this information");
-        // }
-        // }
-
         return users.findById(id);
     }
 

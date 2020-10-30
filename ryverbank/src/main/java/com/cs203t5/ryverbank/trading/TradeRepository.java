@@ -18,8 +18,6 @@ public interface TradeRepository extends JpaRepository <Trade, Long> {
      * @return The trade found.
      */
     Optional<Trade> findById(Long id);
-
-    // Optional<Trade> findBySymbol(String symbol);
     
     /**
      * Derived query to find all trades by the customer id.

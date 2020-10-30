@@ -30,16 +30,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
      */
     List<Asset> findAllByPortfolioId(Long id);
 
-    /**
-     * Derived query to find asset by asset code, portfolio id and whether it is
-     * currently traded.
-     * 
-     * @param symbol
-     * @param id     The id of the portfolio.
-     * @param ans
-     * @return The list of assets found.
-     */
-    List<Asset> findAllByCodeAndPortfolioIdAndIsTraded(String symbol, Long id, boolean ans);
+    // List<Asset> findAllByCodeAndPortfolioIdAndIsTraded(String symbol, Long id, boolean ans);
 
     // maybe should return back the asset and save it into another database?
     // void deleteByCodeAndCustomerId(String symbol, Long id);

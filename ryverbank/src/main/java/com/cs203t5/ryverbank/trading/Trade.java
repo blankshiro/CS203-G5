@@ -26,14 +26,14 @@ public class Trade {
 
     @NotNull(message = "Symbol cannot be null")
     private String symbol;
-    
+
     @NotNull(message = "Quantity cannot be null")
     @Column(name = "quantity")
-    private int quantity=-531;
+    private int quantity = -531;
 
     @Column(name = "bid")
     @JsonProperty("bid")
-    private double bid=-1;
+    private double bid = -1;
 
     @Column(name = "ask")
     @JsonProperty("ask")

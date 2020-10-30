@@ -21,6 +21,11 @@ public class AccountNotFoundException extends RuntimeException {
         super("Could not find account " + accNumber);
     }
 
+    /**
+     * Constructs a new AccountNotFoundException with the specified detail message.
+     * 
+     * @param msg The message to be printed.
+     */
     public AccountNotFoundException(String msg){
         super(msg);
     }

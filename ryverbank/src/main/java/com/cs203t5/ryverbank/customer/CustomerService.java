@@ -18,20 +18,11 @@ public interface CustomerService {
     // Manager update Customer Address
     Customer updateAddress(Long userId, String address);
 
-    // Customer update own Address
-    // Customer updateAddress(Long userId, String address, String authenticatedUsername);
-
     // Manager update Customer phone
     Customer updatePhone(Long userId, String phone);
 
-    // Customer update own phone
-    // Customer updatePhone(Long userId, String phone, String authenticatedUsername);
-
     // Manager update Customer password
     Customer updatePassword(Long userId, String password);
-
-    // Customer update own password
-    // Customer updatePassword(Long userId, String password, String authenticatedUsername);
 
     // Manager update Customer active field
     Customer updateActiveStatus(Long userId, Boolean activeStatus);

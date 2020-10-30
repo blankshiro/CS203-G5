@@ -47,7 +47,6 @@ public class Asset {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    // @MapsId("customerId")
     @JoinColumn(name = "portfolioId", referencedColumnName = "id", updatable = false, insertable = false)
     private Portfolio portfolio;
 
