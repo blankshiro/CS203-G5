@@ -1,18 +1,21 @@
 package com.cs203t5.ryverbank.trading;
 
-import java.util.*;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import com.cs203t5.ryverbank.account_transaction.*;
 import com.cs203t5.ryverbank.portfolio.*;
 import com.cs203t5.ryverbank.portfolio.AssetService;
-import com.cs203t5.ryverbank.account_transaction.*;
 
-import org.springframework.stereotype.Component;
+import org.graalvm.compiler.lir.CompositeValue.Component;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.Instant;
-import org.springframework.scheduling.annotation.Scheduled;
 
 @Component
 public class StockCrawler {
@@ -133,13 +136,8 @@ public class StockCrawler {
         System.out.println("Market is open");
 
     }
-
-    /**
-     * Simulates the stock market for buy trades. This market only opens at 9am
-     * (GMT+8) every weekday.
-     */
-    @Scheduled(cron = "0 00 09 ? * MON-FRI", zone = "GMT+8")
-    public void openBuyMarket() {
+    @Scheduled(cron = "30 00 09 ? * MON-FRI", zone = "GMT+8")
+    public void openBuyMarket(){
         String[] symbols = new String[] { "A17U", "C61U", "C31", "C38U", "C09", "C52", "D01", "D05", "G13", "H78",
                 "C07", "J36", "J37", "BN4", "N2IU", "ME8U", "M44U", "O39", "S58", "U96", "S68", "C6L", "Z74", "S63",
                 "Y92", "U11", "U14", "V03", "F34", "BS6" };
@@ -354,12 +352,8 @@ public class StockCrawler {
 
     }
 
-    /**
-     * Simulates the stock market for sell trades. This market only opens at 9am
-     * (GMT+&) every weekday.
-     */
-    @Scheduled(cron = "0 00 09 ? * MON-FRI", zone = "GMT+8")
-    public void openSellMarket() {
+ @Scheduled(cron = "30 00 09 ? * MON-FRI", zone = "GMT+8")
+    public void openSellMarket(){
         String[] symbols = new String[] { "A17U", "C61U", "C31", "C38U", "C09", "C52", "D01", "D05", "G13", "H78",
                 "C07", "J36", "J37", "BN4", "N2IU", "ME8U", "M44U", "O39", "S58", "U96", "S68", "C6L", "Z74", "S63",
                 "Y92", "U11", "U14", "V03", "F34", "BS6" };
