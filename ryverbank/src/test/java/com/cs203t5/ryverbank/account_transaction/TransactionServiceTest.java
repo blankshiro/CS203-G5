@@ -39,46 +39,46 @@ public class TransactionServiceTest {
     private AccountServiceImpl accService;;
 
 
-    @Test
-    public void getAllTransactions(){
-        Transaction transaction1 = new Transaction(2L, 3L, 400.0);
-        Transaction transaction2 = new Transaction(2L, 3L, 1400.0);
+    // @Test
+    // public void getAllTransactions(){
+    //     Transaction transaction1 = new Transaction(2L, 3L, 400.0);
+    //     Transaction transaction2 = new Transaction(2L, 3L, 1400.0);
 
-        List<Transaction> list = new ArrayList<>();
+    //     List<Transaction> list = new ArrayList<>();
 
-        when(transactions.findAll()).thenReturn(Arrays.asList(transaction1, transaction2));
-        list = tImpl.listTransactions();
+    //     when(transactions.findAll()).thenReturn(Arrays.asList(transaction1, transaction2));
+    //     list = tImpl.listTransactions();
 
-        assertNotNull(list);
-        assertEquals(2, list.size());
-    }
+    //     assertNotNull(list);
+    //     assertEquals(2, list.size());
+    // }
 
-    @Test
-    public void getTransaction_returnTransaction(){
-        Transaction transaction = new Transaction(2L, 3L, 1350.0);
-        Long id = transaction.getId();
+    // @Test
+    // public void getTransaction_returnTransaction(){
+    //     Transaction transaction = new Transaction(2L, 3L, 1350.0);
+    //     Long id = transaction.getId();
 
-        when(transactions.findById(id)).thenReturn(Optional.of(transaction));
+    //     when(transactions.findById(id)).thenReturn(Optional.of(transaction));
 
-        Transaction getTransaction = tImpl.getTransaction(id);
+    //     Transaction getTransaction = tImpl.getTransaction(id);
 
-        assertNotNull(getTransaction);
+    //     assertNotNull(getTransaction);
 
-        verify(transactions).findById(id);
-    }
+    //     verify(transactions).findById(id);
+    // }
 
-    @Test
-    public void getTransaction_returnNull(){
-        Long id = 6L;
+    // @Test
+    // public void getTransaction_returnNull(){
+    //     Long id = 6L;
 
-        when(transactions.findById(id)).thenReturn(Optional.empty());
+    //     when(transactions.findById(id)).thenReturn(Optional.empty());
 
-        Transaction transaction = tImpl.getTransaction(id);
+    //     Transaction transaction = tImpl.getTransaction(id);
         
-        assertNull(transaction);
+    //     assertNull(transaction);
 
-        verify(transactions).findById(id);
-    }
+    //     verify(transactions).findById(id);
+    // }
 
     @Test
     public void createTransaction_returnTransaction(){

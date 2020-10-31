@@ -37,10 +37,10 @@ public class TradeServiceImpl implements TradeServices {
 
     //Get All trades on the market
     //This method will be used exclusively by Manager / Market maker
-    @Override
-    public List<Trade> getAllTrades(){
-        return tradeRepository.findAll();
-    }
+    // @Override
+    // public List<Trade> getAllTrades(){
+    //     return tradeRepository.findAll();
+    // }
 
     //Get Specific trades on the market
     //This method will be used exclusively by Customer
