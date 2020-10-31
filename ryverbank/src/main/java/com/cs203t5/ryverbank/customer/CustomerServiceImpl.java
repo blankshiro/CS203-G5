@@ -1,15 +1,12 @@
 package com.cs203t5.ryverbank.customer;
 
-import java.util.List;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.cs203t5.ryverbank.portfolio.Portfolio;
 import com.cs203t5.ryverbank.portfolio.PortfolioRepository;
 
 /**
- * The CustomerServiceImpl implements all the functionality required to create
- * users, get users and update user information.
+ * Implementation of the CustomerService class.
  * 
  * @see CustomerService
  */
@@ -20,7 +17,7 @@ public class CustomerServiceImpl implements CustomerService {
     private PortfolioRepository portfolios;
 
     /**
-     * The constructor for CustomerServiceImpl.
+     * Constructs a CustomerServiceImpl with the following parameters.
      * 
      * @param users      The customer repository.
      * @param portfolios The portfolio repository.
@@ -30,14 +27,6 @@ public class CustomerServiceImpl implements CustomerService {
         this.portfolios = portfolios;
     }
 
-    /**
-     * Creates a new user. If the username exists in the customer repository, throw
-     * a CustomerExistsException. If the phone number and nric is invalid, throw a
-     * InvalidEntryException.
-     * 
-     * @param user The user to be created.
-     * @return The user created.
-     */
     @Override
     public Customer createUser(Customer user) {
         if (users.existsByUsername(user.getUsername())) {
@@ -54,10 +43,6 @@ public class CustomerServiceImpl implements CustomerService {
         return user;
     }
 
-    /**
-     * 
-     * 
-     */
     @Override
     public Customer getUser(Long userId, String authenticatedUsername, String authenticatedUserRole) {
 
@@ -71,8 +56,6 @@ public class CustomerServiceImpl implements CustomerService {
         }).orElse(null);
     }
 
-    // Updates the address of a particular user
-    // This method will be used exclusively by Managers
     @Override
     public Customer updateAddress(Long userId, String newAddress) {
         if (newAddress != null && !newAddress.isEmpty()) {
@@ -86,26 +69,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
-    // Updates the address of a particular user
-    // This method will be used exclusively by Customer
-    // @Override
-    // public Customer updateAddress(Long userId, String newAddress, String authenticatedUsername) {
-    //     if (newAddress != null && !newAddress.isEmpty()) {
-    //         return users.findById(userId).map(user -> {
-    //             if (user.getUsername().equals(authenticatedUsername)) {
-    //                 user.setAddress(newAddress);
-    //                 return users.save(user);
-    //             } else {
-    //                 throw new CustomerUnauthorizedException("You do not have permission to access this information");
-    //             }
-    //         }).orElse(null);
-    //     }
-
-    //     return null;
-    // }
-
-    // Updates the phone of a particular user
-    // This method will be used exclusively by Managers
     @Override
     public Customer updatePhone(Long userId, String newPhone) {
         if (newPhone != null && !newPhone.isEmpty()) {
@@ -118,26 +81,6 @@ public class CustomerServiceImpl implements CustomerService {
         return null;
     }
 
-    // Updates the phone of a particular user
-    // This method will be used exclusively by Customer
-    // @Override
-    // public Customer updatePhone(Long userId, String newPhone, String authenticatedUsername) {
-    //     if (newPhone != null && !newPhone.isEmpty()) {
-    //         return users.findById(userId).map(user -> {
-    //             if (user.getUsername().equals(authenticatedUsername)) {
-    //                 user.setPhone(newPhone);
-    //                 return users.save(user);
-    //             } else {
-    //                 throw new CustomerUnauthorizedException("You do not have permission to access this information");
-    //             }
-    //         }).orElse(null);
-    //     }
-
-    //     return null;
-    // }
-
-    // Updates the password of a particular user
-    // This method will be used exclusively by Managers
     @Override
     public Customer updatePassword(Long userId, String newPassword) {
         if (newPassword != null && !newPassword.isEmpty()) {
@@ -150,26 +93,6 @@ public class CustomerServiceImpl implements CustomerService {
         return null;
     }
 
-    // Updates the password of a particular user
-    // This method will be used exclusively by Customer
-    // @Override
-    // public Customer updatePassword(Long userId, String newPassword, String authenticatedUsername) {
-    //     if (newPassword != null && !newPassword.isEmpty()) {
-    //         return users.findById(userId).map(user -> {
-    //             if (user.getUsername().equals(authenticatedUsername)) {
-    //                 user.setPassword(encoder.encode(newPassword));
-    //                 return users.save(user);
-    //             } else {
-    //                 throw new CustomerUnauthorizedException("You do not have permission to access this information");
-    //             }
-    //         }).orElse(null);
-    //     }
-
-    //     return null;
-    // }
-
-    // Updates the active field of a particular user
-    // This method will be used exclusively by Managers
     @Override
     public Customer updateActiveStatus(Long userId, Boolean activeStatus) {
         if (activeStatus != null) {

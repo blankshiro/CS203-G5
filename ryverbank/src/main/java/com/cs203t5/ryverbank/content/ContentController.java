@@ -19,9 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * A ContentController that accepts and returns content JSON data.
+ */
 @RestController
 public class ContentController {
+    /** The content repository. */
     private ContentRepository meinContent;
+    /** The content services. */
     private ContentService contentService;
 
     /**
@@ -93,11 +98,12 @@ public class ContentController {
         }
     }
 
-        /**
+    /**
      * List all the contents in the system. This method should only be accessible by
      * the manager. If the method is used by the user, throw a ContentNotFound
      * Exception.
      * 
+     * @param id   The content id.
      * @param auth Checks for authenticated user role.
      * @return The list of all contents.
      */
@@ -110,38 +116,36 @@ public class ContentController {
         if (authenticatedUserRole.equals("ROLE_MANAGER") || authenticatedUserRole.equals("ROLE_ANALYST")) {
             if (meinContent.findById(id).isEmpty()) {
                 throw new ContentNotFoundException("No content available for viewing");
-            } 
+            }
             // If the person is a user, we need to check if the content is approved or not
         } else if (authenticatedUserRole.equals("ROLE_USER")) {
             if (meinContent.findById(id).isEmpty()) {
                 throw new ContentNotFoundException("No content available for viewing");
-            } 
+            }
             Optional<Content> newContent = meinContent.findById(id);
-            try{
+            try {
                 Content aContent = newContent.get();
-                if (!aContent.isApproved()){
+                if (!aContent.isApproved()) {
                     throw new ContentNotFoundException("No content available for viewing");
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new ContentNotFoundException("No content available for viewing");
-            } 
+            }
         }
-        
+
         return meinContent.findById(id);
- 
+
     }
 
-    // This method should only be accessible to managers/analysts, with the
-    // exception being approving the content
-    /*
-     * This method will be in charge of calling all the updating methods on content
+    /**
+     * General method for calling all the updating methods and approving method in
+     * the content class. Users with the role of analyst or managers can call the
+     * updating methods. Otherwise, only the manager can call the approving method.
      * 
-     * Roles that can call these methods: Analyst, Manager updateTitle()
-     * updateSummary() updateContent() updateLink()
-     * 
-     * This method approves the content so that it can be seen by users
-     * 
-     * Roles that can call these methods: Manager approveContent()
+     * @param id       The content id.
+     * @param aContent The content to update.
+     * @param auth     Checks for authenticated user role.
+     * @return The updated content.
      */
     @PutMapping(value = "/contents/{id}")
     public Optional<Content> updateContentFields(@PathVariable Long id, @RequestBody Content aContent,

@@ -2,15 +2,14 @@ package com.cs203t5.ryverbank.portfolio;
 
 import javax.persistence.*;
 
-import com.cs203t5.ryverbank.customer.Customer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
 
-//all the details of asset can be obtain from trade repository
-
+/**
+ * Asset class for asset management.
+ */
 @Entity
 @Setter
 @Getter
@@ -49,7 +48,6 @@ public class Asset {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    // @MapsId("customerId")
     @JoinColumn(name = "portfolioId", referencedColumnName = "id", updatable = false, insertable = false)
     private Portfolio portfolio;
 
@@ -62,13 +60,13 @@ public class Asset {
     /**
      * Constructs an asset with the following parameters.
      * 
-     * @param code
-     * @param quantity
-     * @param avgPrice
-     * @param currentPrice
-     * @param portfolioId
-     * @param isTraded
-     * @param record
+     * @param code         The code of the asset.
+     * @param quantity     The quantity of asset.
+     * @param avgPrice     The average price of asset.
+     * @param currentPrice The current price of asset.
+     * @param portfolioId  The portfolio id.
+     * @param isTraded     Checks whether the asset is traded.
+     * @param record       The current records of the asset.
      */
     public Asset(String code, int quantity, double avgPrice, double currentPrice, Long portfolioId, boolean isTraded,
             String record) {
