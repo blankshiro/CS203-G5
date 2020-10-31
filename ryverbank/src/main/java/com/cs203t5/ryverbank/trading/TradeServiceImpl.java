@@ -122,11 +122,11 @@ public class TradeServiceImpl implements TradeServices {
     
         Calendar today = Calendar.getInstance(timeZone);
 
-    //    if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
-    //    {
-    //        trade.setStatus("open");
-    //        customStock.setBidVolume(customStock.getAskVolume() + trade.getQuantity());
-    //    }else{
+       if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
+       {
+           trade.setStatus("open");
+           customStock.setBidVolume(customStock.getAskVolume() + trade.getQuantity());
+       }else{
                 //Get the list of trades for {symbol}
                 List <Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
                 List<Trade> listOfSellTrades = new ArrayList<>();
@@ -315,7 +315,7 @@ public class TradeServiceImpl implements TradeServices {
             //if it reaches here, straight away count as success
             // portfolioService.addAsset(trade, trade.getCustomerId());
             assetService.addAsset(trade, customStock);
-    //  }
+     }
 
        
     return tradeRepository.save(trade);
@@ -357,12 +357,12 @@ public class TradeServiceImpl implements TradeServices {
     
         Calendar today = Calendar.getInstance(timeZone);
 
-    //    if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
-    //    {
-    //        trade.setStatus("open");
-    //        customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
+       if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
+       {
+           trade.setStatus("open");
+           customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
 
-    //    }else{
+       }else{
             List <Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
             List<Trade> listOfBuyTrades = new ArrayList<>();
         
@@ -533,7 +533,7 @@ public class TradeServiceImpl implements TradeServices {
             //Set stock ask price
             customStock.setAsk(customStock.getAsk());
 
-    //    }
+       }
 
        
         portfolioService.updateRealizedGainLoss(trade,customStock);
@@ -580,12 +580,12 @@ public class TradeServiceImpl implements TradeServices {
     
         Calendar today = Calendar.getInstance(timeZone);
 
-    //    if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
-    //    {
-    //        trade.setStatus("open");
-    //        customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
+       if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
+       {
+           trade.setStatus("open");
+           customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
            
-    //    }else{
+       }else{
             //Get the list of trades for {symbol}
             List <Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
             List<Trade> listOfSellTrades = new ArrayList<>();
@@ -774,7 +774,7 @@ public class TradeServiceImpl implements TradeServices {
         // portfolioService.addAsset(trade, trade.getCustomerId());
         assetService.addAsset(trade, customStock);
 
-    //    }
+       }
         
     return tradeRepository.save(trade);
 
@@ -814,12 +814,12 @@ public class TradeServiceImpl implements TradeServices {
     
         Calendar today = Calendar.getInstance(timeZone);
 
-    //    if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
-    //    {
-    //        trade.setStatus("open");
-    //        customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
+       if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
+       {
+           trade.setStatus("open");
+           customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
            
-    //    }else{
+       }else{
             List <Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
             List<Trade> listOfBuyTrades = new ArrayList<>();
         
@@ -998,7 +998,7 @@ public class TradeServiceImpl implements TradeServices {
             customStock.setAsk(newAskPrice);
 
             count = 0;
-    //    }
+       }
 
        
         portfolioService.updateRealizedGainLoss(trade, customStock);
