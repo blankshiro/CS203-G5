@@ -8,8 +8,6 @@ import java.util.*;
 
 import javax.validation.Valid;
 
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
@@ -62,6 +60,7 @@ public class TradeController {
      * account does not have enough available balance, throw TradeInvalidException.
      * 
      * @param trade The trade to be created.
+     * @param auth Checks for authenticated username.
      * @return The trade created.
      */
     @ResponseStatus(HttpStatus.CREATED)
@@ -217,7 +216,8 @@ public class TradeController {
      * Search for trade with the given id If there is not trade with the given "id",
      * throw a TradeNotFoundException
      * 
-     * @param id
+     * @param id The trade id to find.
+     * @param auth Checks for authenticated username.
      * @return The trade found.
      */
 

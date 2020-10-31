@@ -20,6 +20,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.*;
 
+/**
+ * Customer class for managing customers of the bank application. Each user can
+ * have either the role of USER, ANALYST or MANAGER. Every customer have have
+ * many accounts and trades but only one portfolio.
+ */
 @Entity
 @Setter
 @Getter
@@ -62,22 +67,16 @@ public class Customer implements UserDetails {
     @NotNull(message = "Active should not be null")
     private Boolean active = null;
 
-    // One person can have many accounts, that is why @OneToMany - One customer is
-    // given many accoutns
-    // mappedBy: The list of accoutns is owned by a "customer"
-
-    // The owner of the field "accounts" is the customer
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Account> accounts;
 
-    // have to add portfolio to customer
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Portfolio portfolio;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Trade> trades;
-    
+
     /**
      * Constructs a new customer with the following parameters.
      * 
@@ -102,7 +101,7 @@ public class Customer implements UserDetails {
         this.active = active;
     }
 
-    /** 
+    /**
      * Return a collection of authorities (roles) granted to the user.
      */
     @Override

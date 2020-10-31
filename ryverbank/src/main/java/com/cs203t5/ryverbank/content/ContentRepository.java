@@ -30,7 +30,7 @@ public interface ContentRepository extends JpaRepository<Content, Long> {
     /**
      * Derived query to search for a particular content, based on its Id
      * 
-     * @param id The id of the content.
+     * @param Id The id of the content.
      * @return The content found.
      */
     Optional<Content> findById(Long Id);

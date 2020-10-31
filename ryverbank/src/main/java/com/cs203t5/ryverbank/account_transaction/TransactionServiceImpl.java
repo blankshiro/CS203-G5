@@ -1,7 +1,5 @@
 package com.cs203t5.ryverbank.account_transaction;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,14 +25,6 @@ public class TransactionServiceImpl implements TransactionServices {
         this.accService = accService;
     }
 
-    /**
-     * Creates a normal transaction based on the transaction information. If the
-     * transferer or receiver account is not found, throw
-     * AccountNotFoundException.
-     * 
-     * @param transaction The transaction information.
-     * @return The transaction created.
-     */
     @Override
     public Transaction addTransaction(Transaction transaction) {
         Long acc1 = transaction.getAccount1();
@@ -53,16 +43,6 @@ public class TransactionServiceImpl implements TransactionServices {
         return transactions.save(transaction);
     }
 
-    /**
-     * Creates a trade transaction based on the transaction information. This method
-     * can only be used when there is a matched trade, otherwise the unmatched trade
-     * will be updated in TradeServiceImpl.
-     * 
-     * @param acc1 The buyer/seller account.
-     * @param acc2 The account being traded with acc1.
-     * @param amt  The amount traded.
-     * @return The trade transaction created.
-     */
     @Override
     public Transaction addTransaction(Long acc1, Long acc2, double amt) {
         long give, take;

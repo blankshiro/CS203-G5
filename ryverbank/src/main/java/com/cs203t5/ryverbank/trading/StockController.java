@@ -15,7 +15,7 @@ public class StockController {
     private StockServices stockService;
 
     /**
-     * Construcst a StockController with the following parameters.
+     * Constructs a StockController with the following parameters.
      * 
      * @param stockRepository The stock repository.
      * @param stockService    The stock services.
@@ -29,7 +29,7 @@ public class StockController {
     /**
      * List all stocks in the system
      * 
-     * @return list of all stocls
+     * @return list of all stocks
      */
     @GetMapping("/stocks")
     public List<CustomStock> listStocks() {
@@ -40,6 +40,7 @@ public class StockController {
      * Finds the stock based on the specified stock symbol. If no stock is found,
      * throw StockSymbolNotFoundException.
      * 
+     * @param symbol The stock symbol to find.
      * @return The stock found.
      */
     @GetMapping("/stocks/{symbol}")

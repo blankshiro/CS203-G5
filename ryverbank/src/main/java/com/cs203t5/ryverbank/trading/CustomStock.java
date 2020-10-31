@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotNull;
 import lombok.*;
 
+/**
+ * Stock class for stock management. 
+ */
 @Entity
 @Setter
 @Getter

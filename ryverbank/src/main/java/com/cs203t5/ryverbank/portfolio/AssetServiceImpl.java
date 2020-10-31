@@ -30,13 +30,6 @@ public class AssetServiceImpl implements AssetService {
         this.portfolios = portfolios;
     }
 
-    /**
-     * Creates an asset based on the specified trade and stock. This method will
-     * only work if the trade is filled or partially filled.
-     * 
-     * @param trade The trade filled or partially filled.
-     * @param stock The stock of the trade.
-     */
     public void addAsset(Trade trade, CustomStock stock) {
         String symbol = trade.getSymbol();
         Long customerId = trade.getCustomerId();
@@ -78,14 +71,6 @@ public class AssetServiceImpl implements AssetService {
 
     }
 
-    /**
-     * Updates the asset based on the specified trade, asset, stock and portfolio.
-     * 
-     * @param trade     The updated trade.
-     * @param asset     The asset to update.
-     * @param stock     The stock of the trade.
-     * @param portfolio The portfolio that contains the asset to update.
-     */
     public void updateAsset(Trade trade, Asset asset, CustomStock stock, Portfolio portfolio) {
 
         double current_price = 0.0;
@@ -133,14 +118,6 @@ public class AssetServiceImpl implements AssetService {
 
     }
 
-    /**
-     * Sells an asset based on the specified symbol of asset, quantity amount and
-     * customer id.
-     * 
-     * @param symbol     The symbol of the asset.
-     * @param quantity   The quantity of the asset to sell.
-     * @param customerId The customer id.
-     */
     public void sellAsset(String symbol, int quantity, Long customerId) {
         Optional<Portfolio> opPortfolio = portfolios.findByCustomerId(customerId);
         Portfolio portfolio = opPortfolio.get();
@@ -166,14 +143,6 @@ public class AssetServiceImpl implements AssetService {
         }
     }
 
-    /**
-     * Retrieves back the asset with the specified asset symbol, quantity and
-     * customer id when the customer cancels a trade.
-     * 
-     * @param symbol     The symbol of the asset.
-     * @param quantity   The quantity of the asset cancelled.
-     * @param customerId The customer id.
-     */
     public void retrieveAsset(String symbol, int quantity, Long customerId) {
         Optional<Portfolio> opPortfolio = portfolios.findByCustomerId(customerId);
         Portfolio portfolio = opPortfolio.get();

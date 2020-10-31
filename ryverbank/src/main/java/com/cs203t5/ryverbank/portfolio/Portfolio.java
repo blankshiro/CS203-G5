@@ -13,6 +13,10 @@ import org.hibernate.annotations.Where;
 
 import lombok.*;
 
+/**
+ * Portfolio class to track customer portfolio. Each portfolio can have many
+ * assets but each portfolio can only belong to one customer.
+ */
 @Entity
 @Setter
 @Getter

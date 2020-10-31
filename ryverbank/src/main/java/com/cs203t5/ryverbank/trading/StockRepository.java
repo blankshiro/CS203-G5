@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
  * A StockRepository that provides the mechanism for storage, retrieval,
  * search, update and delete operation on stock objects
  */
+@Repository
 public interface StockRepository extends JpaRepository<CustomStock, String> {
     
     /**

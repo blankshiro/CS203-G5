@@ -4,28 +4,66 @@ package com.cs203t5.ryverbank.customer;
  * An interface for various customer services.
  */
 public interface CustomerService {
-    // Creating new User (C of C.R.U.D)
-    // Roles: Manager
+    /**
+     * Creates a new user. If the username exists in the customer repository, throw
+     * a CustomerExistsException. If the phone number and nric is invalid, throw a
+     * InvalidEntryException.
+     * 
+     * @param user The user to be created.
+     * @return The user created.
+     */
     Customer createUser(Customer user);
 
-    // Get User (R of C.R.U.D)
-    // Roles: Customer & Manager
+    /**
+     * Gets the customer with the specified user id, authenticated username and
+     * authenticated user role. If the user calling this method is not a manager or
+     * the authenticated user, throw CustomerUnauthorizedException.
+     * 
+     * @param userId                The user id.
+     * @param authenticatedUsername The authenticated username.
+     * @param authenticatedUserRole The authenticated user role.
+     * @return The customer found.
+     */
     Customer getUser(Long userId, String authenticatedUsername, String authenticatedUserRole);
 
-    // Update user's information (U of C.R.U.D)
-    // Roles: Customer & Manager
-
-    // Manager update Customer Address
+    /**
+     * Updates the customer's address with the specified user id and new address
+     * information. If no user is found, return null.
+     * 
+     * @param userId     The user id.
+     * @param address The user's new address information.
+     * @return The customer with the updated information.
+     */
     Customer updateAddress(Long userId, String address);
 
-    // Manager update Customer phone
+    /**
+     * Updates the customer's phone number with the specified user id and new phone
+     * number. If no user is found, return null.
+     * 
+     * @param userId   The user id.
+     * @param phone The user's new phone information.
+     * @return The customer with the updated information.
+     */
     Customer updatePhone(Long userId, String phone);
 
-    // Manager update Customer password
+    /**
+     * Updates the customer's password with the specified user id and new password .
+     * If no user is found, return null.
+     * 
+     * @param userId      The user id.
+     * @param password The user's new password.
+     * @return The customer with the updated information.
+     */
     Customer updatePassword(Long userId, String password);
 
-    // Manager update Customer active field
+    /**
+     * Updates the user's active status with the specified user id and new active
+     * status. If no user is found, return null.
+     * 
+     * @param userId       The user id.
+     * @param activeStatus The user's new active status.
+     * @return The customer with the updated active status.
+     */
     Customer updateActiveStatus(Long userId, Boolean activeStatus);
-
 
 }

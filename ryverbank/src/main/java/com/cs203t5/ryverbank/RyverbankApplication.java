@@ -12,6 +12,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * Main class.
+ */
 @SpringBootApplication
 @EnableScheduling
 public class RyverbankApplication {

@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 
 import lombok.*;
 
+/**
+ * Trade class for trade management.
+ */
 @Entity
 @Setter
 @Getter
@@ -66,7 +69,7 @@ public class Trade {
     private Account account;
 
     /**
-     * Constructs a new trade with the following paramters.
+     * Constructs a new trade with the following parameters.
      * 
      * @param action         The action by the customer. (specify "buy" for buying
      *                       and "sell" for selling)

@@ -1,15 +1,10 @@
 package com.cs203t5.ryverbank.portfolio;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import com.cs203t5.ryverbank.trading.CustomStock;
-import com.cs203t5.ryverbank.trading.Trade;
-import com.cs203t5.ryverbank.trading.TradeRepository;
+import com.cs203t5.ryverbank.trading.*;
 
 import org.springframework.stereotype.Service;
-
-import javassist.compiler.ast.DoubleConst;
 
 /**
  * Implementation of the PortfolioService class.
@@ -32,12 +27,6 @@ public class PortfolioServiceImpl implements PortfolioService {
         // this.assets = assets;
     }
 
-    /**
-     * Finds the portfolio with the specified customer id.
-     * 
-     * @param id The customer id.
-     * @return The portfolio found
-     */
     public Portfolio getPortfolio(Long id) {
         return portfolios.findByCustomerId(id).map(portfolio -> {
             calGainLoss(portfolio);
@@ -47,12 +36,6 @@ public class PortfolioServiceImpl implements PortfolioService {
         // {return portfolios.save(new Portfolio(id));});
     }
 
-    /**
-     * Calculates the unrealized profit or loss for the assets owned based on the
-     * specified portfolio.
-     * 
-     * @param portfolio The portfolio to calculate.
-     */
     public void calGainLoss(Portfolio portfolio) {
         List<Asset> list = new ArrayList<>();
         list = portfolio.getAssets();
@@ -67,12 +50,6 @@ public class PortfolioServiceImpl implements PortfolioService {
         portfolio.setUnrealizedGainLoss(unrealizedGainLoss);
     }
 
-    /**
-     * Updates the realized gain or loss based on the specified trade and stock.
-     * 
-     * @param trade The trade to calculate.
-     * @param stock The stock being traded.
-     */
     public void updateRealizedGainLoss(Trade trade, CustomStock stock) {
         if (trade.getStatus().equals("filled") || trade.getStatus().equals("partial-filled")) {
             Long id = trade.getCustomerId();

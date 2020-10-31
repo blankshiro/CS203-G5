@@ -9,14 +9,17 @@ import java.util.Optional;
 
 import com.cs203t5.ryverbank.account_transaction.*;
 import com.cs203t5.ryverbank.portfolio.*;
-import com.cs203t5.ryverbank.portfolio.AssetService;
 
-import org.graalvm.compiler.lir.CompositeValue.Component;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
+/**
+ * Stock crawler class that crawls stock info data from the Straits Times Index:
+ * https://www.sgx.com/indices/products/sti using yahoo finance API.
+ */
 @Component
 public class StockCrawler {
     /** The stock repository. */
@@ -38,7 +41,7 @@ public class StockCrawler {
      * @param stockRepository The stock repository.
      * @param tradeRepository The trade repository.
      * @param assetService    The asset services.
-     * @param tramService     The transaction services.
+     * @param tranService     The transaction services.
      * @param accService      The account services.
      */
     public StockCrawler(StockRepository stockRepository, TradeRepository tradeRepository, AssetService assetService,
@@ -136,8 +139,9 @@ public class StockCrawler {
         System.out.println("Market is open");
 
     }
+
     @Scheduled(cron = "30 00 09 ? * MON-FRI", zone = "GMT+8")
-    public void openBuyMarket(){
+    public void openBuyMarket() {
         String[] symbols = new String[] { "A17U", "C61U", "C31", "C38U", "C09", "C52", "D01", "D05", "G13", "H78",
                 "C07", "J36", "J37", "BN4", "N2IU", "ME8U", "M44U", "O39", "S58", "U96", "S68", "C6L", "Z74", "S63",
                 "Y92", "U11", "U14", "V03", "F34", "BS6" };
@@ -352,8 +356,13 @@ public class StockCrawler {
 
     }
 
- @Scheduled(cron = "30 00 09 ? * MON-FRI", zone = "GMT+8")
-    public void openSellMarket(){
+    /**
+     * Simulates the opening of a sell market by finding the list of open or
+     * partially filled buy trades in the current repository and matching it to
+     * them. This market will only be open at 9am (GMT+8) every weekday.
+     */
+    @Scheduled(cron = "30 00 09 ? * MON-FRI", zone = "GMT+8")
+    public void openSellMarket() {
         String[] symbols = new String[] { "A17U", "C61U", "C31", "C38U", "C09", "C52", "D01", "D05", "G13", "H78",
                 "C07", "J36", "J37", "BN4", "N2IU", "ME8U", "M44U", "O39", "S58", "U96", "S68", "C6L", "Z74", "S63",
                 "Y92", "U11", "U14", "V03", "F34", "BS6" };

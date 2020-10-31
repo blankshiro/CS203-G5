@@ -12,6 +12,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
 
+/**
+ * Content class for content management. 
+ */
 @Entity
 @Setter
 @Getter
@@ -19,7 +22,6 @@ import lombok.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Content {
 
-    //Primary key for all content 
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

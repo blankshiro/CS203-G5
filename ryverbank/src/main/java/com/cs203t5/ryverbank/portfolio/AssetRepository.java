@@ -15,9 +15,9 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
      * Optional query to find asset by asset code, portfolio id and whether it is
      * currently traded.
      * 
-     * @param symbol
+     * @param symbol The symbol of the asset.
      * @param id     The id of the portfolio.
-     * @param ans
+     * @param ans    Checks whether the asset is being traded.
      * @return The asset found.
      */
     Optional<Asset> findByCodeAndPortfolioIdAndIsTraded(String symbol, Long id, boolean ans);
@@ -29,9 +29,4 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
      * @return The list of assets found.
      */
     List<Asset> findAllByPortfolioId(Long id);
-
-    // List<Asset> findAllByCodeAndPortfolioIdAndIsTraded(String symbol, Long id, boolean ans);
-
-    // maybe should return back the asset and save it into another database?
-    // void deleteByCodeAndCustomerId(String symbol, Long id);
 }

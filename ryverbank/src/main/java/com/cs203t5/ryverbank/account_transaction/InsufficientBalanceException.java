@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * InsufficientBalanceException will be thrown when the specified account has
  * insufficient balance.
  * 
- * @see RuntimeException.
+ * @see RuntimeException
  */
 @ResponseStatus(HttpStatus.FORBIDDEN)
 public class InsufficientBalanceException extends RuntimeException {

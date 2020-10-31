@@ -8,6 +8,10 @@ import lombok.*;
 
 import com.cs203t5.ryverbank.customer.*;
 
+/**
+ * Account class for for fund transfers and trades. Each customer can have many
+ * accounts.
+ */
 @Entity
 @Setter
 @Getter
@@ -22,16 +26,7 @@ public class Account {
     @JsonProperty("id")
     private Long accountID;
 
-    /**
-     * Many accounts can be given to one customer, hence @ManyToOne
-     * 
-     * @JoinColumn(name = The column name you want to have on your table)
-     * 
-     */
-
     @ManyToOne(fetch = FetchType.LAZY)
-    // By this logic, we can find accounts based on the customer
-    // JsonIgnore is important so that we don't see the Customer information
     @JsonIgnore
     private Customer customer;
 

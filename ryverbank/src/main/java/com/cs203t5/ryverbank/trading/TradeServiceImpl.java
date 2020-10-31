@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * Implementation of the TradeServices class.
  * 
- * @see TradeServices.
+ * @see TradeServices
  */
 @Service
 public class TradeServiceImpl implements TradeServices {
@@ -50,22 +50,12 @@ public class TradeServiceImpl implements TradeServices {
         this.portfolioService = portfolioService;
     }
 
-    // Get All trades on the market
-    // This method will be used exclusively by Manager / Market maker
-    @Override
-    public List<Trade> getAllTrades() {
-        return tradeRepository.findAll();
-    }
 
-    /**
-     * Finds the trade with the specified trade id and customer. This method can
-     * only be accessed by the customer who created the trade. Otherwise, it will
-     * throw a CustomerUnauthorizedException.
-     * 
-     * @param customer The customer that created the trade.
-     * @param tradeId  The trade id.
-     * @return The trade found.
-     */
+    // @Override
+    // public List<Trade> getAllTrades() {
+    //     return tradeRepository.findAll();
+    // }
+
     @Override
     public Trade getTrade(Long tradeId, Customer customer) {
         return tradeRepository.findById(tradeId).map(trade -> {
@@ -78,18 +68,6 @@ public class TradeServiceImpl implements TradeServices {
 
     }
 
-    /**
-     * Cancels a trade with the specified trade id and customer. This method can
-     * only be accessed by the customer who wants to cancel the trade. Otherwise, it
-     * will throw a CustomerUnauthorizedException.
-     * 
-     * This method can only be called when the customer wants to cancel an open
-     * trade. Otherwise, it will throw a TradeInvalidException.
-     * 
-     * @param tradeId  The trade id.
-     * @param customer The customer that wants to cancel the trade.
-     * @return The trade cancelled.
-     */
     @Override
     public Trade cancelTrade(Long tradeId, Customer customer) {
         return tradeRepository.findById(tradeId).map(trade -> {
@@ -110,14 +88,6 @@ public class TradeServiceImpl implements TradeServices {
         }).orElse(null);
     }
 
-    /**
-     * Creates a market buy trade with the specified trade, customer and stock.
-     * 
-     * @param trade       The trade to be made.
-     * @param customer    The customer that wants to market buy.
-     * @param customStock The stock that the customer wants to buy.
-     * @return The market buy trade created.
-     */
     @Override
     public Trade createMarketBuyTrade(Trade trade, Customer customer, CustomStock customStock) {
 
@@ -342,14 +312,6 @@ public class TradeServiceImpl implements TradeServices {
 
     }
 
-    /**
-     * Creates a market sell trade with the specified trade, customer and stock.
-     * 
-     * @param trade       The trade to be made.
-     * @param customer    The customer that wants to market sell.
-     * @param customStock The stock that the customer wants to sell.
-     * @return The market sell trade created.
-     */
     @Override
     public Trade createMarketSellTrade(Trade trade, Customer customer, CustomStock customStock) {
         long currentTimestamp = Instant.now().getEpochSecond();
@@ -554,14 +516,6 @@ public class TradeServiceImpl implements TradeServices {
 
     }
 
-    /**
-     * Creates a limit buy trade with the specified trade, customer and stock.
-     * 
-     * @param trade       The trade to be made.
-     * @param customer    The customer that wants to limit buy.
-     * @param customStock The stock that the customer wants to buy.
-     * @return The limit buy trade created.
-     */
     @Override
     public Trade createLimitBuyTrade(Trade trade, Customer customer, CustomStock customStock) {
         long currentTimestamp = Instant.now().getEpochSecond();
@@ -792,14 +746,6 @@ public class TradeServiceImpl implements TradeServices {
 
     }
 
-    /**
-     * Creates a limit sell trade with the specified trade, customer and stock.
-     * 
-     * @param trade       The trade to be made.
-     * @param customer    The customer that wants to limit sell.
-     * @param customStock The stock that the customer wants to sell.
-     * @return The limit sell trade created.
-     */
     @Override
     public Trade createLimitSellTrade(Trade trade, Customer customer, CustomStock customStock) {
         long currentTimestamp = Instant.now().getEpochSecond();

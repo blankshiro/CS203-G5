@@ -6,8 +6,7 @@ import com.cs203t5.ryverbank.portfolio.Portfolio;
 import com.cs203t5.ryverbank.portfolio.PortfolioRepository;
 
 /**
- * The CustomerServiceImpl implements all the functionality required to create
- * users, get users and update user information.
+ * Implementation of the CustomerService class.
  * 
  * @see CustomerService
  */
@@ -28,14 +27,6 @@ public class CustomerServiceImpl implements CustomerService {
         this.portfolios = portfolios;
     }
 
-    /**
-     * Creates a new user. If the username exists in the customer repository, throw
-     * a CustomerExistsException. If the phone number and nric is invalid, throw a
-     * InvalidEntryException.
-     * 
-     * @param user The user to be created.
-     * @return The user created.
-     */
     @Override
     public Customer createUser(Customer user) {
         if (users.existsByUsername(user.getUsername())) {
@@ -52,16 +43,6 @@ public class CustomerServiceImpl implements CustomerService {
         return user;
     }
 
-    /**
-     * Gets the customer with the specified user id, authenticated username and
-     * authenticated user role. If the user calling this method is not a manager or
-     * the authenticated user, throw CustomerUnauthorizedException.
-     * 
-     * @param userId                The user id.
-     * @param authenticatedUsername The authenticated username.
-     * @param authenticatedUserRole The authenticated user role.
-     * @return The customer found.
-     */
     @Override
     public Customer getUser(Long userId, String authenticatedUsername, String authenticatedUserRole) {
 
@@ -75,14 +56,6 @@ public class CustomerServiceImpl implements CustomerService {
         }).orElse(null);
     }
 
-    /**
-     * Updates the customer's address with the specified user id and new address
-     * information. If no user is found, return null.
-     * 
-     * @param userId     The user id.
-     * @param newAddress The user's new address information.
-     * @return The customer with the updated information.
-     */
     @Override
     public Customer updateAddress(Long userId, String newAddress) {
         if (newAddress != null && !newAddress.isEmpty()) {
@@ -96,14 +69,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     }
 
-    /**
-     * Updates the customer's phone number with the specified user id and new phone
-     * number. If no user is found, return null.
-     * 
-     * @param userId   The user id.
-     * @param newPhone The user's new phone information.
-     * @return The customer with the updated information.
-     */
     @Override
     public Customer updatePhone(Long userId, String newPhone) {
         if (newPhone != null && !newPhone.isEmpty()) {
@@ -116,14 +81,6 @@ public class CustomerServiceImpl implements CustomerService {
         return null;
     }
 
-    /**
-     * Updates the customer's password with the specified user id and new password .
-     * If no user is found, return null.
-     * 
-     * @param userId      The user id.
-     * @param newPassword The user's new password.
-     * @return The customer with the updated information.
-     */
     @Override
     public Customer updatePassword(Long userId, String newPassword) {
         if (newPassword != null && !newPassword.isEmpty()) {
@@ -136,14 +93,6 @@ public class CustomerServiceImpl implements CustomerService {
         return null;
     }
 
-    /**
-     * Updates the user's active status with the specified user id and new active
-     * status. If no user is found, return null.
-     * 
-     * @param userId       The user id.
-     * @param activeStatus The user's new active status.
-     * @return The customer with the updated active status.
-     */
     @Override
     public Customer updateActiveStatus(Long userId, Boolean activeStatus) {
         if (activeStatus != null) {

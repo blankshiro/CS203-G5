@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * SellQuantityException will be thrown when the sell quantity exceeds the
  * amount of asset that the user owns.
  * 
- * @see RuntimeException.
+ * @see RuntimeException
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class SellQuantityExceedException extends RuntimeException {

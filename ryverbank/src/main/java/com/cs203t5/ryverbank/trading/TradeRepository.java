@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
  * A TradeRepository that provides the mechanism for storage, retrieval,
  * search, update and delete operation on trade objects
  */
+@Repository
 public interface TradeRepository extends JpaRepository <Trade, Long> {
     /**
      * Optional query to find the trade by the trade id.
