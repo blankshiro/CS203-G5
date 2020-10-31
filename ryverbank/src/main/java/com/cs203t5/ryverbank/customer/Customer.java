@@ -20,13 +20,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.*;
 
+/**
+ * Customer class for managing customers of the bank application. Each user can
+ * have either the role of USER, ANALYST or MANAGER. Every customer have have
+ * many accounts and trades but only one portfolio.
+ */
 @Entity
 @Setter
 @Getter
 @ToString
-// @AllArgsConstructor
 @NoArgsConstructor
-// @EqualsAndHashCode
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Customer implements UserDetails {
     private static final long serialVersionUID = 1L;
@@ -64,34 +67,26 @@ public class Customer implements UserDetails {
     @NotNull(message = "Active should not be null")
     private Boolean active = null;
 
-    // One person can have many accounts, that is why @OneToMany - One customer is
-    // given many accoutns
-    // mappedBy: The list of accoutns is owned by a "customer"
-
-    // @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, fetch =
-    // FetchType.LAZY, orphanRemoval = true);
-    // The owner of the field "accounts" is the customer
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Account> accounts;
 
-    // have to add portfolio to customer
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Portfolio portfolio;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Trade> trades;
-    
+
     /**
-     * Constructs a new user with the following parameters.
+     * Constructs a new customer with the following parameters.
      * 
-     * @param username    The username of the user.
-     * @param password    The password of the user.
-     * @param full_name   The full name of the user.
-     * @param nric        The nric of the user.
-     * @param phone       The phone number of the user.
-     * @param address     The address of the user.
-     * @param authorities The role of the user.
+     * @param username    The username of the customer.
+     * @param password    The password of the customer.
+     * @param full_name   The full name of the customer.
+     * @param nric        The nric of the customer.
+     * @param phone       The phone number of the customer.
+     * @param address     The address of the customer.
+     * @param authorities The role of the customer.
      * @param active      The active status of the account.
      */
     public Customer(String username, String password, String full_name, String nric, String phone, String address,
@@ -106,7 +101,7 @@ public class Customer implements UserDetails {
         this.active = active;
     }
 
-    /*
+    /**
      * Return a collection of authorities (roles) granted to the user.
      */
     @Override

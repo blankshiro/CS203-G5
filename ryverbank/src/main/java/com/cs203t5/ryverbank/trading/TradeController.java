@@ -4,16 +4,10 @@ import com.cs203t5.ryverbank.customer.*;
 import com.cs203t5.ryverbank.portfolio.AssetService;
 import com.cs203t5.ryverbank.account_transaction.*;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.function.ToDoubleBiFunction;
+import java.util.*;
 
 import javax.validation.Valid;
 
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
@@ -60,10 +54,14 @@ public class TradeController {
     }
 
     /**
-     * Create a new trade
+     * Create a new trade based on the trade information and user authentication. If
+     * the user is not found, throw CustomerNotFoundException. If account is not
+     * found, throw AccountNotFoundException. If the trade is invalid or the
+     * account does not have enough available balance, throw TradeInvalidException.
      * 
-     * @param trade
-     * @return the trade
+     * @param trade The trade to be created.
+     * @param auth Checks for authenticated username.
+     * @return The trade created.
      */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/trades")
@@ -251,8 +249,9 @@ public class TradeController {
      * Search for trade with the given id If there is not trade with the given "id",
      * throw a TradeNotFoundException
      * 
-     * @param id
-     * @return trade with the given id
+     * @param id The trade id to find.
+     * @param auth Checks for authenticated username.
+     * @return The trade found.
      */
 
     @GetMapping("/trades/{id}")
@@ -278,13 +277,16 @@ public class TradeController {
 
     }
 
-    // This method should only be accessible to User
-    /*
-     * This method will be in charge of calling all the updating methods on Trade
-     * 
-     * Roles that can call these methods: User cancelTrade()
+    /**
+     * Updates the trade based on the new trade information and user authentication.
+     * If no user is found, throw CustomerNotFoundException. If no trade is found,
+     * throw TradeNotFoundException.
+     *
+     * @param id           The id of the trade.
+     * @param newTradeInfo The new trade information.
+     * @param auth         The user authentication.
+     * @return The trade updated.
      */
-
     @PutMapping("/trades/{id}")
     public Optional<Trade> updateTrade(@PathVariable Long id, @Valid @RequestBody Trade newTradeInfo,
             Authentication auth) {

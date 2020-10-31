@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * A PorfolioController that accpes and returns portfolio JSON data.
+ * A PortfolioController that accepts and returns portfolio JSON data.
  */
 @RestController
 public class PortfolioController {
-    // private PortfolioRepository portfolios;
+    /** The portfolio services. */
     private PortfolioService portfolioService;
+    /** The customer repository. */
     private CustomerRepository customers;
 
     /**
@@ -36,7 +37,7 @@ public class PortfolioController {
     /**
      * Search for the portfolio with the customer id. This method should only be
      * accessible by the authenticated user. If an unauthorized user uses this
-     * method, it will throw a CustomerUnauthorizaedException.
+     * method, it will throw a CustomerUnauthorizedException.
      * 
      * @param auth Checks for user's authenticated username and user role.
      * @return The portfolio found.

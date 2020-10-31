@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * CustomerUnauthorizedException will be thrown when a user is not authorized to
+ * CustomerUnauthorizedException will be thrown when a customer is not authorized to
  * perform a certain action.
  * 
  * @see RuntimeException

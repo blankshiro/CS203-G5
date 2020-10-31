@@ -4,7 +4,6 @@ import java.util.*;
 
 import javax.persistence.*;
 
-import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.cs203t5.ryverbank.customer.Customer;
@@ -14,6 +13,10 @@ import org.hibernate.annotations.Where;
 
 import lombok.*;
 
+/**
+ * Portfolio class to track customer portfolio. Each portfolio can have many
+ * assets but each portfolio can only belong to one customer.
+ */
 @Entity
 @Setter
 @Getter
@@ -24,14 +27,11 @@ public class Portfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // @NotNull(message = "Must have customer id")
     @JsonIgnore
     private Long id;
 
     @JsonProperty("customer_id")
     Long customerId;
-    // @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    // @ElementCollection
     @JsonProperty("assets")
     @Column(name = "assets")
     @Where(clause = "istraded = false")
@@ -47,7 +47,6 @@ public class Portfolio {
 
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", updatable = false, insertable = false)
-    // @MapsId("customerId")
     @JsonIgnore
     private Customer customer;
 

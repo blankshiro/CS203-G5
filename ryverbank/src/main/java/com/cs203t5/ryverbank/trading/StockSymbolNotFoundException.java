@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * StockSymbolNotFoundException is thrown when a stock symbol cannot be found.
+ * 
+ * @see RuntimeException
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class StockSymbolNotFoundException extends RuntimeException {

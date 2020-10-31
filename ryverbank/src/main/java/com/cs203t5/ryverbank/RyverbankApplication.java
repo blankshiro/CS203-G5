@@ -1,11 +1,5 @@
 package com.cs203t5.ryverbank;
 
-import java.util.Optional;
-import java.util.*;
-import java.text.*;
-
-import javax.security.auth.login.AccountNotFoundException;
-
 import com.cs203t5.ryverbank.trading.*;
 import com.cs203t5.ryverbank.customer.*;
 import com.cs203t5.ryverbank.account_transaction.*;
@@ -18,6 +12,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * Main class.
+ */
 @SpringBootApplication
 @EnableScheduling
 public class RyverbankApplication {

@@ -1,42 +1,40 @@
 package com.cs203t5.ryverbank.account_transaction;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of the TransactionServices class.
+ * 
+ * @see TransactionServices
+ */
 @Service
 public class TransactionServiceImpl implements TransactionServices {
-
+    /** The transaction repository. */
     private TransactionRepository transactions;
+    /** The account services. */
     private AccountServices accService;
 
+    /**
+     * Constructs a TransactionServiceImpl with the following parameters.
+     * 
+     * @param transactions The transaction repository.
+     * @param accService   The account services.
+     */
     public TransactionServiceImpl(TransactionRepository transactions, AccountServices accService) {
         this.transactions = transactions;
         this.accService = accService;
     }
 
     @Override
-    public List<Transaction> listTransactions() {
-        return transactions.findAll();
-    }
-
-    @Override
-    public Transaction getTransaction(Long id) {
-        return transactions.findById(id).map(transaction -> {
-            return transaction;
-        }).orElse(null);
-    }
-
-    @Override
     public Transaction addTransaction(Transaction transaction) {
         Long acc1 = transaction.getAccount1();
         Long acc2 = transaction.getAccount2();
-        if(accService.getAccount(acc1) != null){
-            accService.fundTransfer(acc1, transaction.getAmount()*-1);
+        if (accService.getAccount(acc1) != null) {
+            accService.fundTransfer(acc1, transaction.getAmount() * -1);
         } else {
             throw new AccountNotFoundException(acc1);
         }
-        if(accService.getAccount(acc2) != null){
+        if (accService.getAccount(acc2) != null) {
             accService.fundTransfer(acc2, transaction.getAmount());
         } else {
             throw new AccountNotFoundException(acc2);
@@ -45,24 +43,22 @@ public class TransactionServiceImpl implements TransactionServices {
         return transactions.save(transaction);
     }
 
-    //only when matchTrade then will add transaction
-    //for unmatch trade the available balance will be updated on tradeServiceImpl
     @Override
-    public Transaction addTransaction(Long acc1, Long acc2, double amt){
+    public Transaction addTransaction(Long acc1, Long acc2, double amt) {
         long give, take;
         double total = 0.0;
-        if(amt < 0.0){
+        if (amt < 0.0) {
             give = acc1;
             take = acc2;
-            //buyer balance will reduce
+            // buyer balance will reduce
             accService.accTradeApproved(give, amt);
-            //seller balance will increase
+            // seller balance will increase
             accService.accTradeApproved(take, Math.abs(amt));
             total = Math.abs(amt);
         } else {
             give = acc2;
             take = acc1;
-            accService.accTradeApproved(give, amt*-1);
+            accService.accTradeApproved(give, amt * -1);
             accService.accTradeApproved(take, amt);
             total = amt;
         }
