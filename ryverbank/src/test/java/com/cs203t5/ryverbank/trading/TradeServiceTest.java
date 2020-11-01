@@ -17,10 +17,9 @@ import com.cs203t5.ryverbank.account_transaction.Account;
 import com.cs203t5.ryverbank.account_transaction.AccountRepository;
 import com.cs203t5.ryverbank.account_transaction.AccountServiceImpl;
 import com.cs203t5.ryverbank.account_transaction.AccountServices;
-import com.cs203t5.ryverbank.customer.Customer;
-import com.cs203t5.ryverbank.customer.CustomerUnauthorizedException;
-import com.cs203t5.ryverbank.trading.TradeRepository;
-import com.cs203t5.ryverbank.trading.TradeServiceImpl;
+import com.cs203t5.ryverbank.customer.*;
+import com.cs203t5.ryverbank.portfolio.PortfolioRepository;
+import com.cs203t5.ryverbank.trading.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,14 +36,24 @@ public class TradeServiceTest{
     @Mock
     private AccountRepository accountRepository;
 
+    @Mock
+    private AccountServices accountService;
+
+    @Mock
+    private CustomerRepository users;
+
+    @Mock
+    private PortfolioRepository portfolioRepository;
+
+    @InjectMocks
+    private CustomerServiceImpl userService;
+
+
     @InjectMocks
     private TradeServiceImpl tradeServiceImpl;
 
     @InjectMocks
     private AccountServiceImpl accountServiceImpl;
-
-    @Mock
-    private AccountServices accountService;
 
    
 
@@ -89,7 +98,6 @@ public class TradeServiceTest{
 
        // Act: actually using the save option
        Trade savedTrade = tradeServiceImpl.createMarketBuyTrade(trade, customer, customStock );
-
         //Assertion: Check if what you want to test really happens
         //Check if the trade is actually saved
         //Note: Might not be right since createContent will never return null
@@ -119,6 +127,9 @@ public class TradeServiceTest{
 
        CustomStock customStock = new CustomStock("A17U", 3.25, 20000, 3.30, 20000,3.30) ;
 
+         //Mocking the save
+         when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
+
         //This should be null if an exception is thrown
         Trade savedTrade = tradeServiceImpl.createMarketBuyTrade(trade, customer, customStock );
  
@@ -135,28 +146,21 @@ public class TradeServiceTest{
         Long customerId = Long.valueOf(customer_Id);
 
        //Arrange 
-       Trade trade1 = new Trade("buy", "A17U", 2000, 0.0, 0.0, 0.0, 0,Instant.now().getEpochSecond(),  accountId, customerId, null);
-       Trade trade2 = new Trade("buy", "C61U", 20001, 0.0, 0.0, 0.0, 0,Instant.now().getEpochSecond(),  accountId, customerId, null);
+       Trade trade = new Trade("buy", "A17U", 2000, 0.0, 0.0, 0.0, 0,Instant.now().getEpochSecond(),  accountId, customerId, null);
        Customer customer = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234","White House", "ROLE_USER", true);
        Account account = new Account(customer.getCustomerId(), 500000, 500000);
        accountServiceImpl.addAccount(account);
+       CustomStock customStock = new CustomStock("A17U", 3.25, 20000, 3.30, 20000,3.30) ;
 
-       CustomStock customStock1 = new CustomStock("A17U", 3.25, 20000, 3.30, 20000,3.30) ;
-       CustomStock customStock2 = new CustomStock("C61U", 3.25, 20000, 3.30, 20000,3.30) ;
-       
-      Trade savedTrade1 = tradeServiceImpl.createMarketBuyTrade(trade1, customer, customStock1);
+        //Mocking the save
+        when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
+       Trade savedTrade = tradeServiceImpl.createMarketBuyTrade(trade, customer, customStock);
+       System.out.println(savedTrade);
+    
          
-      Trade savedTrade2 = tradeServiceImpl.createMarketBuyTrade(trade2, customer, customStock2);
-
-
-        //Stubbing
-        when (tradeRepository.findAll()).thenReturn(Arrays.asList(savedTrade1, savedTrade2));
-
-
         //Act
-        List<Trade> allTrade = tradeServiceImpl.getAllTrades();
+        Trade allTrade = tradeServiceImpl.getTrade(savedTrade.getId(), customer);
         assertNotNull(allTrade);
-        assertEquals(2, allTrade.size());
         
     }
 
@@ -208,10 +212,10 @@ public class TradeServiceTest{
          //Mocking the save
          when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
 
+
         //Make the trade partial-filled
         Trade savedTrade = tradeServiceImpl.createMarketBuyTrade(trade, customer, customStock);
         savedTrade.setStatus("partial-filled");
-        
         
         //Mock a successful search 
         when(tradeRepository.findById(savedTrade.getId())).thenReturn(Optional.of(savedTrade));
@@ -236,22 +240,24 @@ public class TradeServiceTest{
        Customer newCustomer = new Customer("user2", "goodpassword2", "Mark Tan", "S7982834C", "91431234","White House", "ROLE_USER", true);
        Account account = new Account(customer.getCustomerId(), 500000, 500000);
        accountServiceImpl.addAccount(account);
-
        CustomStock customStock = new CustomStock("A17U", 3.25, 20000, 3.30, 20000,3.30) ;
 
+    
+
         //Mocking the save
-         when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
+        when(users.save(any(Customer.class))).thenReturn(newCustomer);
+        when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
 
-        //Make the trade partial-filled
+  
+        // Act: actually using the save option
+        userService.createUser(customer);
+        userService.createUser(newCustomer);
         Trade savedTrade = tradeServiceImpl.createMarketBuyTrade(trade, customer, customStock);
-     
-        //Return a null
+
+    
+        // //Return a null
         Trade updatedTrade = tradeServiceImpl.cancelTrade(savedTrade.getId(), newCustomer);
-
         assertNull(updatedTrade);
-        //Mock a successful search 
-        // when(tradeRepository.findById(savedTrade.getId())).thenReturn(Optional.of(savedTrade));
-        // assertThrows(CustomerUnauthorizedException.class, ()-> tradeServiceImpl.cancelTrade(savedTrade.getId(), newCustomer));
-
+      
      }
 }
