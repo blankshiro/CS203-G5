@@ -119,9 +119,9 @@ public class TradeServiceImpl implements TradeServices {
         Calendar today = Calendar.getInstance(timeZone);
 
         if (!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday)
-                || today.equals(sunday)) {
+            ||  today.equals(sunday)  ) {
             trade.setStatus("open");
-            customStock.setBidVolume(customStock.getAskVolume() + trade.getQuantity());
+         
         } else {
             // Get the list of trades for {symbol}
             List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
@@ -148,7 +148,12 @@ public class TradeServiceImpl implements TradeServices {
                     } else {
                         trade.setStatus("open");
                     }
-                    customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
+                    if(customStock.getBidVolume() == 0){
+                        customStock.setBidVolume(trade.getQuantity());
+                    }else{
+                        customStock.setBidVolume(trade.getQuantity());
+                    }
+                  
                     customStock.setAskVolume(customStock.getAskVolume() - trade.getFilledQuantity());
                     count = 0;
 
@@ -161,7 +166,12 @@ public class TradeServiceImpl implements TradeServices {
                 // If is a new trade, meaning no status has been set yet, set the trade to open
             } catch (NullPointerException e) {
                 trade.setStatus("open");
-                customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
+                if(customStock.getBidVolume() == 0){
+                    customStock.setBidVolume(trade.getQuantity());
+                }else{
+                    customStock.setBidVolume(trade.getQuantity());
+                }
+                // customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
                 count = 0;
                 return tradeRepository.save(trade);
             }
@@ -280,11 +290,14 @@ public class TradeServiceImpl implements TradeServices {
 
                 // Set stock bid price
                 customStock.setBid(customStock.getBid());
+               
+            
 
                 return createMarketBuyTrade(trade, customer, customStock);
             }
 
             customStock.setAskVolume(customStock.getAskVolume() - trade.getFilledQuantity());
+
 
             // Set stock last price
             if (lastPrice == 0.0) {
@@ -301,6 +314,53 @@ public class TradeServiceImpl implements TradeServices {
             assetService.addAsset(trade, customStock);
         }
 
+        /*
+        This is to set the askVolume for the stockInfo
+        */
+        // Get the list of trades for {symbol}
+        List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
+        List<Trade> listOfSellTrades = new ArrayList<>();
+
+
+        if(customStock.getAskVolume() <= 0){
+         // Get the list of open & partial-filled of market buy trades for {symbol}
+            for (Trade sellTradeList : listOfTrades) {
+                if (sellTradeList.getAction().equals("sell")) {
+                    if (sellTradeList.getStatus().equals("open")
+                            || sellTradeList.getStatus().equals("partial-filled")) {
+                                listOfSellTrades.add(sellTradeList);
+                    }
+
+                }
+            }
+          
+            if(listOfSellTrades.size() != 0){
+                Date date = new Date(listOfSellTrades.get(0).getDate());
+                Trade matchTrade = listOfSellTrades.get(0);
+
+                for(Trade sellTrade: listOfSellTrades){
+                    Date currentSellTradeDate = new Date(sellTrade.getDate());
+                        if (matchTrade.getAsk() > sellTrade.getAsk()) {
+                            matchTrade = sellTrade;
+                        } else if (matchTrade.getAsk() == sellTrade.getAsk()) {
+                            if (date.after(currentSellTradeDate)) {
+                                matchTrade = sellTrade;
+                            }
+                        }
+                }
+
+                customStock.setAskVolume(matchTrade.getQuantity());
+                if(matchTrade.getAsk() != 0.0){
+                    customStock.setAsk(matchTrade.getAsk());
+                }
+
+            }else{
+                customStock.setAskVolume(0);
+            } 
+            
+        }
+
+          
         return tradeRepository.save(trade);
 
     }
@@ -341,9 +401,8 @@ public class TradeServiceImpl implements TradeServices {
         Calendar today = Calendar.getInstance(timeZone);
 
         if (!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday)
-                || today.equals(sunday)) {
+        ||  today.equals(sunday)   ) {
             trade.setStatus("open");
-            customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
 
         } else {
             List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
@@ -366,7 +425,6 @@ public class TradeServiceImpl implements TradeServices {
                     } else {
                         trade.setStatus("open");
                     }
-                    customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
                     customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
                     count = 0;
 
@@ -375,7 +433,6 @@ public class TradeServiceImpl implements TradeServices {
                 }
             } catch (NullPointerException e) {
                 trade.setStatus("open");
-                customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
                 count = 0;
                 return tradeRepository.save(trade);
             }
@@ -507,6 +564,48 @@ public class TradeServiceImpl implements TradeServices {
 
         portfolioService.updateRealizedGainLoss(trade, customStock);
 
+          // Set the bidVolume
+          List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
+          List<Trade> listOfBuyTrades = new ArrayList<>();
+  
+  
+          if(customStock.getBidVolume() <= 0){
+           // Get the list of open & partial-filled of market buy trades for {symbol}
+              for (Trade buyTradeList : listOfTrades) {
+                  if (buyTradeList.getAction().equals("buy")) {
+                      if (buyTradeList.getStatus().equals("open")
+                              || buyTradeList.getStatus().equals("partial-filled")) {
+                                listOfBuyTrades.add(buyTradeList);
+                      }
+  
+                  }
+              }
+            
+              if(listOfBuyTrades.size() != 0){
+                  Date date = new Date(listOfBuyTrades.get(0).getDate());
+                  Trade matchTrade = listOfBuyTrades.get(0);
+  
+                  for (Trade buyTrade : listOfBuyTrades) {
+                    Date currentBuyTradeDate = new Date(buyTrade.getDate());
+                    if (matchTrade.getBid() < buyTrade.getBid()) {
+                        matchTrade = buyTrade;
+                    } else if (matchTrade.getBid() == buyTrade.getBid()) {
+                        if (date.after(currentBuyTradeDate))
+                            matchTrade = buyTrade;
+                    }
+
+                }
+  
+                  customStock.setBidVolume(matchTrade.getQuantity());
+                  if(matchTrade.getBid() != 0.0){
+                    customStock.setAsk(matchTrade.getBid());
+                }
+              }else{
+                  customStock.setBidVolume(0);
+              } 
+              
+          }
+
         return tradeRepository.save(trade);
 
     }
@@ -550,9 +649,8 @@ public class TradeServiceImpl implements TradeServices {
         Calendar today = Calendar.getInstance(timeZone);
 
         if (!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday)
-                || today.equals(sunday)) {
+        ||  today.equals(sunday)    ) {
             trade.setStatus("open");
-            customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
 
         } else {
             // Get the list of trades for {symbol}
@@ -564,8 +662,13 @@ public class TradeServiceImpl implements TradeServices {
             // It must be better than the current stock's bid price and still lower than the
             // ask price
             double newBidPrice = customStock.getBid();
+            int newBidVolume = customStock.getBidVolume();
+            
+    
             if (trade.getBid() > newBidPrice && trade.getBid() < customStock.getAsk()) {
                 newBidPrice = trade.getBid();
+                newBidVolume = trade.getQuantity();
+          
             }
 
             // Get the list of open & partial-filled sell trades that are equal to the
@@ -591,7 +694,7 @@ public class TradeServiceImpl implements TradeServices {
                         trade.setStatus("open");
                     }
                     customStock.setBid(newBidPrice);
-                    customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
+                    customStock.setBidVolume(newBidVolume);
                     customStock.setAskVolume(customStock.getAskVolume() - trade.getFilledQuantity());
                     count = 0;
 
@@ -603,7 +706,8 @@ public class TradeServiceImpl implements TradeServices {
             } catch (NullPointerException e) {
                 trade.setStatus("open");
                 customStock.setBid(newBidPrice);
-                customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
+                customStock.setBidVolume(newBidVolume);
+                // customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
                 count = 0;
                 return tradeRepository.save(trade);
             }
@@ -707,7 +811,7 @@ public class TradeServiceImpl implements TradeServices {
                 Long give = trade.getAccountId();
                 Long take = matchTrade.getAccountId();
                 double amt = trade.getFilledQuantity() * matchTrade.getAsk();
-                System.out.println(matchTrade.getFilledQuantity());
+                // System.out.println(matchTrade.getFilledQuantity());
                 // seller available balance will increase
                 accService.accTradeOnHold(take, amt);
                 // add in transaction
@@ -739,6 +843,53 @@ public class TradeServiceImpl implements TradeServices {
 
         }
 
+
+        /*
+        This is to set the askVolume for the stockInfo
+        */
+        // Get the list of trades for {symbol}
+        List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
+        List<Trade> listOfSellTrades = new ArrayList<>();
+
+
+        if(customStock.getAskVolume() <= 0){
+         // Get the list of open & partial-filled of market buy trades for {symbol}
+            for (Trade sellTradeList : listOfTrades) {
+                if (sellTradeList.getAction().equals("sell")) {
+                    if (sellTradeList.getStatus().equals("open")
+                            || sellTradeList.getStatus().equals("partial-filled")) {
+                                listOfSellTrades.add(sellTradeList);
+                    }
+
+                }
+            }
+          
+            if(listOfSellTrades.size() != 0){
+                Date date = new Date(listOfSellTrades.get(0).getDate());
+                Trade matchTrade = listOfSellTrades.get(0);
+
+                for(Trade sellTrade: listOfSellTrades){
+                    Date currentSellTradeDate = new Date(sellTrade.getDate());
+                        if (matchTrade.getAsk() > sellTrade.getAsk()) {
+                            matchTrade = sellTrade;
+                        } else if (matchTrade.getAsk() == sellTrade.getAsk()) {
+                            if (date.after(currentSellTradeDate)) {
+                                matchTrade = sellTrade;
+                            }
+                        }
+                }
+
+                customStock.setAskVolume(matchTrade.getQuantity());
+                if(matchTrade.getAsk() != 0.0){
+                    customStock.setAsk(matchTrade.getAsk());
+                }
+            }else{
+                customStock.setAskVolume(0);
+            } 
+            
+        }
+
+        
         return tradeRepository.save(trade);
 
     }
@@ -777,22 +928,26 @@ public class TradeServiceImpl implements TradeServices {
         Calendar today = Calendar.getInstance(timeZone);
 
         if (!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday)
-                || today.equals(sunday)) {
+        ||  today.equals(sunday)   ) {
             trade.setStatus("open");
-            customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
+            // customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
 
         } else {
             List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
             List<Trade> listOfBuyTrades = new ArrayList<>();
 
+
+        
             // Set the newAskPrice, the best price will be recorded
             // It must be better than the current stock's ask price and still higher /equal
             // than the bid price
             // best price is lower ask
             double newAskPrice = customStock.getAsk();
+            int newAskVolume = customStock.getAskVolume();
             if (trade.getAsk() < newAskPrice && trade.getAsk() > customStock.getBid()
                     || trade.getAsk() == customStock.getBid()) {
                 newAskPrice = trade.getAsk();
+                newAskVolume = trade.getQuantity();
             }
 
             // Gte the list of open & partial-filled buy trades that are equal to the
@@ -816,7 +971,8 @@ public class TradeServiceImpl implements TradeServices {
                         trade.setStatus("open");
                     }
                     customStock.setAsk(newAskPrice);
-                    customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
+                    customStock.setAskVolume(newAskVolume);
+                    // customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
                     customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
                     count = 0;
 
@@ -826,7 +982,8 @@ public class TradeServiceImpl implements TradeServices {
             } catch (NullPointerException e) {
                 trade.setStatus("open");
                 customStock.setAsk(newAskPrice);
-                customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
+                customStock.setAskVolume(newAskVolume);
+                // customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
                 count = 0;
                 return tradeRepository.save(trade);
             }
@@ -953,6 +1110,48 @@ public class TradeServiceImpl implements TradeServices {
         }
 
         portfolioService.updateRealizedGainLoss(trade, customStock);
+
+            // Set the bidVolume
+            List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
+            List<Trade> listOfBuyTrades = new ArrayList<>();
+    
+    
+            if(customStock.getBidVolume() <= 0){
+             // Get the list of open & partial-filled of market buy trades for {symbol}
+                for (Trade buyTradeList : listOfTrades) {
+                    if (buyTradeList.getAction().equals("buy")) {
+                        if (buyTradeList.getStatus().equals("open")
+                                || buyTradeList.getStatus().equals("partial-filled")) {
+                                  listOfBuyTrades.add(buyTradeList);
+                        }
+    
+                    }
+                }
+              
+                if(listOfBuyTrades.size() != 0){
+                    Date date = new Date(listOfBuyTrades.get(0).getDate());
+                    Trade matchTrade = listOfBuyTrades.get(0);
+    
+                    for (Trade buyTrade : listOfBuyTrades) {
+                      Date currentBuyTradeDate = new Date(buyTrade.getDate());
+                      if (matchTrade.getBid() < buyTrade.getBid()) {
+                          matchTrade = buyTrade;
+                      } else if (matchTrade.getBid() == buyTrade.getBid()) {
+                          if (date.after(currentBuyTradeDate))
+                              matchTrade = buyTrade;
+                      }
+  
+                  }
+    
+                    customStock.setBidVolume(matchTrade.getQuantity());
+                    if(matchTrade.getBid() != 0.0){
+                        customStock.setAsk(matchTrade.getBid());
+                    }
+                }else{
+                    customStock.setBidVolume(0);
+                } 
+                
+            }
         return tradeRepository.save(trade);
     }
 }

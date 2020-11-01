@@ -39,7 +39,8 @@ public class GenericController {
     private TransactionServices meinTranServices;
     /** The account services. */
     private AccountServices meinAccServices;
-
+    /** The account services. */
+    private PortfolioService portfolioService;
     /**
      * Constructs a GenericController with the following parameters.
      * 
@@ -57,7 +58,7 @@ public class GenericController {
     public GenericController(ContentRepository meinContent, CustomerRepository meinCustomers,
             TradeRepository meinTrades, AccountRepository meinAccounts, StockRepository meinStocks,
             TransactionRepository meinTransactions, PortfolioRepository meinPortfolios, AssetService meinAssetService,
-            TransactionServices meinTranServices, AccountServices meinAccServices) {
+            TransactionServices meinTranServices, AccountServices meinAccServices, PortfolioService portfolioService) {
         this.meinContent = meinContent;
         this.meinCustomers = meinCustomers;
         this.meinTrades = meinTrades;
@@ -68,6 +69,7 @@ public class GenericController {
         this.meinAssetService = meinAssetService;
         this.meinTranServices = meinTranServices;
         this.meinAccServices = meinAccServices;
+        this.portfolioService = portfolioService;
     }
 
     /**
@@ -142,7 +144,7 @@ public class GenericController {
             foundAcc.setAvailableBalance(100000.0);
             foundAcc.setBalance(100000.0);
             StockCrawler stc = new StockCrawler(meinStocks, meinTrades, meinAssetService, meinTranServices,
-                    meinAccServices);
+                    meinAccServices,portfolioService );
             stc.crawl();
             stc.marketMaker();
         } catch (Exception e) {
