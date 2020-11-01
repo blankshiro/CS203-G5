@@ -32,6 +32,8 @@ public class StockCrawler {
     private TransactionServices tranService;
     /** The account services. */
     private AccountServices accService;
+    /** The pportfolio services. */
+    private PortfolioService portfolioService;
     /** Counter. */
     private int count = 0;
 
@@ -43,14 +45,17 @@ public class StockCrawler {
      * @param assetService    The asset services.
      * @param tranService     The transaction services.
      * @param accService      The account services.
+     * @param portfolioService The Portfolio Services
      */
     public StockCrawler(StockRepository stockRepository, TradeRepository tradeRepository, AssetService assetService,
-            TransactionServices tranService, AccountServices accService) {
+            TransactionServices tranService, AccountServices accService, PortfolioService portfolioService) {
         this.stockRepository = stockRepository;
         this.tradeRepository = tradeRepository;
         this.assetService = assetService;
         this.accService = accService;
         this.tranService = tranService;
+        this.portfolioService = portfolioService;
+          
     }
 
     // Open the market at 9am (GMT+8) every weekday
@@ -140,7 +145,7 @@ public class StockCrawler {
 
     }
 
-    @Scheduled(cron = "30 00 09 ? * MON-FRI", zone = "GMT+8")
+    @Scheduled(cron = "30 30 09 ? * MON-FRI", zone = "GMT+8")
     public void openBuyMarket() {
         String[] symbols = new String[] { "A17U", "C61U", "C31", "C38U", "C09", "C52", "D01", "D05", "G13", "H78",
                 "C07", "J36", "J37", "BN4", "N2IU", "ME8U", "M44U", "O39", "S58", "U96", "S68", "C6L", "Z74", "S63",
@@ -158,8 +163,7 @@ public class StockCrawler {
             // Gets all the buy trades that are open or partially filled and add to
             // listOfBuyTrades
             for (Trade trade : tradesList) {
-                if (trade.getAction().equals("buy")
-                        && (trade.getStatus().equals("open") || trade.getStatus().equals("partial-filled"))) {
+                if (trade.getAction().equals("buy") && (trade.getStatus().equals("open"))) {
                     if (!(trade.getAccountId().equals(accountId))) {
                         listOfBuyTrades.add(trade);
                     }
@@ -174,14 +178,46 @@ public class StockCrawler {
                 List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
                 List<Trade> listOfSellTrades = new ArrayList<>();
 
-                // Get the list of open & partial-filled of market sell trades for {symbol}
-                for (Trade sellTradeList : listOfTrades) {
-                    if (sellTradeList.getAction().equals("sell")) {
-                        if (sellTradeList.getStatus().equals("open")
-                                || sellTradeList.getStatus().equals("partial-filled")) {
-                            listOfSellTrades.add(sellTradeList);
-                        }
+                // Set the newBidPrice, the best price will be recorded
+                // best price is the higher bid
+                // It must be better than the current stock's bid price and still lower than the
+                // ask price
+                double newBidPrice = customStock.getBid();
+                int newBidVolume = customStock.getBidVolume();
+                double tradeBidPrice = trade.getBid();
+                if (tradeBidPrice == 0.0) {
+                    tradeBidPrice = customStock.getBid();
+                }
 
+                if (tradeBidPrice > newBidPrice && tradeBidPrice < customStock.getAsk()) {
+                    newBidPrice = tradeBidPrice;
+                    newBidVolume = trade.getQuantity();
+
+                }
+                // Get the list of open & partial-filled of market sell trades for {symbol}
+                if (trade.getBid() == 0.0 || trade.getBid() > customStock.getAsk()) {
+                    for (Trade sellTradeList : listOfTrades) {
+                        if (sellTradeList.getAction().equals("sell")) {
+                            if (sellTradeList.getStatus().equals("open")
+                                    || sellTradeList.getStatus().equals("partial-filled")) {
+                                listOfSellTrades.add(sellTradeList);
+                            }
+
+                        }
+                    }
+                } else {
+                    // Get the list of open & partial-filled sell trades that are equal to the
+                    // bid_price or lower than the bid price for {symbol}
+                    for (Trade sellTradeList : listOfTrades) {
+                        if (sellTradeList.getAction().equals("sell")) {
+                            if (sellTradeList.getAsk() == trade.getBid() || sellTradeList.getAsk() < trade.getBid()) {
+                                if (sellTradeList.getStatus().equals("open")
+                                        || sellTradeList.getStatus().equals("partial-filled")) {
+                                    listOfSellTrades.add(sellTradeList);
+                                }
+                            }
+
+                        }
                     }
                 }
 
@@ -195,7 +231,8 @@ public class StockCrawler {
                         } else {
                             trade.setStatus("open");
                         }
-                        customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
+                        customStock.setBid(newBidPrice);
+                        customStock.setBidVolume(newBidVolume);
                         customStock.setAskVolume(customStock.getAskVolume() - trade.getFilledQuantity());
                         count = 0;
 
@@ -209,7 +246,8 @@ public class StockCrawler {
                     // If is a new trade, meaning no status has been set yet, set the trade to open
                 } catch (NullPointerException e) {
                     trade.setStatus("open");
-                    customStock.setBidVolume(customStock.getBidVolume() + trade.getQuantity());
+                    customStock.setBid(newBidPrice);
+                    customStock.setBidVolume(newBidVolume);
                     count = 0;
                     tradeRepository.save(trade);
                     return;
@@ -297,12 +335,6 @@ public class StockCrawler {
                     trade.setAvgPrice(avgPrice);
 
                     // Set the avg_price for match trade
-                    double tradeBidPrice;
-                    if (trade.getBid() == 0.0) {
-                        tradeBidPrice = customStock.getBid();
-                    } else {
-                        tradeBidPrice = trade.getBid();
-                    }
                     matchTrade.setAvgPrice(tradeBidPrice);
 
                     lastPrice = matchTrade.getAsk();
@@ -347,9 +379,54 @@ public class StockCrawler {
 
                 count = 0;
                 // if it reaches here, straight away count as success
-                // portfolioService.addAsset(trade, trade.getCustomerId());
                 assetService.addAsset(trade, customStock);
+
+                /*
+                 * This is to set the askVolume for the stockInfo
+                 */
+                // Get the list of trades for {symbol}
+                List<Trade> listOfAvaiTrades = tradeRepository.findAllBySymbol(symbol);
+                List<Trade> listOfAvaiSellTrades = new ArrayList<>();
+
+                if (customStock.getAskVolume() <= 0) {
+                    // Get the list of open & partial-filled of market buy trades for {symbol}
+                    for (Trade sellTradeList : listOfAvaiTrades) {
+                        if (sellTradeList.getAction().equals("sell")) {
+                            if (sellTradeList.getStatus().equals("open")
+                                    || sellTradeList.getStatus().equals("partial-filled")) {
+                                listOfAvaiSellTrades.add(sellTradeList);
+                            }
+
+                        }
+                    }
+
+                    if (listOfAvaiSellTrades.size() != 0) {
+                        Date date = new Date(listOfAvaiSellTrades.get(0).getDate());
+                        Trade matchTrade = listOfAvaiSellTrades.get(0);
+
+                        for (Trade sellTrade : listOfAvaiSellTrades) {
+                            Date currentSellTradeDate = new Date(sellTrade.getDate());
+                            if (matchTrade.getAsk() > sellTrade.getAsk()) {
+                                matchTrade = sellTrade;
+                            } else if (matchTrade.getAsk() == sellTrade.getAsk()) {
+                                if (date.after(currentSellTradeDate)) {
+                                    matchTrade = sellTrade;
+                                }
+                            }
+                        }
+
+                        customStock.setAskVolume(matchTrade.getQuantity());
+                        if (matchTrade.getAsk() != 0.0) {
+                            customStock.setAsk(matchTrade.getAsk());
+                        }
+
+                    } else {
+                        customStock.setAskVolume(0);
+                    }
+
+                }
                 tradeRepository.save(trade);
+                stockRepository.save(customStock);
             }
 
         }
@@ -392,13 +469,30 @@ public class StockCrawler {
                 List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
                 List<Trade> listOfBuyTrades = new ArrayList<>();
 
-                // Get list of open / partial-filled market buy trades
-                for (Trade buyTrade : listOfTrades) {
-                    if (buyTrade.getAction().equals("buy")) {
-                        if (buyTrade.getStatus().equals("open") || buyTrade.getStatus().equals("partial-filled")) {
-                            listOfBuyTrades.add(buyTrade);
-                        }
+                //Market Sell
+                if (trade.getAsk() == 0.0 || trade.getAsk() < customStock.getBid()) {
+                    // Get list of open / partial-filled market buy trades
+                    for (Trade buyTrade : listOfTrades) {
+                        if (buyTrade.getAction().equals("buy")) {
+                            if (buyTrade.getStatus().equals("open") || buyTrade.getStatus().equals("partial-filled")) {
+                                listOfBuyTrades.add(buyTrade);
+                            }
 
+                        }
+                    }
+                } else { //Limit Sell
+                    // Gte the list of open & partial-filled buy trades that are equal to the
+                    // ask_price or higher than the ask_price
+                    for (Trade buyTrade : listOfTrades) {
+                        if (buyTrade.getAction().equals("buy")) {
+                            if (buyTrade.getBid() == trade.getAsk() || buyTrade.getBid() > trade.getAsk()) {
+                                if (buyTrade.getStatus().equals("open")
+                                        || buyTrade.getStatus().equals("partial-filled")) {
+                                    listOfBuyTrades.add(buyTrade);
+                                }
+                            }
+
+                        }
                     }
                 }
 
@@ -409,16 +503,15 @@ public class StockCrawler {
                         } else {
                             trade.setStatus("open");
                         }
-                        customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
+
                         customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
                         count = 0;
                         tradeRepository.save(trade);
-                        // ADD PORTFOLIO HERE
+                        portfolioService.updateRealizedGainLoss(trade, customStock);
                         return;
                     }
                 } catch (NullPointerException e) {
                     trade.setStatus("open");
-                    customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
                     count = 0;
                     tradeRepository.save(trade);
                     return;
@@ -546,7 +639,51 @@ public class StockCrawler {
                 }
                 // Set stock ask price
                 customStock.setAsk(customStock.getAsk());
+
+                portfolioService.updateRealizedGainLoss(trade, customStock);
+
+                // Set the bidVolume
+                List<Trade> listOfAvaiTrades = tradeRepository.findAllBySymbol(symbol);
+                List<Trade> listOfAvaiBuyTrades = new ArrayList<>();
+
+                if (customStock.getBidVolume() <= 0) {
+                    // Get the list of open & partial-filled of market buy trades for {symbol}
+                    for (Trade buyTradeList : listOfAvaiTrades) {
+                        if (buyTradeList.getAction().equals("buy")) {
+                            if (buyTradeList.getStatus().equals("open")
+                                    || buyTradeList.getStatus().equals("partial-filled")) {
+                                listOfAvaiBuyTrades.add(buyTradeList);
+                            }
+
+                        }
+                    }
+
+                    if (listOfAvaiBuyTrades.size() != 0) {
+                        Date date = new Date(listOfAvaiBuyTrades.get(0).getDate());
+                        Trade matchTrade = listOfAvaiBuyTrades.get(0);
+
+                        for (Trade buyTrade : listOfAvaiBuyTrades) {
+                            Date currentBuyTradeDate = new Date(buyTrade.getDate());
+                            if (matchTrade.getBid() < buyTrade.getBid()) {
+                                matchTrade = buyTrade;
+                            } else if (matchTrade.getBid() == buyTrade.getBid()) {
+                                if (date.after(currentBuyTradeDate))
+                                    matchTrade = buyTrade;
+                            }
+
+                        }
+
+                        customStock.setBidVolume(matchTrade.getQuantity());
+                        if (matchTrade.getBid() != 0.0) {
+                            customStock.setAsk(matchTrade.getBid());
+                        }
+                    } else {
+                        customStock.setBidVolume(0);
+                    }
+
+                }
                 tradeRepository.save(trade);
+                stockRepository.save(customStock);
             }
 
         }
