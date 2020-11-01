@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 
 import lombok.*;
 
+/**
+ * Trade class for trade management.
+ */
 @Entity
 @Setter
 @Getter
@@ -26,14 +29,14 @@ public class Trade {
 
     @NotNull(message = "Symbol cannot be null")
     private String symbol;
-    
+
     @NotNull(message = "Quantity cannot be null")
     @Column(name = "quantity")
-    private int quantity=-531;
+    private int quantity = -531;
 
     @Column(name = "bid")
     @JsonProperty("bid")
-    private double bid=-1;
+    private double bid = -1;
 
     @Column(name = "ask")
     @JsonProperty("ask")
@@ -66,7 +69,7 @@ public class Trade {
     private Account account;
 
     /**
-     * Constructs a new trade with the following paramters.
+     * Constructs a new trade with the following parameters.
      * 
      * @param action         The action by the customer. (specify "buy" for buying
      *                       and "sell" for selling)

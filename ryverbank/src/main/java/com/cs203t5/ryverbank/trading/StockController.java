@@ -1,15 +1,8 @@
 package com.cs203t5.ryverbank.trading;
 
 import java.util.List;
-import java.util.Optional;
 
-import javax.validation.Valid;
-
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
-
 
 /**
  * A StockController that accepts and returns stock JSON data.
@@ -22,10 +15,10 @@ public class StockController {
     private StockServices stockService;
 
     /**
-     * Construcst a StockController with the following parameters.
+     * Constructs a StockController with the following parameters.
      * 
      * @param stockRepository The stock repository.
-     * @param stockService The stock services.
+     * @param stockService    The stock services.
      */
     public StockController(StockRepository stockRepository, StockServices stockService) {
         this.stockRepository = stockRepository;
@@ -36,7 +29,7 @@ public class StockController {
     /**
      * List all stocks in the system
      * 
-     * @return list of all stocls
+     * @return list of all stocks
      */
     @GetMapping("/stocks")
     public List<CustomStock> listStocks() {
@@ -44,9 +37,11 @@ public class StockController {
     }
 
     /**
-     * Get specific stocks in the system
+     * Finds the stock based on the specified stock symbol. If no stock is found,
+     * throw StockSymbolNotFoundException.
      * 
-     * @return Specific stocls
+     * @param symbol The stock symbol to find.
+     * @return The stock found.
      */
     @GetMapping("/stocks/{symbol}")
     public CustomStock getStocks(@PathVariable String symbol) {

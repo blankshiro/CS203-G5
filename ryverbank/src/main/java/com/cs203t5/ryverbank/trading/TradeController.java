@@ -4,16 +4,10 @@ import com.cs203t5.ryverbank.customer.*;
 import com.cs203t5.ryverbank.portfolio.AssetService;
 import com.cs203t5.ryverbank.account_transaction.*;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.function.ToDoubleBiFunction;
+import java.util.*;
 
 import javax.validation.Valid;
 
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
@@ -40,12 +34,12 @@ public class TradeController {
     /**
      * Constructs a TradeController with the following parameters.
      * 
-     * @param trackRepository The trade repository.
-     * @param tradeServices The trade services.
+     * @param trackRepository    The trade repository.
+     * @param tradeServices      The trade services.
      * @param customerRepository The customer repository.
-     * @param accountRepository The account repository.
-     * @param stockRepository The stock repository.
-     * @param assetService The asset services.
+     * @param accountRepository  The account repository.
+     * @param stockRepository    The stock repository.
+     * @param assetService       The asset services.
      */
     public TradeController(TradeRepository trackRepository, TradeServices tradeServices,
             CustomerRepository customerRepository, AccountRepository accountRepository, StockRepository stockRepository,
@@ -60,41 +54,18 @@ public class TradeController {
     }
 
     /**
-     * Create a new trade
+     * Create a new trade based on the trade information and user authentication. If
+     * the user is not found, throw CustomerNotFoundException. If account is not
+     * found, throw AccountNotFoundException. If the trade is invalid or the
+     * account does not have enough available balance, throw TradeInvalidException.
      * 
-     * @param trade
-     * @return the trade
+     * @param trade The trade to be created.
+     * @param auth Checks for authenticated username.
+     * @return The trade created.
      */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/trades")
-    public Trade createTrade(@Valid @RequestBody Trade trade, Authentication auth){
-        //If customer submit a trade on weekend OR submit on weekday BUT before 9am and after 5pm (GMT+8) ,
-        //Throw an error that shows market is close
-        TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
-
-        Calendar startDateTime=Calendar.getInstance(timeZone);
-        startDateTime.set(Calendar.HOUR_OF_DAY,9);
-        startDateTime.set(Calendar.MINUTE,0);
-        startDateTime.set(Calendar.SECOND,0);
-    
-        Calendar endDateTime=Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY,17);
-        endDateTime.set(Calendar.MINUTE,0);
-        endDateTime.set(Calendar.SECOND,0);
-    
-    
-        Calendar saturday = Calendar.getInstance(timeZone);
-        saturday.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
-
-        Calendar sunday = Calendar.getInstance(timeZone);
-        sunday.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-    
-        Calendar today = Calendar.getInstance(timeZone);
-
-       if(!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday) || today.equals(sunday))
-       {
-           throw new TradeInvalidException("Market is close");
-       }
+    public Trade createTrade(@Valid @RequestBody Trade trade, Authentication auth) {
 
         String authenticatedUsername = auth.getName();
 
@@ -106,72 +77,72 @@ public class TradeController {
             throw new CustomerNotFoundException("Could not find user " + authenticatedUsername);
         }
 
-            
         Customer customer = optionalCustomer.get();
-        
 
- 
         // To do, check if account exists
         // Find the accounts that customer owns
         boolean accountExist = false;
         List<Account> accountList = accountRepository.findByCustomer(optionalCustomer);
 
-        if(accountList.size() == 0){
+        if (accountList.size() == 0) {
             throw new AccountNotFoundException(trade.getAccountId());
-        }else{
-            for(Account account: accountList){
-                if(account.getAccountID() == trade.getAccountId()){
+        } else {
+            for (Account account : accountList) {
+                if (account.getAccountID() == trade.getAccountId()) {
                     accountExist = true;
                 }
 
             }
         }
 
-      //If there account does not exist, throw AccountNotFoundException 
-       if(!accountExist){
+        // If there account does not exist, throw AccountNotFoundException
+        if (!accountExist) {
             throw new AccountNotFoundException(trade.getAccountId());
         }
 
+        Optional<Account> optionalAccount = accountRepository.findById(trade.getAccountId());
 
-        Optional <Account> optionalAccount = accountRepository.findById(trade.getAccountId());
-
-
-        //Checking quantity, if quantity is not multiple of 100
-        //throw exception
-        if(trade.getQuantity() % 100 != 0){
+        // Checking quantity, if quantity is not multiple of 100
+        // throw exception
+        if (trade.getQuantity() % 100 != 0) {
             throw new TradeInvalidException("Invalid Quantity");
         }
 
-
-        if(trade.getQuantity() < 0){
+        if (trade.getQuantity() < 0) {
             throw new TradeInvalidException("invalid quantity");
         }
 
-        //Buy at market price
-        if(trade.getAction().equals("buy") && trade.getBid() == 0.0){
-            if(trade.getBid() < 0){
+        // Buy at market price
+        if (trade.getAction().equals("buy") && trade.getBid() == 0.0) {
+            if (trade.getBid() < 0) {
                 throw new TradeInvalidException("invalid bid price");
             }
-            
+
+            if (trade.getAsk() != 0) {
+                trade.setAsk(0);
+            }
+
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
 
-            if(optionalStock != null && optionalStock.isPresent()){
+            if (optionalStock != null && optionalStock.isPresent()) {
                 CustomStock customStock = optionalStock.get();
-                if(optionalAccount.get().getAvailableBalance() < (customStock.getAsk() * trade.getQuantity())){
+                if (optionalAccount.get().getAvailableBalance() < (customStock.getAsk() * trade.getQuantity())) {
                     throw new TradeInvalidException("Available Balance Not Enough");
-                }else{
-                    return tradeServices.createMarketBuyTrade(trade,customer,customStock);
+                } else {
+                    return tradeServices.createMarketBuyTrade(trade, customer, customStock);
                 }
-                
+
             }
 
         }
 
-
-         //Sell at market order
-        if(trade.getAction().equals("sell") && trade.getAsk() == 0.0){
-            if(trade.getAsk() < 0){
+        // Sell at market order
+        if (trade.getAction().equals("sell") && trade.getAsk() == 0.0) {
+            if (trade.getAsk() < 0) {
                 throw new TradeInvalidException("invalid ask price");
+            }
+            if (trade.getBid() < 0 || trade.getBid() > 0) {
+                trade.setBid(0.0);
             }
 
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
@@ -179,59 +150,55 @@ public class TradeController {
             if (optionalStock != null && optionalStock.isPresent()) {
                 CustomStock customStock = optionalStock.get();
 
-                if(optionalAccount.get().getAvailableBalance() < (customStock.getAsk() * trade.getQuantity())){
-                    throw new TradeInvalidException("Available Balance Not Enough");
-                }else{
-                    //make sure owner have this asset, and quantity do not exceed the amount of asset
-                    //which the owner currently owns.
-                    //if successful, quantity will be deducted and details of the asset will recompute again
-                    assetService.sellAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
-                    return tradeServices.createMarketSellTrade(trade,customer,customStock);
-                }
-                
-       
+                // make sure owner have this asset, and quantity do not exceed the amount of
+                // asset
+                // which the owner currently owns.
+                // if successful, quantity will be deducted and details of the asset will
+                // recompute again
+                assetService.sellAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
+                return tradeServices.createMarketSellTrade(trade, customer, customStock);
+
             }
 
         }
 
-
-        //Buy at limit order
-        if(trade.getAction().equals("buy") && trade.getBid() != 0.0){
-            if(trade.getBid() < 0){
+        // Buy at limit order
+        if (trade.getAction().equals("buy") && trade.getBid() != 0.0) {
+            if (trade.getBid() < 0) {
                 throw new TradeInvalidException("invalid bid price");
             }
+            if (trade.getAsk() != 0) {
+                trade.setAsk(0);
+            }
 
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
 
-            if(optionalStock != null && optionalStock.isPresent()){
+            if (optionalStock != null && optionalStock.isPresent()) {
                 CustomStock customStock = optionalStock.get();
-                if(optionalAccount.get().getAvailableBalance() < (trade.getBid() * trade.getQuantity())){
+                if (optionalAccount.get().getAvailableBalance() < (trade.getBid() * trade.getQuantity())) {
                     throw new TradeInvalidException("Available Balance Not Enough");
-                }else{
+                } else {
                     return tradeServices.createLimitBuyTrade(trade, customer, customStock);
                 }
-                
+
             }
         }
 
-
-
-         //Sell at limit order
-         if(trade.getAction().equals("sell") && trade.getAsk() != 0.0){
-            if(trade.getAsk() < 0){
+        // Sell at limit order
+        if (trade.getAction().equals("sell") && trade.getAsk() != 0.0) {
+            if (trade.getAsk() < 0) {
                 throw new TradeInvalidException("invalid ask price");
+            }
+            if (trade.getBid() < 0 || trade.getBid() > 0) {
+                trade.setBid(0.0);
             }
 
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
 
-            if(optionalStock != null && optionalStock.isPresent()){
+            if (optionalStock != null && optionalStock.isPresent()) {
                 CustomStock customStock = optionalStock.get();
-                if(optionalAccount.get().getAvailableBalance() < (trade.getAsk() * trade.getQuantity())){
-                    throw new TradeInvalidException("Available Balance Not Enough");
-                }else{
-                    assetService.sellAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
-                    return tradeServices.createLimitSellTrade(trade, customer, customStock);
-                }
+                assetService.sellAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
+                return tradeServices.createLimitSellTrade(trade, customer, customStock);
 
             }
 
@@ -255,8 +222,9 @@ public class TradeController {
      * Search for trade with the given id If there is not trade with the given "id",
      * throw a TradeNotFoundException
      * 
-     * @param id
-     * @return trade with the given id
+     * @param id The trade id to find.
+     * @param auth Checks for authenticated username.
+     * @return The trade found.
      */
 
     @GetMapping("/trades/{id}")
@@ -282,13 +250,16 @@ public class TradeController {
 
     }
 
-    // This method should only be accessible to User
-    /*
-     * This method will be in charge of calling all the updating methods on Trade
-     * 
-     * Roles that can call these methods: User cancelTrade()
+    /**
+     * Updates the trade based on the new trade information and user authentication.
+     * If no user is found, throw CustomerNotFoundException. If no trade is found,
+     * throw TradeNotFoundException.
+     *
+     * @param id           The id of the trade.
+     * @param newTradeInfo The new trade information.
+     * @param auth         The user authentication.
+     * @return The trade updated.
      */
-
     @PutMapping("/trades/{id}")
     public Optional<Trade> updateTrade(@PathVariable Long id, @Valid @RequestBody Trade newTradeInfo,
             Authentication auth) {
