@@ -106,7 +106,7 @@ public class TradeServiceImpl implements TradeServices {
         startDateTime.set(Calendar.SECOND, 0);
 
         Calendar endDateTime = Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY, 17);
+        endDateTime.set(Calendar.HOUR_OF_DAY, 24);
         endDateTime.set(Calendar.MINUTE, 0);
         endDateTime.set(Calendar.SECOND, 0);
 
@@ -388,7 +388,7 @@ public class TradeServiceImpl implements TradeServices {
         startDateTime.set(Calendar.SECOND, 0);
 
         Calendar endDateTime = Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY, 17);
+        endDateTime.set(Calendar.HOUR_OF_DAY, 24);
         endDateTime.set(Calendar.MINUTE, 0);
         endDateTime.set(Calendar.SECOND, 0);
 
@@ -636,7 +636,7 @@ public class TradeServiceImpl implements TradeServices {
         startDateTime.set(Calendar.SECOND, 0);
 
         Calendar endDateTime = Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY, 17);
+        endDateTime.set(Calendar.HOUR_OF_DAY, 24);
         endDateTime.set(Calendar.MINUTE, 0);
         endDateTime.set(Calendar.SECOND, 0);
 
@@ -915,7 +915,7 @@ public class TradeServiceImpl implements TradeServices {
         startDateTime.set(Calendar.SECOND, 0);
 
         Calendar endDateTime = Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY, 17);
+        endDateTime.set(Calendar.HOUR_OF_DAY, 24);
         endDateTime.set(Calendar.MINUTE, 0);
         endDateTime.set(Calendar.SECOND, 0);
 
