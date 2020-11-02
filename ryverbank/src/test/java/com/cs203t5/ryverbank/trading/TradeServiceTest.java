@@ -75,7 +75,7 @@ public class TradeServiceTest {
 
       // Arrange
       Trade trade = new Trade("buy", "A17U", 2000, 0.0, 0.0, 0.0, 0, Instant.now().getEpochSecond(), 1L,
-            4L, null);
+            4L, null, 0.0);
       Customer customer = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234", "White House",
             "ROLE_USER", true);
       accountServiceImpl.addAccount(new Account(customer.getCustomerId(), 500000, 500000));
@@ -109,7 +109,7 @@ public class TradeServiceTest {
 
       // Arrange
       Trade trade = new Trade("buy", "A17U", 2000, 0.0, 0.0, 0.0, 0, Instant.now().getEpochSecond(), 1L,
-            4L, null);
+            4L, null, 0.0);
       Customer customer = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234", "White House",
             "ROLE_USER", true);
       Account account = new Account(customer.getCustomerId(), 500000, 500000);
@@ -140,7 +140,7 @@ public class TradeServiceTest {
 
       // Arrange
       Trade trade = new Trade("buy", "A17U", 2000, 0.0, 0.0, 0.0, 0, Instant.now().getEpochSecond(), accountId,
-            customerId, null);
+            customerId, null,0.0);
       Customer customer = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234", "White House",
             "ROLE_USER", true);
       Customer newCustomer = new Customer("user2", "goodpassword2", "Mark Tan", "S7982834C", "91431234", "White House",
