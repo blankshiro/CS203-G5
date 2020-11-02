@@ -192,18 +192,13 @@ public class AccountNTransactionController {
             cus = user.get();
         }
         
-        getSessionDetails();
         Long sender = newTransInfo.getAccount1();
         Long receiver = newTransInfo.getAccount2();
         // check if the accounts_id belong to the customer
-        System.out.println("this is sender - " + sender);
-        System.out.println("this is receiver - " + receiver);
         Account acc = accService.getAccount(sender);
         if(acc == null){
             throw new AccountNotFoundException("No such account");
         }
-        System.out.println("this is transferer customer id - " + acc.getCustomer_id());
-        System.out.println("this is logged in customer id - " + cus.getCustomerId());
         if(acc.getCustomer_id() != cus.getCustomerId()){
             throw new CustomerUnauthorizedException("Account does not belong to this customer");
         }
