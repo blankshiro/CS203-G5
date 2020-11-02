@@ -136,7 +136,7 @@ public class AccountNTransactionController {
             newAccInfo.setAvailableBalance(newAccInfo.getBalance());
             return accService.addAccount(newAccInfo);
 
-        }).orElseThrow(() -> new CustomerNotFoundException(newAccInfo.getCustomer_id()));
+        }).orElseThrow(() -> new AccountCustomerNotFoundException(newAccInfo.getCustomer_id()));
     }
 
     /**
