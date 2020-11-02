@@ -31,6 +31,8 @@ public class TradeController {
     /** The asset services. */
     private AssetService assetService;
 
+    private AccountServices accService;
+
     /**
      * Constructs a TradeController with the following parameters.
      * 
@@ -43,13 +45,14 @@ public class TradeController {
      */
     public TradeController(TradeRepository trackRepository, TradeServices tradeServices,
             CustomerRepository customerRepository, AccountRepository accountRepository, StockRepository stockRepository,
-            AssetService assetService) {
+            AssetService assetService,  AccountServices accService) {
         this.trackRepository = trackRepository;
         this.tradeServices = tradeServices;
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
         this.stockRepository = stockRepository;
         this.assetService = assetService;
+        this.accService = accService;
 
     }
 
@@ -264,6 +267,7 @@ public class TradeController {
     public Optional<Trade> updateTrade(@PathVariable Long id, @Valid @RequestBody Trade newTradeInfo,
             Authentication auth) {
         String authenticatedUsername = auth.getName();
+        
 
         // retrieve optionalCustomer object from Customer repository
         Optional<Customer> optionalCustomer = customerRepository.findByUsername(authenticatedUsername);
@@ -280,8 +284,11 @@ public class TradeController {
         if (trade == null)
             throw new TradeNotFoundException(id);
 
-        if (newTradeInfo.getAction().equals("cancel"))
+        
+        if (newTradeInfo.getStatus().equals("cancelled")){
             tradeServices.cancelTrade(id, customer);
+        }
+         
 
         return trackRepository.findById(id);
     }

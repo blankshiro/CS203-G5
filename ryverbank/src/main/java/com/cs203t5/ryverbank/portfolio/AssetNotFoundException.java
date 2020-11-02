@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * 
  * @see RuntimeException
  */
-@ResponseStatus(HttpStatus.NOT_FOUND)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class AssetNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 

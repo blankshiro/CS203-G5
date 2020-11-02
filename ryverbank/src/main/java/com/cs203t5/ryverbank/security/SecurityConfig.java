@@ -60,15 +60,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/customers/*").hasAnyRole("USER", "MANAGER")
                 // .antMatchers(HttpMethod.DELETE, "/customers/*").authenticated()
 
-                .antMatchers(HttpMethod.GET, "/accounts").hasRole("USER").antMatchers(HttpMethod.GET, "/accounts/*")
+                .antMatchers(HttpMethod.GET, "/accounts").hasRole("USER")
+                .antMatchers(HttpMethod.GET, "/accounts/*")
                 .hasRole("USER").antMatchers(HttpMethod.POST, "/accounts").hasRole("MANAGER")
                 .antMatchers(HttpMethod.GET, "/accounts/*/transactions").hasRole("USER")
                 .antMatchers(HttpMethod.POST, "/accounts/*").hasRole("USER")
 
                 // Following lines are for content
                 // Everyone that wants to access the content page needs to be authenticated
-                .antMatchers(HttpMethod.GET, "/contents").authenticated().antMatchers(HttpMethod.GET, "/contents/*")
-                .authenticated()
+                .antMatchers(HttpMethod.GET, "/contents").authenticated()
+                .antMatchers(HttpMethod.GET, "/contents/*").authenticated()
 
                 // Only managers and analysts can post into this URL
                 .antMatchers(HttpMethod.POST, "/contents").hasAnyRole("ANALYST", "MANAGER")
@@ -80,14 +81,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/contents/*").hasAnyRole("ANALYST", "MANAGER")
 
                 .antMatchers(HttpMethod.POST, "/trades").hasRole("USER")
+                .antMatchers(HttpMethod.PUT, "/trades/*").hasRole("USER")
 
                 .antMatchers(HttpMethod.GET, "/trades").authenticated()
 
                 .antMatchers(HttpMethod.GET, "/trades/*").authenticated()
 
                 // only users get to see their portfolio
-                .antMatchers(HttpMethod.GET, "/portfolio").hasRole("USER").antMatchers(HttpMethod.GET, "/portfolio")
-                .authenticated()
+                .antMatchers(HttpMethod.GET, "/portfolio").hasRole("USER")
+                .antMatchers(HttpMethod.GET, "/portfolio").authenticated()
 
                 .and().logout().logoutUrl("/logout")
                 // This is to allow the session to be set up so that it is not invalidated when
