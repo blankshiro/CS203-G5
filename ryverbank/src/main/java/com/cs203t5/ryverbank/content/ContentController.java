@@ -58,6 +58,9 @@ public class ContentController {
 
         // Only allow them to create content if they are either a manager or an analyst
         if (authenticatedUserRole.equals("ROLE_MANAGER") || authenticatedUserRole.equals("ROLE_ANALYST")) {
+            if(aContent.isApproved() && authenticatedUserRole.equals("ROLE_ANALYST")){
+                aContent.setApproved(false);
+            }
             return contentService.createContent(aContent);
         } else {
             // If the user is not authorized to post, then direct them to HTTP403
