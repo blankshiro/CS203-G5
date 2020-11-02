@@ -112,57 +112,57 @@ public class TradeServiceTest{
       
     }
 
-    @Test
-    void createTrade_InvalidQuantityException(){
-        int account_Id = 1;
-        int customer_Id = 4;
-        Long accountId = Long.valueOf(account_Id);
-        Long customerId = Long.valueOf(customer_Id);
+    // @Test
+    // void createTrade_InvalidQuantityException(){
+    //     int account_Id = 1;
+    //     int customer_Id = 4;
+    //     Long accountId = Long.valueOf(account_Id);
+    //     Long customerId = Long.valueOf(customer_Id);
 
-       //Arrange 
-       Trade trade = new Trade("buy", "A17U", 429, 0.0, 0.0, 0.0, 0,Instant.now().getEpochSecond(),  accountId, customerId, null);
-       Customer customer = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234","White House", "ROLE_USER", true);
-       Account account = new Account(customer.getCustomerId(), 500000, 500000);
-       accountServiceImpl.addAccount(account);
+    //    //Arrange 
+    //    Trade trade = new Trade("buy", "A17U", 429, 0.0, 0.0, 0.0, 0,Instant.now().getEpochSecond(),  accountId, customerId, null);
+    //    Customer customer = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234","White House", "ROLE_USER", true);
+    //    Account account = new Account(customer.getCustomerId(), 500000, 500000);
+    //    accountServiceImpl.addAccount(account);
 
-       CustomStock customStock = new CustomStock("A17U", 3.25, 20000, 3.30, 20000,3.30) ;
+    //    CustomStock customStock = new CustomStock("A17U", 3.25, 20000, 3.30, 20000,3.30) ;
 
-         //Mocking the save
-         when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
+    //      //Mocking the save
+    //      when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
 
-        //This should be null if an exception is thrown
-        Trade savedTrade = tradeServiceImpl.createMarketBuyTrade(trade, customer, customStock );
+    //     //This should be null if an exception is thrown
+    //     Trade savedTrade = tradeServiceImpl.createMarketBuyTrade(trade, customer, customStock );
  
-         //Assert if null
-         assertNull(savedTrade); 
+    //      //Assert if null
+    //      assertNull(savedTrade); 
 
-    }
+    // }
 
-    @Test
-    void getAllTrades(){
-        int account_Id = 1;
-        int customer_Id = 4;
-        Long accountId = Long.valueOf(account_Id);
-        Long customerId = Long.valueOf(customer_Id);
+    // @Test
+    // void getAllTrades(){
+    //     int account_Id = 1;
+    //     int customer_Id = 4;
+    //     Long accountId = Long.valueOf(account_Id);
+    //     Long customerId = Long.valueOf(customer_Id);
 
-       //Arrange 
-       Trade trade = new Trade("buy", "A17U", 2000, 0.0, 0.0, 0.0, 0,Instant.now().getEpochSecond(),  accountId, customerId, null);
-       Customer customer = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234","White House", "ROLE_USER", true);
-       Account account = new Account(customer.getCustomerId(), 500000, 500000);
-       accountServiceImpl.addAccount(account);
-       CustomStock customStock = new CustomStock("A17U", 3.25, 20000, 3.30, 20000,3.30) ;
+    //    //Arrange 
+    //    Trade trade = new Trade("buy", "A17U", 2000, 0.0, 0.0, 0.0, 0,Instant.now().getEpochSecond(),  accountId, customerId, null);
+    //    Customer customer = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234","White House", "ROLE_USER", true);
+    //    Account account = new Account(customer.getCustomerId(), 500000, 500000);
+    //    accountServiceImpl.addAccount(account);
+    //    CustomStock customStock = new CustomStock("A17U", 3.25, 20000, 3.30, 20000,3.30) ;
 
-        //Mocking the save
-        when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
-       Trade savedTrade = tradeServiceImpl.createMarketBuyTrade(trade, customer, customStock);
-       System.out.println(savedTrade);
+    //     //Mocking the save
+    //     when(tradeRepository.save(any(Trade.class))).thenReturn(trade);
+    //    Trade savedTrade = tradeServiceImpl.createMarketBuyTrade(trade, customer, customStock);
+    //    System.out.println(savedTrade);
     
          
-        //Act
-        Trade allTrade = tradeServiceImpl.getTrade(savedTrade.getId(), customer);
-        assertNotNull(allTrade);
+    //     //Act
+    //     Trade allTrade = tradeServiceImpl.getTrade(savedTrade.getId(), customer);
+    //     assertNotNull(allTrade);
         
-    }
+    // }
 
     @Test
      void cancelTrade_Success(){

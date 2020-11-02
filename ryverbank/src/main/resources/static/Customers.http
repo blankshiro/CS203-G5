@@ -4,7 +4,7 @@ GET http://localhost:8080/logout
 #Reset
 GET http://localhost:8080/reset
 ####
-GET https://ryverbank.vision/
+GET https://ryverbank.vision/reset
 
 #####
 GET http://localhost:8080/customers

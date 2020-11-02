@@ -41,6 +41,9 @@ public class GenericController {
     private AccountServices meinAccServices;
     /** The account services. */
     private PortfolioService portfolioService;
+
+    private AssetRepository meinAssetRepository;
+
     /**
      * Constructs a GenericController with the following parameters.
      * 
@@ -58,7 +61,7 @@ public class GenericController {
     public GenericController(ContentRepository meinContent, CustomerRepository meinCustomers,
             TradeRepository meinTrades, AccountRepository meinAccounts, StockRepository meinStocks,
             TransactionRepository meinTransactions, PortfolioRepository meinPortfolios, AssetService meinAssetService,
-            TransactionServices meinTranServices, AccountServices meinAccServices, PortfolioService portfolioService) {
+            TransactionServices meinTranServices, AccountServices meinAccServices, PortfolioService portfolioService, AssetRepository meinAssetRepository) {
         this.meinContent = meinContent;
         this.meinCustomers = meinCustomers;
         this.meinTrades = meinTrades;
@@ -70,6 +73,7 @@ public class GenericController {
         this.meinTranServices = meinTranServices;
         this.meinAccServices = meinAccServices;
         this.portfolioService = portfolioService;
+        this.meinAssetRepository = meinAssetRepository;
     }
 
     /**
@@ -87,14 +91,22 @@ public class GenericController {
      */
     @GetMapping("/reset")
     public void resetRepos() {
+
+        System.out.println("Deleting all Assets");
+        meinAssetRepository.deleteAll();
+
         // Delete all portfolios
         System.out.println("Deleting all Portfolios");
         meinPortfolios.deleteImmediate();
         System.out.println(meinPortfolios.count());
 
+        System.out.println("Deleting all trade");
+        meinTrades.deleteAll();
+
         System.out.println("Deleting all accounts");
         meinAccounts.deleteImmediate();
         System.out.println(meinAccounts.count());
+
         // Delete all existing customers & content
         System.out.println("Deleting all customers");
         // Everyone but the marketmaker will be deleted
@@ -103,8 +115,6 @@ public class GenericController {
         System.out.println("Deleting all content");
         meinContent.deleteAll();
 
-        System.out.println("Deleting all trades");
-        meinTrades.deleteAll();
 
         System.out.println("Deleting all stock records");
         meinStocks.deleteAll();

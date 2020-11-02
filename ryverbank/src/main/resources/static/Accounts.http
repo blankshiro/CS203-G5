@@ -40,7 +40,7 @@ Content-Type: application/json
 Authorization: Basic manager_1:01_manager_01
 
 {
-    "customer_id":9,
+    "customer_id":5,
     "balance":1000,
     "available_balance":500
 

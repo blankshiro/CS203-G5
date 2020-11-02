@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.cs203t5</groupId>
 	<artifactId>ryverbank</artifactId>
-	<version>0.0.3-STABLE</version>
+	<version>0.1.0-STABLE</version>
 	<name>ryverbank</name>
 	<description>Ryver bank application T5</description>
 
