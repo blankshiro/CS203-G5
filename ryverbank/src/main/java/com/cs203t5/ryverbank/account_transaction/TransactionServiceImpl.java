@@ -31,6 +31,8 @@ public class TransactionServiceImpl implements TransactionServices {
         Long acc2 = transaction.getAccount2();
         if (accService.getAccount(acc1) != null) {
             accService.fundTransfer(acc1, transaction.getAmount() * -1);
+        } else if (accService.getAccount(acc1).getAvailableBalance() < transaction.getAmount()) {
+            throw new InsufficientBalanceException("Not enough funds");
         } else {
             throw new AccountNotFoundException(acc1);
         }
@@ -39,7 +41,6 @@ public class TransactionServiceImpl implements TransactionServices {
         } else {
             throw new AccountNotFoundException(acc2);
         }
-
         return transactions.save(transaction);
     }
 

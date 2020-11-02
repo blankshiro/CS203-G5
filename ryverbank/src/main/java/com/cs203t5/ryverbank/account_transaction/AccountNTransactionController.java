@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 
 import com.cs203t5.ryverbank.customer.*;
 
@@ -25,6 +26,8 @@ public class AccountNTransactionController {
     /** The transaction services. */
     private TransactionServices transService;
 
+    private CustomerService cusService;
+
     private Long sessionID = 1L; // this is to retrieve id from customer retrieve from securitycontextholder
 
     /**
@@ -37,12 +40,13 @@ public class AccountNTransactionController {
      * @param transService The transaction services.
      */
     public AccountNTransactionController(AccountRepository accRepo, CustomerRepository cusRepo,
-            TransactionRepository transRepo, AccountServices accService, TransactionServices transService) {
+            TransactionRepository transRepo, AccountServices accService, TransactionServices transService, CustomerService cusService) {
         this.accRepo = accRepo;
         this.cusRepo = cusRepo;
         this.transRepo = transRepo;
         this.accService = accService;
         this.transService = transService;
+        this.cusService = cusService;
     }
 
     /**
@@ -179,27 +183,32 @@ public class AccountNTransactionController {
      */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/accounts/{id}/transactions")
-    public Transaction addTransaction(@PathVariable Long id, @RequestBody Transaction newTransInfo) {
-        getSessionDetails();
-        Long session = sessionID;
+    public Transaction addTransaction(@PathVariable Long id, @RequestBody Transaction newTransInfo, Authentication auth) {
+        String username = auth.getName();
+
+        Optional<Customer> user = cusRepo.findByUsername(username);
+        Customer cus = null;
+        if(user != null){
+            cus = user.get();
+        }
+        
         Long sender = newTransInfo.getAccount1();
         Long receiver = newTransInfo.getAccount2();
-        return accRepo.findById(id).map(account -> {
-            // check if the accounts_id belong to the customer
-            if (account.getCustomer_id() != session) {
-                throw new CustomerUnauthorizedException("Account does not belong to this customer");
-            }
-            // check if the transaction serder account belong to the customer
-            if (sender != id) {
-                throw new CustomerUnauthorizedException("Account does not belong to this customer");
-            }
+        // check if the accounts_id belong to the customer
+        Account acc = accService.getAccount(sender);
+        if(acc == null){
+            throw new AccountNotFoundException("No such account");
+        }
+        if(acc.getCustomer_id() != cus.getCustomerId()){
+            throw new CustomerUnauthorizedException("Account does not belong to this customer");
+        }
 
-            // check if the receiver is valid
-            if (!accRepo.existsById(receiver)) {
-                throw new AccountNotFoundException(receiver);
-            }
-            return transService.addTransaction(newTransInfo);
-        }).orElseThrow(() -> new AccountNotFoundException(id));
+        // check if the receiver is valid
+        if(accService.getAccount(receiver) == null){
+            throw new AccountNotFoundException(receiver);
+        }
+        System.out.println("successful");
+        return transService.addTransaction(newTransInfo);
     }
 
 }

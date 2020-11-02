@@ -47,7 +47,7 @@ public class AccountServiceImpl implements AccountServices {
             double curr = account.getAvailableBalance();
             double balance = account.getBalance();
             if (amt < 0.0) {
-                if (curr - Math.abs(amt) < 0) {
+                if (curr < Math.abs(amt)) {
                     throw new InsufficientBalanceException("Not enough funds in account");
                 } else {
                     account.setAvailableBalance(curr - Math.abs(amt));
