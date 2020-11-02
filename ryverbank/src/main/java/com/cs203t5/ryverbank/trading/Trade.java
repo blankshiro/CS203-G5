@@ -59,6 +59,9 @@ public class Trade {
     private String status;
 
     @JsonIgnore
+    private double tradedPrice = 0.0;
+
+    @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", updatable = false, insertable = false)
     private Customer user;
@@ -89,7 +92,7 @@ public class Trade {
      *                       "partial-filled", "cancelled" or "expired")
      */
     public Trade(String action, String symbol, int quantity, double bid, double ask, double avgPrice,
-            int filledQuantity, Long date, Long accountId, Long customerId, String status) {
+            int filledQuantity, Long date, Long accountId, Long customerId, String status, double tradedPrice) {
         this.action = action;
         this.symbol = symbol;
         this.quantity = quantity;
@@ -101,6 +104,7 @@ public class Trade {
         this.accountId = accountId;
         this.customerId = customerId;
         this.status = status;
+        this.tradedPrice = tradedPrice;
 
     }
 

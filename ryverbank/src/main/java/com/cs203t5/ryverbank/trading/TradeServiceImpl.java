@@ -68,6 +68,9 @@ public class TradeServiceImpl implements TradeServices {
                     // if it is sell then asset quantity will be put back into portfolio
                     if (trade.getAction().equals("sell")) {
                         assetService.retrieveAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
+                    }else if(trade.getAction().equals("buy")){
+                        accService.accTradeOnHold(trade.getAccountId(), trade.getQuantity() * trade.getTradedPrice());
+
                     }
                     return tradeRepository.save(trade);
                 } else {
@@ -92,9 +95,11 @@ public class TradeServiceImpl implements TradeServices {
         // Set the time when trade is submitted
         trade.setDate(currentTimestamp);
 
+
         /* ACCOUNT GET THE BUYER ID FROM TRADE HERE */
         accService.accTradeOnHold(trade.getAccountId(), trade.getQuantity() * customStock.getAsk() * -1);
 
+   
         // If customer submit a trade on weekend OR submit on weekday BUT before 9am and
         // after 5pm (GMT+8) ,
         // Throw an error that shows market is close
@@ -118,6 +123,7 @@ public class TradeServiceImpl implements TradeServices {
 
         Calendar today = Calendar.getInstance(timeZone);
 
+        trade.setTradedPrice(customStock.getAsk());
         if (!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday)
             ||  today.equals(sunday)  ) {
             trade.setStatus("open");
@@ -137,7 +143,7 @@ public class TradeServiceImpl implements TradeServices {
 
                 }
             }
-
+           
             // When there is not available sell trades on the market
             // Set the trade to it's original status
             // Add the subsequent volume
@@ -187,6 +193,8 @@ public class TradeServiceImpl implements TradeServices {
 
             double avgPrice = trade.getAvgPrice();
 
+ 
+
             if (listOfSellTrades.size() != 0) {
                 Date date = new Date(listOfSellTrades.get(0).getDate());
                 Trade matchTrade = listOfSellTrades.get(0);
@@ -202,6 +210,7 @@ public class TradeServiceImpl implements TradeServices {
                         }
                     }
                 }
+
 
                 // add the number of matched trade by one
                 count++;
@@ -246,6 +255,7 @@ public class TradeServiceImpl implements TradeServices {
                     trade.setStatus("filled");
                 }
 
+          
                 // Set the avg_price for current trade
                 double matchTradeAskPrice;
                 if (matchTrade.getAsk() == 0.0) {
@@ -254,6 +264,7 @@ public class TradeServiceImpl implements TradeServices {
                     matchTradeAskPrice = matchTrade.getAsk();
                 }
 
+          
                 avgPrice = (avgPrice + matchTradeAskPrice) / count;
                 trade.setAvgPrice(avgPrice);
 
@@ -292,7 +303,7 @@ public class TradeServiceImpl implements TradeServices {
                 customStock.setBid(customStock.getBid());
                
             
-
+          
                 return createMarketBuyTrade(trade, customer, customStock);
             }
 
@@ -349,6 +360,7 @@ public class TradeServiceImpl implements TradeServices {
                         }
                 }
 
+                
                 customStock.setAskVolume(matchTrade.getQuantity());
                 if(matchTrade.getAsk() != 0.0){
                     customStock.setAsk(matchTrade.getAsk());
@@ -405,6 +417,7 @@ public class TradeServiceImpl implements TradeServices {
             trade.setStatus("open");
 
         } else {
+           
             List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
             List<Trade> listOfBuyTrades = new ArrayList<>();
 
@@ -559,6 +572,7 @@ public class TradeServiceImpl implements TradeServices {
             }
             // Set stock ask price
             customStock.setAsk(customStock.getAsk());
+            count = 0;
 
         }
 
@@ -606,6 +620,7 @@ public class TradeServiceImpl implements TradeServices {
               
           }
 
+        
         return tradeRepository.save(trade);
 
     }
@@ -647,6 +662,8 @@ public class TradeServiceImpl implements TradeServices {
         sunday.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 
         Calendar today = Calendar.getInstance(timeZone);
+
+        trade.setTradedPrice(trade.getBid());
 
         if (!(today.after(startDateTime) && today.before(endDateTime)) || today.equals(saturday)
         ||  today.equals(sunday)    ) {
@@ -879,6 +896,7 @@ public class TradeServiceImpl implements TradeServices {
                         }
                 }
 
+                
                 customStock.setAskVolume(matchTrade.getQuantity());
                 if(matchTrade.getAsk() != 0.0){
                     customStock.setAsk(matchTrade.getAsk());
@@ -889,7 +907,7 @@ public class TradeServiceImpl implements TradeServices {
             
         }
 
-        
+    
         return tradeRepository.save(trade);
 
     }
@@ -944,11 +962,17 @@ public class TradeServiceImpl implements TradeServices {
             // best price is lower ask
             double newAskPrice = customStock.getAsk();
             int newAskVolume = customStock.getAskVolume();
-            if (trade.getAsk() < newAskPrice && trade.getAsk() > customStock.getBid()
-                    || trade.getAsk() == customStock.getBid()) {
+            if(customStock.getAskVolume() == 0){
                 newAskPrice = trade.getAsk();
                 newAskVolume = trade.getQuantity();
+            }else{
+                if (trade.getAsk() < newAskPrice && trade.getAsk() > customStock.getBid()
+                || trade.getAsk() == customStock.getBid()) {
+                    newAskPrice = trade.getAsk();
+                    newAskVolume = trade.getQuantity();
             }
+            }
+         
 
             // Gte the list of open & partial-filled buy trades that are equal to the
             // ask_price or higher than the ask_price

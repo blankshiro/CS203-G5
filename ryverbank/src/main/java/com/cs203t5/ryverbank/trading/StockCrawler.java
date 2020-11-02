@@ -120,9 +120,9 @@ public class StockCrawler {
                 Long customerId = Long.valueOf(customer_Id);
 
                 tradeRepository.save(
-                        new Trade(buyAction, symbol, quantity, bid, 0.0, 0.0, 0, date, accountId, customerId, status));
+                        new Trade(buyAction, symbol, quantity, bid, 0.0, 0.0, 0, date, accountId, customerId, status,0.0));
                 tradeRepository.save(
-                        new Trade(sellAction, symbol, quantity, 0.0, ask, 0.0, 0, date, accountId, customerId, status));
+                        new Trade(sellAction, symbol, quantity, 0.0, ask, 0.0, 0, date, accountId, customerId, status,0.0));
 
                 Optional<CustomStock> optionalStocks = stockRepository.findBySymbol(symbol);
                 if (optionalStocks != null || optionalStocks.isPresent()) {
