@@ -9,8 +9,7 @@ import lombok.*;
 import com.cs203t5.ryverbank.customer.*;
 
 /**
- * Account class for for fund transfers and trades. Each customer can have many
- * accounts.
+ * Account class for account management.
  */
 @Entity
 @Setter

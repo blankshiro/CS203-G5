@@ -25,7 +25,7 @@ public interface CustomerRepository extends JpaRepository <Customer, Long> {
     Optional<Customer> findByUsername(String username);
 
     /**
-     * Derviced query to check if username exists
+     * Derived query to check if username exists
      * 
      * @param username The username of the customer.
      * @return True if user is found, otherwise return False.

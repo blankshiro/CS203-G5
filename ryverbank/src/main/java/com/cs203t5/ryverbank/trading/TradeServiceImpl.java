@@ -12,17 +12,35 @@ import java.time.*;
 
 import java.util.*;
 
+/**
+ * Implementation of the TradeServices class.
+ * 
+ * @see TradeServices
+ */
 @Service
 public class TradeServiceImpl implements TradeServices {
+    /** The trade repository. */
     private TradeRepository tradeRepository;
-
-    // addded asset service impl here by junan
+    /** The asset services. */
     private AssetService assetService;
+    /** The transaction services. */
     private TransactionServices tranService;
+    /** The account services. */
     private AccountServices accService;
+    /** The portfolio services. */
     private PortfolioService portfolioService;
+    /** Counter. */
     private int count = 0;
 
+    /**
+     * Constructs a TradeServiceImpl with the following parameters.
+     * 
+     * @param tradeRepository The trade repository.
+     * @param assetService The asset services.
+     * @param tranService The transaction services.
+     * @param accService The account services.
+     * @param portfolioService The portfolio services.
+     */
     public TradeServiceImpl(TradeRepository tradeRepository, AssetService assetService, TransactionServices tranService,
             AccountServices accService, PortfolioService portfolioService) {
         this.tradeRepository = tradeRepository;
