@@ -132,6 +132,7 @@ public class TradeController {
                 if (optionalAccount.get().getAvailableBalance() < (customStock.getAsk() * trade.getQuantity())) {
                     throw new TradeInvalidException("Available Balance Not Enough");
                 } else {
+                    accService.accTradeOnHold(trade.getAccountId(), trade.getQuantity() * customStock.getAsk() * -1);
                     return tradeServices.createMarketBuyTrade(trade, customer, customStock);
                 }
 
@@ -181,6 +182,8 @@ public class TradeController {
                 if (optionalAccount.get().getAvailableBalance() < (trade.getBid() * trade.getQuantity())) {
                     throw new TradeInvalidException("Available Balance Not Enough");
                 } else {
+                     /* ACCOUNT GET THE BUYER ID FROM TRADE HERE */
+                    accService.accTradeOnHold(trade.getAccountId(), trade.getQuantity() * trade.getBid() * -1);
                     return tradeServices.createLimitBuyTrade(trade, customer, customStock);
                 }
 

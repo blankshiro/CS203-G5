@@ -2,6 +2,8 @@ package com.cs203t5.ryverbank.trading;
 
 import org.springframework.stereotype.Service;
 
+
+
 import com.cs203t5.ryverbank.customer.*;
 import com.cs203t5.ryverbank.portfolio.AssetService;
 import com.cs203t5.ryverbank.account_transaction.*;
@@ -97,7 +99,7 @@ public class TradeServiceImpl implements TradeServices {
 
 
         /* ACCOUNT GET THE BUYER ID FROM TRADE HERE */
-        accService.accTradeOnHold(trade.getAccountId(), trade.getQuantity() * customStock.getAsk() * -1);
+        // accService.accTradeOnHold(trade.getAccountId(), trade.getQuantity() * customStock.getAsk() * -1);
 
    
         // If customer submit a trade on weekend OR submit on weekday BUT before 9am and
@@ -146,7 +148,6 @@ public class TradeServiceImpl implements TradeServices {
            
             // When there is not available sell trades on the market
             // Set the trade to it's original status
-            // Add the subsequent volume
             try {
                 if (listOfSellTrades.size() == 0) {
                     if (trade.getStatus().equals("partial-filled")) {
@@ -165,8 +166,11 @@ public class TradeServiceImpl implements TradeServices {
 
                     // trade successful then store into user's asset list
                     // assetService.addAsset(trade)
+                  
                     assetService.addAsset(trade, customStock);
-
+                    if(trade.getFilledQuantity() != 0.0){
+                        trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
+                    }
                     return tradeRepository.save(trade);
                 }
                 // If is a new trade, meaning no status has been set yet, set the trade to open
@@ -196,6 +200,11 @@ public class TradeServiceImpl implements TradeServices {
  
 
             if (listOfSellTrades.size() != 0) {
+                if(accService.getAccount(trade.getAccountId()).getBalance() == 0){
+                    trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
+                    return tradeRepository.save(trade);
+                }
+                
                 Date date = new Date(listOfSellTrades.get(0).getDate());
                 Trade matchTrade = listOfSellTrades.get(0);
 
@@ -214,6 +223,10 @@ public class TradeServiceImpl implements TradeServices {
 
                 // add the number of matched trade by one
                 count++;
+                int originalFilledQuantity = trade.getFilledQuantity();
+                int originalQuantity = trade.getQuantity();
+                int originalMatchFilledQuantity = matchTrade.getFilledQuantity();
+                int originalMatchQuantity = matchTrade.getQuantity();
 
                 // When submitted trade has more quantity than match trade
                 if (matchTrade.getQuantity() - trade.getQuantity() < 0) {
@@ -254,20 +267,6 @@ public class TradeServiceImpl implements TradeServices {
                 } else {
                     trade.setStatus("filled");
                 }
-
-          
-                // Set the avg_price for current trade
-                double matchTradeAskPrice;
-                if (matchTrade.getAsk() == 0.0) {
-                    matchTradeAskPrice = customStock.getAsk();
-                } else {
-                    matchTradeAskPrice = matchTrade.getAsk();
-                }
-
-          
-                avgPrice = (avgPrice + matchTradeAskPrice) / count;
-                trade.setAvgPrice(avgPrice);
-
                 // Set the avg_price for match trade
                 double tradeBidPrice;
                 if (trade.getBid() == 0.0) {
@@ -275,17 +274,67 @@ public class TradeServiceImpl implements TradeServices {
                 } else {
                     tradeBidPrice = trade.getBid();
                 }
-                matchTrade.setAvgPrice(tradeBidPrice);
-
-                lastPrice = matchTrade.getAsk();
-
-                tradeRepository.save(trade);
+          
+         
                 /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE */
                 Long give = trade.getAccountId();
                 Long take = matchTrade.getAccountId();
                 double amt = trade.getFilledQuantity() * customStock.getAsk();
-                accService.accTradeOnHold(take, amt);
-                tranService.addTransaction(give, take, amt * -1);
+
+              
+                if(accService.getAccount(trade.getAccountId()).getBalance() < amt ){
+                
+                    double askPrice = matchTrade.getAsk();
+                    if(matchTrade.getAsk() == 0.0){
+                        askPrice = tradeBidPrice;
+                    }
+                    int newAmount = (int) Math.round( accService.getAccount(trade.getAccountId()).getBalance() / askPrice);
+                    if(newAmount % 100 != 0){
+                        newAmount = (int)(Math.round( newAmount / 100.0) * 100);
+                    }
+                    // if(newAmount == 0){
+                    //     throw new InsufficientBalanceException("Not enough funds");
+                    // }
+                    avgPrice += (newAmount * askPrice);
+                    trade.setAvgPrice(avgPrice);
+                    trade.setFilledQuantity(originalFilledQuantity + newAmount);
+                    trade.setQuantity(originalQuantity - newAmount);
+                    matchTrade.setFilledQuantity(originalMatchFilledQuantity + newAmount);
+                    matchTrade.setQuantity(originalMatchQuantity - newAmount);
+                    if(trade.getQuantity() != 0){
+                        trade.setStatus("partial-filled");
+                    }
+                    if(matchTrade.getQuantity() != 0){
+                        matchTrade.setStatus("partial-filled");
+                    }
+
+                    tradeRepository.save(trade);
+                    tradeRepository.save(matchTrade);
+                   
+                    amt = newAmount * askPrice;
+                    accService.accTradeOnHold(take, amt);
+                    tranService.addTransaction(give, take, amt * -1);
+                }else{
+                    // Set the avg_price for current trade
+                    double matchTradeAskPrice;
+                    if (matchTrade.getAsk() == 0.0) {
+                        matchTradeAskPrice = customStock.getAsk();
+                    } else {
+                        matchTradeAskPrice = matchTrade.getAsk();
+                    }
+           
+                    avgPrice += (trade.getFilledQuantity() * matchTradeAskPrice) ;
+                    trade.setAvgPrice(avgPrice);
+                 
+                    matchTrade.setAvgPrice(tradeBidPrice);
+
+                    lastPrice = matchTrade.getAsk();
+
+                    tradeRepository.save(trade);
+                    accService.accTradeOnHold(take, amt);
+                    tranService.addTransaction(give, take, amt * -1);
+                }
+
                 tradeRepository.save(matchTrade);
             }
 
@@ -301,14 +350,13 @@ public class TradeServiceImpl implements TradeServices {
 
                 // Set stock bid price
                 customStock.setBid(customStock.getBid());
-               
-            
           
                 return createMarketBuyTrade(trade, customer, customStock);
             }
 
             customStock.setAskVolume(customStock.getAskVolume() - trade.getFilledQuantity());
 
+         
 
             // Set stock last price
             if (lastPrice == 0.0) {
@@ -372,6 +420,7 @@ public class TradeServiceImpl implements TradeServices {
             
         }
 
+        trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
           
         return tradeRepository.save(trade);
 
@@ -440,7 +489,9 @@ public class TradeServiceImpl implements TradeServices {
                     }
                     customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
                     count = 0;
-
+                    if(trade.getFilledQuantity() != 0){
+                        trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
+                    }
                     portfolioService.updateRealizedGainLoss(trade, customStock);
                     return tradeRepository.save(trade);
                 }
@@ -523,7 +574,7 @@ public class TradeServiceImpl implements TradeServices {
                     matchTradeBidPrice = matchTrade.getBid();
                 }
 
-                avgPrice = (avgPrice + matchTradeBidPrice) / count;
+                avgPrice += trade.getFilledQuantity() * matchTradeBidPrice;
                 trade.setAvgPrice(avgPrice);
 
                 // Set the avg_price for match trade
@@ -620,7 +671,7 @@ public class TradeServiceImpl implements TradeServices {
               
           }
 
-        
+        trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
         return tradeRepository.save(trade);
 
     }
@@ -636,9 +687,6 @@ public class TradeServiceImpl implements TradeServices {
 
         // Set the time when trade is submitted
         trade.setDate(currentTimestamp);
-
-        /* ACCOUNT GET THE BUYER ID FROM TRADE HERE */
-        accService.accTradeOnHold(trade.getAccountId(), trade.getQuantity() * trade.getBid() * -1);
 
         // If customer submit a trade on weekend OR submit on weekday BUT before 9am and
         // after 5pm (GMT+8) ,
@@ -702,6 +750,15 @@ public class TradeServiceImpl implements TradeServices {
                 }
             }
 
+           
+            // This is set avg_price for trade
+            // If is a open trade, then avg_price will be set to 0.0
+            // If is a partial filled trade, then avg_pirce will be the same
+            try {
+                trade.setAvgPrice(trade.getAvgPrice());
+            } catch (NullPointerException e) {
+                trade.setAvgPrice(0.0);
+            }
             // When there no sell trades for the {symbol} stock
             try {
                 if (listOfSellTrades.size() == 0) {
@@ -717,7 +774,9 @@ public class TradeServiceImpl implements TradeServices {
 
                     // save the trade as an asset here
                     assetService.addAsset(trade, customStock);
-
+                    if(trade.getFilledQuantity() != 0.0){
+                        trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
+                    }
                     return tradeRepository.save(trade);
                 } // when it is a new trade so there is no status
             } catch (NullPointerException e) {
@@ -729,19 +788,19 @@ public class TradeServiceImpl implements TradeServices {
                 return tradeRepository.save(trade);
             }
 
-            // This is set avg_price for trade
-            // If is a open trade, then avg_price will be set to 0.0
-            // If is a partial filled trade, then avg_pirce will be the same
-            try {
-                trade.setAvgPrice(trade.getAvgPrice());
-            } catch (NullPointerException e) {
-                trade.setAvgPrice(0.0);
-            }
+          
 
             double avgPrice = trade.getAvgPrice();
+            
 
             double lastPrice = 0.0;
             if (listOfSellTrades.size() != 0) {
+
+                if(accService.getAccount(trade.getAccountId()).getBalance() == 0){
+                    trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
+                    return tradeRepository.save(trade);
+                }
+
                 Date date = new Date(listOfSellTrades.get(0).getDate());
                 Trade matchTrade = listOfSellTrades.get(0);
 
@@ -762,6 +821,10 @@ public class TradeServiceImpl implements TradeServices {
 
                 // Add number of match trade
                 count++;
+                int originalFilledQuantity = trade.getFilledQuantity();
+                int originalQuantity = trade.getQuantity();
+                int originalMatchFilledQuantity = matchTrade.getFilledQuantity();
+                int originalMatchQuantity = matchTrade.getQuantity();
 
                 // When submitted trade has more quantity than match trade
                 if (matchTrade.getQuantity() - trade.getQuantity() < 0) {
@@ -802,16 +865,16 @@ public class TradeServiceImpl implements TradeServices {
                     trade.setStatus("filled");
                 }
 
-                // Set the avg_price for current trade
-                double matchTradeAskPrice;
-                if (matchTrade.getAsk() == 0.0) {
-                    matchTradeAskPrice = customStock.getAsk();
-                } else {
-                    matchTradeAskPrice = matchTrade.getAsk();
-                }
+                // // Set the avg_price for current trade
+                // double matchTradeAskPrice;
+                // if (matchTrade.getAsk() == 0.0) {
+                //     matchTradeAskPrice = customStock.getAsk();
+                // } else {
+                //     matchTradeAskPrice = matchTrade.getAsk();
+                // }
 
-                avgPrice = (avgPrice + matchTradeAskPrice) / count;
-                trade.setAvgPrice(avgPrice);
+                // avgPrice = (avgPrice + matchTradeAskPrice) / count;
+                // trade.setAvgPrice(avgPrice);
 
                 // Set the avg_price for match trade
                 double tradeBidPrice;
@@ -820,19 +883,69 @@ public class TradeServiceImpl implements TradeServices {
                 } else {
                     tradeBidPrice = trade.getBid();
                 }
-                matchTrade.setAvgPrice(tradeBidPrice);
+          
 
                 lastPrice = matchTrade.getAsk();
                 tradeRepository.save(trade);
+
                 /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE */
                 Long give = trade.getAccountId();
                 Long take = matchTrade.getAccountId();
                 double amt = trade.getFilledQuantity() * matchTrade.getAsk();
-                // System.out.println(matchTrade.getFilledQuantity());
-                // seller available balance will increase
-                accService.accTradeOnHold(take, amt);
-                // add in transaction
-                tranService.addTransaction(give, take, amt * -1);
+
+                if(accService.getAccount(trade.getAccountId()).getBalance() < amt ){
+                
+                    double askPrice = matchTrade.getAsk();
+                    if(matchTrade.getAsk() == 0.0){
+                        askPrice = tradeBidPrice;
+                    }
+                    int newAmount = (int) Math.round( accService.getAccount(trade.getAccountId()).getBalance() / askPrice);
+                    if(newAmount % 100 != 0){
+                        newAmount = (int)(Math.round( newAmount / 100.0) * 100);
+                    }
+                    // if(newAmount == 0){
+                    //     throw new InsufficientBalanceException("Not enough funds");
+                    // }
+                    avgPrice += (newAmount * askPrice);
+                    trade.setAvgPrice(avgPrice);
+                    trade.setFilledQuantity(originalFilledQuantity + newAmount);
+                    trade.setQuantity(originalQuantity - newAmount);
+                    matchTrade.setFilledQuantity(originalMatchFilledQuantity + newAmount);
+                    matchTrade.setQuantity(originalMatchQuantity - newAmount);
+                    if(trade.getQuantity() != 0){
+                        trade.setStatus("partial-filled");
+                    }
+                    if(matchTrade.getQuantity() != 0){
+                        matchTrade.setStatus("partial-filled");
+                    }
+
+                    tradeRepository.save(trade);
+                    tradeRepository.save(matchTrade);
+                   
+                    amt = newAmount * askPrice;
+                    accService.accTradeOnHold(take, amt);
+                    tranService.addTransaction(give, take, amt * -1);
+                }else{
+                    // Set the avg_price for current trade
+                    double matchTradeAskPrice;
+                    if (matchTrade.getAsk() == 0.0) {
+                        matchTradeAskPrice = customStock.getAsk();
+                    } else {
+                        matchTradeAskPrice = matchTrade.getAsk();
+                    }
+           
+                    avgPrice += (trade.getFilledQuantity() * matchTradeAskPrice) ;
+                    trade.setAvgPrice(avgPrice);
+                 
+                    matchTrade.setAvgPrice(tradeBidPrice);
+
+                    lastPrice = matchTrade.getAsk();
+
+                    tradeRepository.save(trade);
+                    accService.accTradeOnHold(take, amt);
+                    tranService.addTransaction(give, take, amt * -1);
+                }
+              
                 tradeRepository.save(matchTrade);
             }
 
@@ -907,6 +1020,7 @@ public class TradeServiceImpl implements TradeServices {
             
         }
 
+        trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
     
         return tradeRepository.save(trade);
 
@@ -999,7 +1113,9 @@ public class TradeServiceImpl implements TradeServices {
                     // customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
                     customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
                     count = 0;
-
+                    if(trade.getFilledQuantity() != 0){
+                        trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
+                    }
                     portfolioService.updateRealizedGainLoss(trade, customStock);
                     return tradeRepository.save(trade);
                 }
@@ -1089,7 +1205,7 @@ public class TradeServiceImpl implements TradeServices {
                     matchTradeBidPrice = matchTrade.getBid();
                 }
 
-                avgPrice = (avgPrice + matchTradeBidPrice) / count;
+                avgPrice += trade.getFilledQuantity() * matchTradeBidPrice;
                 trade.setAvgPrice(avgPrice);
 
                 // Set the avg_price for match trade
@@ -1176,6 +1292,7 @@ public class TradeServiceImpl implements TradeServices {
                 } 
                 
             }
+        trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
         return tradeRepository.save(trade);
     }
 }

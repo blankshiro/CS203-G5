@@ -239,7 +239,9 @@ public class StockCrawler {
                         // trade successful then store into user's asset list
                         // assetService.addAsset(trade)
                         assetService.addAsset(trade, customStock);
-
+                        if(trade.getFilledQuantity() != 0.0){
+                            trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
+                        }
                         tradeRepository.save(trade);
                         return;
                     }
@@ -265,6 +267,12 @@ public class StockCrawler {
                 double avgPrice = trade.getAvgPrice();
 
                 if (listOfSellTrades.size() != 0) {
+
+                    if(accService.getAccount(trade.getAccountId()).getBalance() == 0){
+                        trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
+                         tradeRepository.save(trade);
+                    }
+                    
                     Date date = new Date(listOfSellTrades.get(0).getDate());
                     Trade matchTrade = listOfSellTrades.get(0);
 
@@ -282,6 +290,10 @@ public class StockCrawler {
 
                     // add the number of matched trade by one
                     count++;
+                    int originalFilledQuantity = trade.getFilledQuantity();
+                    int originalQuantity = trade.getQuantity();
+                    int originalMatchFilledQuantity = matchTrade.getFilledQuantity();
+                    int originalMatchQuantity = matchTrade.getQuantity();
 
                     // When submitted trade has more quantity than match trade
                     if (matchTrade.getQuantity() - trade.getQuantity() < 0) {
@@ -323,30 +335,74 @@ public class StockCrawler {
                         trade.setStatus("filled");
                     }
 
-                    // Set the avg_price for current trade
-                    double matchTradeAskPrice;
-                    if (matchTrade.getAsk() == 0.0) {
-                        matchTradeAskPrice = customStock.getAsk();
-                    } else {
-                        matchTradeAskPrice = matchTrade.getAsk();
+                    // Set the avg_price for match trade
+                double tradeBidPrices;
+                if (trade.getBid() == 0.0) {
+                    tradeBidPrices = customStock.getBid();
+                } else {
+                    tradeBidPrices = trade.getBid();
+                }
+          
+         
+                /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE */
+                Long give = trade.getAccountId();
+                Long take = matchTrade.getAccountId();
+                double amt = trade.getFilledQuantity() * customStock.getAsk();
+
+              
+                    if(accService.getAccount(trade.getAccountId()).getBalance() < amt ){
+                    
+                        double askPrice = matchTrade.getAsk();
+                        if(matchTrade.getAsk() == 0.0){
+                            askPrice = tradeBidPrices;
+                        }
+                        int newAmount = (int) Math.round( accService.getAccount(trade.getAccountId()).getBalance() / askPrice);
+                        if(newAmount % 100 != 0){
+                            newAmount = (int)(Math.round( newAmount / 100.0) * 100);
+                        }
+                        // if(newAmount == 0){
+                        //     throw new InsufficientBalanceException("Not enough funds");
+                        // }
+                        avgPrice += (newAmount * askPrice);
+                        trade.setAvgPrice(avgPrice);
+                        trade.setFilledQuantity(originalFilledQuantity + newAmount);
+                        trade.setQuantity(originalQuantity - newAmount);
+                        matchTrade.setFilledQuantity(originalMatchFilledQuantity + newAmount);
+                        matchTrade.setQuantity(originalMatchQuantity - newAmount);
+                        if(trade.getQuantity() != 0){
+                            trade.setStatus("partial-filled");
+                        }
+                        if(matchTrade.getQuantity() != 0){
+                            matchTrade.setStatus("partial-filled");
+                        }
+
+                        tradeRepository.save(trade);
+                        tradeRepository.save(matchTrade);
+                    
+                        amt = newAmount * askPrice;
+                        accService.accTradeOnHold(take, amt);
+                        tranService.addTransaction(give, take, amt * -1);
+                    }else{
+                        // Set the avg_price for current trade
+                        double matchTradeAskPrice;
+                        if (matchTrade.getAsk() == 0.0) {
+                            matchTradeAskPrice = customStock.getAsk();
+                        } else {
+                            matchTradeAskPrice = matchTrade.getAsk();
+                        }
+            
+                        avgPrice += (trade.getFilledQuantity() * matchTradeAskPrice) ;
+                        trade.setAvgPrice(avgPrice);
+                    
+                        matchTrade.setAvgPrice(tradeBidPrices);
+
+                        lastPrice = matchTrade.getAsk();
+
+                        tradeRepository.save(trade);
+                        accService.accTradeOnHold(take, amt);
+                        tranService.addTransaction(give, take, amt * -1);
                     }
 
-                    avgPrice = (avgPrice + matchTradeAskPrice) / count;
-                    trade.setAvgPrice(avgPrice);
-
-                    // Set the avg_price for match trade
-                    matchTrade.setAvgPrice(tradeBidPrice);
-
-                    lastPrice = matchTrade.getAsk();
-
-                    tradeRepository.save(trade);
-                    /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE */
-                    Long give = trade.getAccountId();
-                    Long take = matchTrade.getAccountId();
-                    double amt = trade.getFilledQuantity() * customStock.getAsk();
-                    accService.accTradeOnHold(take, amt);
-                    tranService.addTransaction(give, take, amt * -1);
-                    tradeRepository.save(matchTrade);
                 }
 
                 // If trade is partial-filled after matching, find other available sell trade on
@@ -425,6 +481,7 @@ public class StockCrawler {
                     }
 
                 }
+                trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
                 tradeRepository.save(trade);
                 stockRepository.save(customStock);
             }
@@ -506,6 +563,9 @@ public class StockCrawler {
 
                         customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
                         count = 0;
+                        if(trade.getFilledQuantity() != 0){
+                            trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
+                        }
                         tradeRepository.save(trade);
                         portfolioService.updateRealizedGainLoss(trade, customStock);
                         return;
@@ -590,7 +650,7 @@ public class StockCrawler {
                         matchTradeBidPrice = matchTrade.getBid();
                     }
 
-                    avgPrice = (avgPrice + matchTradeBidPrice) / count;
+                    avgPrice += trade.getFilledQuantity() * matchTradeBidPrice;
                     trade.setAvgPrice(avgPrice);
 
                     // Set the avg_price for match trade
@@ -682,6 +742,7 @@ public class StockCrawler {
                     }
 
                 }
+                trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
                 tradeRepository.save(trade);
                 stockRepository.save(customStock);
             }
