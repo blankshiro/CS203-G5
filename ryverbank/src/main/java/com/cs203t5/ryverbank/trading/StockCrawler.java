@@ -32,7 +32,7 @@ public class StockCrawler {
     private TransactionServices tranService;
     /** The account services. */
     private AccountServices accService;
-    /** The pportfolio services. */
+    /** The portfolio services. */
     private PortfolioService portfolioService;
     /** Counter. */
     private int count = 0;
@@ -40,11 +40,11 @@ public class StockCrawler {
     /**
      * Constructs a StockCrawler with the following parameters.
      * 
-     * @param stockRepository The stock repository.
-     * @param tradeRepository The trade repository.
-     * @param assetService    The asset services.
-     * @param tranService     The transaction services.
-     * @param accService      The account services.
+     * @param stockRepository  The stock repository.
+     * @param tradeRepository  The trade repository.
+     * @param assetService     The asset services.
+     * @param tranService      The transaction services.
+     * @param accService       The account services.
      * @param portfolioService The Portfolio Services
      */
     public StockCrawler(StockRepository stockRepository, TradeRepository tradeRepository, AssetService assetService,
@@ -55,11 +55,15 @@ public class StockCrawler {
         this.accService = accService;
         this.tranService = tranService;
         this.portfolioService = portfolioService;
-          
+
     }
 
     // Open the market at 9am (GMT+8) every weekday
     // @Scheduled(cron = "0 00 09 ? * MON-FRI", zone = "GMT+8")
+    /**
+     * Simulates a web crawler by crawling the stock market from SGX and saving it
+     * into the stock repository.
+     */
     public void crawl() {
 
         try {
@@ -119,10 +123,10 @@ public class StockCrawler {
                 Long accountId = Long.valueOf(account_Id);
                 Long customerId = Long.valueOf(customer_Id);
 
-                tradeRepository.save(
-                        new Trade(buyAction, symbol, quantity, bid, 0.0, 0.0, 0, date, accountId, customerId, status,0.0));
-                tradeRepository.save(
-                        new Trade(sellAction, symbol, quantity, 0.0, ask, 0.0, 0, date, accountId, customerId, status,0.0));
+                tradeRepository.save(new Trade(buyAction, symbol, quantity, bid, 0.0, 0.0, 0, date, accountId,
+                        customerId, status, 0.0));
+                tradeRepository.save(new Trade(sellAction, symbol, quantity, 0.0, ask, 0.0, 0, date, accountId,
+                        customerId, status, 0.0));
 
                 Optional<CustomStock> optionalStocks = stockRepository.findBySymbol(symbol);
                 if (optionalStocks != null || optionalStocks.isPresent()) {
@@ -145,6 +149,11 @@ public class StockCrawler {
 
     }
 
+    /**
+     * Simulates the opening of a buy market by finding the list of open or
+     * partially filled sell trades in the current repository and matching it to
+     * them. This market will only be open at 9am (GMT+8) every weekday.
+     */
     @Scheduled(cron = "30 00 09 ? * MON-FRI", zone = "GMT+8")
     public void openBuyMarket() {
         String[] symbols = new String[] { "A17U", "C61U", "C31", "C38U", "C09", "C52", "D01", "D05", "G13", "H78",
@@ -526,7 +535,7 @@ public class StockCrawler {
                 List<Trade> listOfTrades = tradeRepository.findAllBySymbol(trade.getSymbol());
                 List<Trade> listOfBuyTrades = new ArrayList<>();
 
-                //Market Sell
+                // Market Sell
                 if (trade.getAsk() == 0.0 || trade.getAsk() < customStock.getBid()) {
                     // Get list of open / partial-filled market buy trades
                     for (Trade buyTrade : listOfTrades) {
@@ -537,7 +546,7 @@ public class StockCrawler {
 
                         }
                     }
-                } else { //Limit Sell
+                } else { // Limit Sell
                     // Gte the list of open & partial-filled buy trades that are equal to the
                     // ask_price or higher than the ask_price
                     for (Trade buyTrade : listOfTrades) {

@@ -127,7 +127,7 @@ public class AccountNTransactionController {
 
     /**
      * Creates an account based on the specified account information. If there is no
-     * customer found based on the information, throw CustomerNotFoundException.
+     * customer found based on the information, throw AccountCustomerNotFoundException.
      * 
      * @param newAccInfo The account information.
      * @return The account created.
