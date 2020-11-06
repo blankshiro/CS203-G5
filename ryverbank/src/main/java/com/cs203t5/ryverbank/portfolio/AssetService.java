@@ -34,7 +34,7 @@ public interface AssetService {
      * @param quantity   The quantity of the asset to sell.
      * @param customerId The customer id.
      */
-    void sellAsset(String symbol, int quantity, Long customerId);
+    void sellAsset(String symbol, int quantity, Long customerId, String status);
 
     /**
      * Retrieves back the asset with the specified asset symbol, quantity and

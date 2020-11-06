@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 
 import com.cs203t5.ryverbank.customer.*;
+import com.cs203t5.ryverbank.portfolio.AssetNotFoundException;
 import com.cs203t5.ryverbank.portfolio.AssetService;
 import com.cs203t5.ryverbank.account_transaction.*;
 import com.cs203t5.ryverbank.portfolio.PortfolioService;
@@ -126,12 +127,12 @@ public class TradeServiceImpl implements TradeServices {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
 
         Calendar startDateTime = Calendar.getInstance(timeZone);
-        startDateTime.set(Calendar.HOUR_OF_DAY, 9);
+        startDateTime.set(Calendar.HOUR_OF_DAY, 00);
         startDateTime.set(Calendar.MINUTE, 0);
         startDateTime.set(Calendar.SECOND, 0);
 
         Calendar endDateTime = Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY, 17);
+        endDateTime.set(Calendar.HOUR_OF_DAY, 24);
         endDateTime.set(Calendar.MINUTE, 0);
         endDateTime.set(Calendar.SECOND, 0);
 
@@ -186,6 +187,7 @@ public class TradeServiceImpl implements TradeServices {
                     // assetService.addAsset(trade)
                   
                     assetService.addAsset(trade, customStock);
+                    System.out.println(trade.getCustomerId() + "BUY: " + trade.getFilledQuantity());
                     if(trade.getFilledQuantity() != 0.0){
                         trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
                     }
@@ -389,6 +391,7 @@ public class TradeServiceImpl implements TradeServices {
             // if it reaches here, straight away count as success
             // portfolioService.addAsset(trade, trade.getCustomerId());
             assetService.addAsset(trade, customStock);
+            System.out.println(trade.getCustomerId() + "BUY: " + trade.getFilledQuantity());
         }
 
         /*
@@ -462,12 +465,12 @@ public class TradeServiceImpl implements TradeServices {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
 
         Calendar startDateTime = Calendar.getInstance(timeZone);
-        startDateTime.set(Calendar.HOUR_OF_DAY, 9);
+        startDateTime.set(Calendar.HOUR_OF_DAY, 00);
         startDateTime.set(Calendar.MINUTE, 0);
         startDateTime.set(Calendar.SECOND, 0);
 
         Calendar endDateTime = Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY, 17);
+        endDateTime.set(Calendar.HOUR_OF_DAY, 24);
         endDateTime.set(Calendar.MINUTE, 0);
         endDateTime.set(Calendar.SECOND, 0);
 
@@ -505,11 +508,16 @@ public class TradeServiceImpl implements TradeServices {
                     } else {
                         trade.setStatus("open");
                     }
+                    System.out.println(trade.getSymbol() + "was sold");
                     customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
                     count = 0;
                     if(trade.getFilledQuantity() != 0){
                         trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
                     }
+                    
+                    // assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), trade.getCustomerId());
+                    assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
+                    System.out.println(customer.getCustomerId() + "SELL: " + trade.getFilledQuantity());
                     portfolioService.updateRealizedGainLoss(trade, customStock);
                     return tradeRepository.save(trade);
                 }
@@ -517,6 +525,9 @@ public class TradeServiceImpl implements TradeServices {
                 trade.setStatus("open");
                 count = 0;
                 return tradeRepository.save(trade);
+            }
+            catch(AssetNotFoundException e){
+                System.out.println(e);
             }
 
             double lastPrice = 0.0;
@@ -532,6 +543,7 @@ public class TradeServiceImpl implements TradeServices {
                 Date date = new Date(listOfBuyTrades.get(0).getDate());
                 Trade matchTrade = listOfBuyTrades.get(0);
 
+                //assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
                 // Match to market buy price (current highest buy price)
                 // then the highest buy price
                 for (Trade buyTrade : listOfBuyTrades) {
@@ -571,7 +583,7 @@ public class TradeServiceImpl implements TradeServices {
                     matchTrade.setQuantity(matchTradeQuantity);
 
                 }
-
+                
                 if (matchTrade.getQuantity() != 0) {
                     matchTrade.setStatus("partial-filled");
                 } else {
@@ -606,7 +618,7 @@ public class TradeServiceImpl implements TradeServices {
 
                 // Set the last price
                 lastPrice = matchTrade.getBid();
-
+                
                 tradeRepository.save(trade);
                 /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE */
                 Long take = trade.getAccountId();
@@ -615,6 +627,7 @@ public class TradeServiceImpl implements TradeServices {
                 accService.accTradeOnHold(take, amt);
                 accService.accTradeOnHold(give, amt * -1);
                 tranService.addTransaction(take, give, amt);
+                // assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
                 tradeRepository.save(matchTrade);
             }
 
@@ -644,7 +657,9 @@ public class TradeServiceImpl implements TradeServices {
             count = 0;
 
         }
-
+        //assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), trade.getCustomerId());
+        assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
+        System.out.println(customer.getCustomerId() + "SELL: " + trade.getFilledQuantity());
         portfolioService.updateRealizedGainLoss(trade, customStock);
 
           // Set the bidVolume
@@ -712,12 +727,12 @@ public class TradeServiceImpl implements TradeServices {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
 
         Calendar startDateTime = Calendar.getInstance(timeZone);
-        startDateTime.set(Calendar.HOUR_OF_DAY, 9);
+        startDateTime.set(Calendar.HOUR_OF_DAY, 00);
         startDateTime.set(Calendar.MINUTE, 0);
         startDateTime.set(Calendar.SECOND, 0);
 
         Calendar endDateTime = Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY, 17);
+        endDateTime.set(Calendar.HOUR_OF_DAY, 24);
         endDateTime.set(Calendar.MINUTE, 0);
         endDateTime.set(Calendar.SECOND, 0);
 
@@ -792,6 +807,7 @@ public class TradeServiceImpl implements TradeServices {
 
                     // save the trade as an asset here
                     assetService.addAsset(trade, customStock);
+                    System.out.println(trade.getCustomerId() + "BUY: " + trade.getFilledQuantity());
                     if(trade.getFilledQuantity() != 0.0){
                         trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
                     }
@@ -988,6 +1004,7 @@ public class TradeServiceImpl implements TradeServices {
             // will add trade into the portfolio here
             // portfolioService.addAsset(trade, trade.getCustomerId());
             assetService.addAsset(trade, customStock);
+            System.out.println(trade.getCustomerId() + "BUY: " + trade.getFilledQuantity());
 
         }
 
@@ -1060,12 +1077,12 @@ public class TradeServiceImpl implements TradeServices {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
 
         Calendar startDateTime = Calendar.getInstance(timeZone);
-        startDateTime.set(Calendar.HOUR_OF_DAY, 9);
+        startDateTime.set(Calendar.HOUR_OF_DAY, 00);
         startDateTime.set(Calendar.MINUTE, 0);
         startDateTime.set(Calendar.SECOND, 0);
 
         Calendar endDateTime = Calendar.getInstance(timeZone);
-        endDateTime.set(Calendar.HOUR_OF_DAY, 17);
+        endDateTime.set(Calendar.HOUR_OF_DAY, 24);
         endDateTime.set(Calendar.MINUTE, 0);
         endDateTime.set(Calendar.SECOND, 0);
 
@@ -1130,11 +1147,15 @@ public class TradeServiceImpl implements TradeServices {
                     customStock.setAskVolume(newAskVolume);
                     // customStock.setAskVolume(customStock.getAskVolume() + trade.getQuantity());
                     customStock.setBidVolume(customStock.getBidVolume() - trade.getFilledQuantity());
+                    System.out.println(trade.getSymbol() + "was sold");
                     count = 0;
                     if(trade.getFilledQuantity() != 0){
                         trade.setAvgPrice(trade.getAvgPrice() / trade.getFilledQuantity());
                     }
+                    // assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), trade.getCustomerId());
                     portfolioService.updateRealizedGainLoss(trade, customStock);
+                    assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
+                    System.out.println(customer.getCustomerId() + "SELL: " + trade.getFilledQuantity());
                     return tradeRepository.save(trade);
                 }
             } catch (NullPointerException e) {
@@ -1165,6 +1186,7 @@ public class TradeServiceImpl implements TradeServices {
                 Date date = new Date(listOfBuyTrades.get(0).getDate());
                 Trade matchTrade = listOfBuyTrades.get(0);
 
+                assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
                 for (Trade buyTrade : listOfBuyTrades) {
                     Date currentBuyTradeDate = new Date(buyTrade.getDate());
                     if (matchTrade.getBid() < buyTrade.getBid()) {
@@ -1202,7 +1224,7 @@ public class TradeServiceImpl implements TradeServices {
                     matchTrade.setQuantity(matchTradeQuantity);
 
                 }
-
+                
                 if (matchTrade.getQuantity() != 0) {
                     matchTrade.setStatus("partial-filled");
                 } else {
@@ -1236,7 +1258,7 @@ public class TradeServiceImpl implements TradeServices {
                 matchTrade.setAvgPrice(tradeAskPrice);
 
                 lastPrice = matchTrade.getBid();
-
+               
                 tradeRepository.save(trade);
                 /* ACCOUNT MATCH TRADE CREATED HERE. GET THE SELLER ID HERE */
                 Long take = trade.getAccountId();
@@ -1245,6 +1267,7 @@ public class TradeServiceImpl implements TradeServices {
                 accService.accTradeOnHold(take, amt);
                 accService.accTradeOnHold(give, amt * -1);
                 tranService.addTransaction(take, give, amt);
+                // assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
                 tradeRepository.save(matchTrade);
             }
 
@@ -1266,7 +1289,9 @@ public class TradeServiceImpl implements TradeServices {
 
             count = 0;
         }
-
+        // assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), trade.getCustomerId());
+        // assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
+        System.out.println(customer.getCustomerId() + "SELL: " + trade.getFilledQuantity());
         portfolioService.updateRealizedGainLoss(trade, customStock);
 
             // Set the bidVolume

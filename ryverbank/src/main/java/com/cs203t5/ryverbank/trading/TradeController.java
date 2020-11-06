@@ -159,7 +159,8 @@ public class TradeController {
                 // which the owner currently owns.
                 // if successful, quantity will be deducted and details of the asset will
                 // recompute again
-                assetService.sellAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
+                // assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
+                // System.out.println(customer.getCustomerId() + "SELL: " + trade.getFilledQuantity());
                 return tradeServices.createMarketSellTrade(trade, customer, customStock);
 
             }
@@ -203,7 +204,8 @@ public class TradeController {
 
             if (optionalStock != null && optionalStock.isPresent()) {
                 CustomStock customStock = optionalStock.get();
-                assetService.sellAsset(trade.getSymbol(), trade.getQuantity(), customer.getCustomerId());
+                // assetService.sellAsset(trade.getSymbol(), trade.getFilledQuantity(), customer.getCustomerId(), trade.getStatus());
+                // System.out.println(customer.getCustomerId() + "SELL: " + trade.getFilledQuantity());
                 return tradeServices.createLimitSellTrade(trade, customer, customStock);
 
             }

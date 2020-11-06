@@ -118,14 +118,16 @@ public class AssetServiceImpl implements AssetService {
 
     }
 
-    public void sellAsset(String symbol, int quantity, Long customerId) {
+    public void sellAsset(String symbol, int quantity, Long customerId, String status) {
         Optional<Portfolio> opPortfolio = portfolios.findByCustomerId(customerId);
         Portfolio portfolio = opPortfolio.get();
 
         Optional<Asset> opAsset = assets.findByCodeAndPortfolioIdAndIsTraded(symbol, portfolio.getId(), false);
         if (opAsset.isEmpty()) {
+            System.out.println("I don't have stock!!!");
             throw new AssetNotFoundException("You do not have " + symbol + " asset in your portfolio.");
-        } else if (opAsset.isPresent()) {
+        } 
+        else if (opAsset.isPresent() && (status.equals("filled") || status.equals("partial-filled"))) {
             Asset asset = opAsset.get();
 
             // check quantity not to exceed the quantity that the customer currently owned
@@ -134,6 +136,7 @@ public class AssetServiceImpl implements AssetService {
             }
 
             asset.setQuantity(asset.getQuantity() - quantity);
+            System.out.println("I sold the stock");
             if (asset.getQuantity() == 0) {
                 asset.setTraded(true);
             }

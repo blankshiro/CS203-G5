@@ -1,0 +1,6 @@
+2020-11-06 12:05:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CUSTOM_STOCK" not found; SQL statement:
+select customstoc0_.symbol as symbol1_4_0_, customstoc0_.ask as ask2_4_0_, customstoc0_.ask_volume as ask_volu3_4_0_, customstoc0_.bid as bid4_4_0_, customstoc0_.bid_volume as bid_volu5_4_0_, customstoc0_.last_price as last_pri6_4_0_ from custom_stock customstoc0_ where customstoc0_.symbol=? [42102-200]
+2020-11-06 12:14:11 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CUSTOMER" not found; SQL statement:
+insert into customer (customer_id, active, address, authorities, full_name, nric, password, phone, username) values (null, ?, ?, ?, ?, ?, ?, ?, ?) [42102-200]
