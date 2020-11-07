@@ -45,18 +45,6 @@ public class RyverbankApplication {
 		System.out.println("[Add acccount for user1]" + accounts.save(
 			new Account(customer_id,100000.0,100000.0)).getCustomer_id());
 	
-		ContentRepository meinContent = ctx.getBean(ContentRepository.class);
-		System.out.println("[Adding content]: " +  meinContent.save(
-			new Content("The greatest show", "Invest in the greatest shows", "This is some news", "www.greatshows.com")).getTitle());
-
-		System.out.println("[Adding content]: " +  meinContent.save(
-			new Content("The lamest show", "Invest in the lamest shows", "This is bad news", "www.badshows.com")).getTitle());		
-
-		System.out.println("[Adding content]: " +  meinContent.save(
-			new Content("Konosuba Season 3", "Best shows", "Best girl is back", "www.konosuba.com")).getTitle());
-
-		System.out.println("[Adding content]: " +  meinContent.save(
-			new Content("Cats", "Cats are cool", "Need I say more?", "www.catsarekewl.com")).getTitle());
 
 			// StockCrawler crawler = ctx.getBean(StockCrawler.class);
 

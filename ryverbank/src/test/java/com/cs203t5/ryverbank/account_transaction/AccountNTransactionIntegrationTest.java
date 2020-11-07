@@ -149,7 +149,7 @@ public class AccountNTransactionIntegrationTest {
         ResponseEntity<Object> response = restTemplate.withBasicAuth("manager", "goodpassword")
         .postForEntity(uri, jsonObject, Object.class);
 
-        assertEquals(404, response.getStatusCode().value());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test

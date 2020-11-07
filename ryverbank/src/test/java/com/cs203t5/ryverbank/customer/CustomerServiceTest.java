@@ -23,21 +23,6 @@ public class CustomerServiceTest {
     @InjectMocks
     private CustomerServiceImpl userService;
 
-    /*
-    @Test
-    void createUser_NewUser_ReturnNewUser() {
-        Customer newUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
-                "White House", "ROLE_USER", true);
-
-    //     when(users.save(any(Customer.class))).thenReturn(newUser);
-
-    //     Customer savedCustomer = userService.createUser(newUser);
-
-        assertNotNull(savedCustomer);
-        verify(users).save(newUser);
-    }
-    */
-
     @Test
     void createUser_SameUser_ThrowCustomerExistsException() {
         Customer sameUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
@@ -100,27 +85,6 @@ public class CustomerServiceTest {
         verify(users).findById(userId);
     }
 
-
-    /*
-    @Test
-    void customerUpdateAddress_UnauthorizedUser_ReturnUpdatedAddress() {
-        Customer foundUser = new Customer("user1", "goodpassword1", "Ronald Trump", "S8529649C", "91251234",
-                "White House", "ROLE_USER", true);
-        Long userId = foundUser.getCustomerId();
-
-        // return something not nothing
-        //when(users.findById(userId)).thenReturn();
-
-        Customer updatedCustomerAddress = userService.updateAddress(userId, "Blue House", "user2");
-
-        assertThrows(CustomerUnauthorizedException.class,
-                () -> userService.updateAddress(userId, "Blue House", "user2"));
-
-        // assertNull(updatedCustomerAddress);
-        // verify(users).findById(userId);
-    }
-    */
-    
 
     @Test
     void customerUpdateAddress_UserNotFound_ReturnNull() {

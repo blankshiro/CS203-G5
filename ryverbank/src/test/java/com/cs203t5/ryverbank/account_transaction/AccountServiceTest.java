@@ -47,14 +47,12 @@ public class AccountServiceTest {
     //test getting the account
     @Test
     public void getAcc_FoundAcc_ReturnAcc(){
-        // Long id = 1L;
         Account foundAcc = new Account(1L, 5000.0, 1000.0);
         when(accountRepository.save(any(Account.class))).thenReturn(foundAcc);
         when(accountRepository.findById(foundAcc.getAccountID())).thenReturn(Optional.of(foundAcc));
        
         Account acc = accountServiceImpl.getAccount(foundAcc.getAccountID());
 
-        // Account getAccount = accountServiceImpl.getAccount(accId);
         assertNotNull(acc);
 
         verify(accountRepository).findById(foundAcc.getAccountID());
@@ -64,7 +62,6 @@ public class AccountServiceTest {
     @Test
     public void getFundTransfer_ReturnAcc(){
         Account foundAcc = new Account(1L, 5000.0, 1000.0);
-        // when(accountRepository.save(any(Account.class))).thenReturn(foundAcc);
 
         //mock a get and save account
         when(accountRepository.save(any(Account.class))).thenReturn(foundAcc);
@@ -72,8 +69,7 @@ public class AccountServiceTest {
        
         //if transfer amount not exceeding available balance, deduct it both avail and balance
         double amount = -300.0;
-        //res1 = available balance(1000) - 300 = 700
-        //res2 = baalance(5000) - 300 = 4700
+
         Account account = accountServiceImpl.fundTransfer(foundAcc.getAccountID(), amount);
 
         assertEquals(700.0, account.getAvailableBalance());
