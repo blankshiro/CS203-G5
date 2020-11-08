@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import antlr.collections.List;
 import net.minidev.json.JSONObject;
 
 import com.cs203t5.ryverbank.account_transaction.Account;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -87,42 +89,140 @@ class TradeIntegrationTest {
      
 
     @Test
-    public void createTrade() throws Exception{
+    public void createMarketBuyTrade_Success() throws Exception{
 
         URI uri = new URI(baseUrl + port + "/trades");
-        long currentTimestamp = Instant.now().getEpochSecond();
         Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
         "91251234", "Dog House", "ROLE_USER", true));
    
-        Account acc = accountRepository.save(new Account(customer.getCustomerId(), 80000.0, 80000.0));
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
 
-
-
-        // Trade trade = tradeRepository.save(new Trade("buy", "A17U", 2000, 0.0,0.0, 0.0, 0, currentTimestamp, acc.getAccountID(), customer.getCustomerId(), "open", 0.0));
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
 
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("action", "buy");
-        jsonObject.put("symbol", "A17U");
+        jsonObject.put("symbol", customStock.getSymbol());
         jsonObject.put("quantity", 100);
         jsonObject.put("bid", 0.0);
         jsonObject.put("account_id", acc.getAccountID());
 
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+        assertEquals(201, response.getStatusCode().value());
+       
+    }
+
+
+    @Test
+    public void createMarketBuyTrade_InvalidQuantity() throws Exception{
+
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 179);
+        jsonObject.put("bid", 0.0);
+        jsonObject.put("account_id", acc.getAccountID());
 
         ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
         .postForEntity(uri, jsonObject, Trade.class);
 
-        // ResponseEntity<Trade> result = restTemplate.withBasicAuth("user1", "user1")
-        // .postForEntity(uri, trade, Trade.class);
+
+        assertEquals(400, response.getStatusCode().value());
+       
+    }
 
 
-        assertEquals(201, response.getStatusCode().value());
+    @Test
+    public void createMarketBuyTrade_InsufficientBalance() throws Exception{
+
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 800.0, 800.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 20000);
+        jsonObject.put("bid", 0.0);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+
+
+        assertEquals(400, response.getStatusCode().value());
+       
+    }
+
+    @Test
+    public void createMarketBuyTrade_InvalidStockSymbol() throws Exception{
+
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 800.0, 800.0));
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", "123");
+        jsonObject.put("quantity", 20000);
+        jsonObject.put("bid", 0.0);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+
+
+        assertEquals(404, response.getStatusCode().value());
+       
+    }
+
+    @Test
+    public void createMarketBuyTrade_InvalidBidPrice() throws Exception{
+
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 1000);
+        jsonObject.put("bid", -10.0);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+
+        assertEquals(400, response.getStatusCode().value());
        
     }
  
 
     @Test
-    public void createTrade_InvalidCustomer() throws Exception{
+    public void createMarketBuyTrade_InvalidCustomer() throws Exception{
 
         URI uri = new URI(baseUrl + port + "/trades");
         long currentTimestamp = Instant.now().getEpochSecond();
@@ -142,8 +242,7 @@ class TradeIntegrationTest {
     }
 
     @Test
-    public void createTrade_AccountNotFound() throws Exception{
-
+    public void createMarketBuyTrade_AccountNotFound() throws Exception{
         URI uri = new URI(baseUrl + port + "/trades");
         long currentTimestamp = Instant.now().getEpochSecond();
         Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
@@ -164,6 +263,234 @@ class TradeIntegrationTest {
     }
 
 
+
+    @Test
+    public void createMarketSellTrade_InvalidQuantity() throws Exception{
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 1000);
+        jsonObject.put("bid", 0.0);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put("action", "sell");
+        jsonObject2.put("symbol", customStock.getSymbol());
+        jsonObject2.put("quantity", 179);
+        jsonObject2.put("ask", 0.0);
+        jsonObject2.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response2 = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject2, Trade.class);
+
+        assertEquals(400, response2.getStatusCode().value());
+    }
+
+    @Test
+    public void createMarketSellTrade_InvalidAskPrice() throws Exception{
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 1000);
+        jsonObject.put("bid", 0.0);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put("action", "sell");
+        jsonObject2.put("symbol", customStock.getSymbol());
+        jsonObject2.put("quantity", 1000);
+        jsonObject2.put("ask", -1);
+        jsonObject2.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response2 = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject2, Trade.class);
+
+        assertEquals(400, response2.getStatusCode().value());
+    }
+
+    @Test
+    public void createMarketSellTrade_InvalidStockSymbol() throws Exception{
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 1000);
+        jsonObject.put("bid", 0.0);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put("action", "sell");
+        jsonObject2.put("symbol", "123");
+        jsonObject2.put("quantity", 100);
+        jsonObject2.put("ask", 0.0);
+        jsonObject2.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response2 = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject2, Trade.class);
+
+        assertEquals(404, response2.getStatusCode().value());
+    }
+
+    @Test
+    public void createLimitBuyTrade_Success() throws Exception{
+
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 100);
+        jsonObject.put("bid", 2.6);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+        assertEquals(201, response.getStatusCode().value());
+       
+    }
+
+    @Test
+    public void createLimitBuyTrade_InvalidCustomer() throws Exception{
+
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
+
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 100);
+        jsonObject.put("bid", 2.6);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user2", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+        assertEquals(401, response.getStatusCode().value());
+       
+    }
+
+    @Test
+    public void createLimitBuyTrade_InsufficientQuantity() throws Exception{
+
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 800.0, 800.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 10000);
+        jsonObject.put("bid", 2.6);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+        assertEquals(400, response.getStatusCode().value());
+       
+    }
+
+    @Test
+    public void createLimitBuyTrade_InvalidQuantity() throws Exception{
+
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", -10);
+        jsonObject.put("bid", 2.6);
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+        assertEquals(400, response.getStatusCode().value());
+       
+    }
+
+    @Test
+    public void createLimitBuyTrade_Open() throws Exception{
+
+        URI uri = new URI(baseUrl + port + "/trades");
+        Customer customer = customerRepository.save(new Customer("user1", encoder.encode("user1"), "Woofy Dog", "S8529649C",
+        "91251234", "Dog House", "ROLE_USER", true));
+   
+        Account acc = accountRepository.save(new Account(null, customer, customer.getCustomerId(), 80000.0, 80000.0));
+
+        CustomStock customStock = stockRepository.save(new CustomStock("A17U", 2.5, 20000, 2.5, 20000, 2.7));
+        
+
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("action", "buy");
+        jsonObject.put("symbol", customStock.getSymbol());
+        jsonObject.put("quantity", 1000);
+        jsonObject.put("bid", (customStock.getAsk() - 1));
+        jsonObject.put("account_id", acc.getAccountID());
+
+        ResponseEntity<Trade> response = restTemplate.withBasicAuth("user1", "user1")
+        .postForEntity(uri, jsonObject, Trade.class);
+        assertEquals(201, response.getStatusCode().value());
+        assertEquals("open", response.getBody().getStatus());
+       
+    }
   
 
 
@@ -371,7 +698,7 @@ class TradeIntegrationTest {
             HttpEntity<Trade> requestEntity = new HttpEntity<>(trade2,headers);
     
     
-            URI uri = new URI(baseUrl + port + "/trades/10");
+            URI uri = new URI(baseUrl + port + "/trades/100");
     
             ResponseEntity<Trade> result = restTemplate.withBasicAuth("user1", "goodpassword1")
             .exchange(uri, HttpMethod.PUT, requestEntity , Trade.class);
