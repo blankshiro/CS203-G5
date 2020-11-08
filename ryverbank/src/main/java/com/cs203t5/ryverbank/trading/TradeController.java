@@ -126,6 +126,9 @@ public class TradeController {
             }
 
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
+            if(optionalStock.isEmpty()){
+                throw new StockSymbolNotFoundException(trade.getSymbol() + " not found");
+            }
 
             if (optionalStock != null && optionalStock.isPresent()) {
                 CustomStock customStock = optionalStock.get();
@@ -150,6 +153,9 @@ public class TradeController {
             }
 
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
+            if(optionalStock.isEmpty()){
+                throw new StockSymbolNotFoundException(trade.getSymbol() + " not found");
+            }
 
             if (optionalStock != null && optionalStock.isPresent()) {
                 CustomStock customStock = optionalStock.get();
@@ -176,6 +182,9 @@ public class TradeController {
             }
 
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
+            if(optionalStock.isEmpty()){
+                throw new StockSymbolNotFoundException(trade.getSymbol() + " not found");
+            }
 
             if (optionalStock != null && optionalStock.isPresent()) {
                 CustomStock customStock = optionalStock.get();
@@ -200,6 +209,9 @@ public class TradeController {
             }
 
             Optional<CustomStock> optionalStock = stockRepository.findBySymbol(trade.getSymbol());
+            if(optionalStock.isEmpty()){
+                throw new StockSymbolNotFoundException(trade.getSymbol() + " not found");
+            }
 
             if (optionalStock != null && optionalStock.isPresent()) {
                 CustomStock customStock = optionalStock.get();
