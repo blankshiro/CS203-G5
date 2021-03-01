@@ -1,7 +1,7 @@
 # Project Ryver Bank 
-Group Memebers:
-Derrick Lim
-Edwin Tok
-Keah Keat
-Jun An
+Group Memebers:<br>
+Derrick Lim<br>
+Edwin Tok<br>
+Keah Keat<br>
+Jun An<br>
 Shi Ying
