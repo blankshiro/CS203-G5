@@ -1,5 +1,5 @@
 # Project Ryver Bank 
-Group Memebers:<br>
+Group Members:<br>
 Derrick Lim<br>
 Edwin Tok<br>
 Keah Keat<br>
