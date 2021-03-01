@@ -1,2 +1,7 @@
 # Project Ryver Bank 
-# Group 5 (KonoSuba)
+Group Memebers:
+Derrick Lim
+Edwin Tok
+Keah Keat
+Jun An
+Shi Ying
